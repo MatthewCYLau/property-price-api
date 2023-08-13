@@ -10,11 +10,20 @@ Ensure you have installed [.NET SDK](https://dotnet.microsoft.com/en-us/download
 dotnet --version
 ```
 
-## Usage
+## Run app locally
 
 ```bash
 dotnet run
 curl http://localhost:5049/healthz
+```
+
+## Build/run app via Docker
+
+```bash
+cd property-price-api
+docker build -t property-price-api:v1 .
+docker run -p 80:80 property-price-api:v1 
+curl http://localhost:80/healthz
 ```
 
 ## Contributing
