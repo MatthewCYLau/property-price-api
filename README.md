@@ -14,6 +14,7 @@ dotnet --version
 
 ```bash
 dotnet run
+curl http://localhost:5049/healthz
 ```
 
 ## Contributing
