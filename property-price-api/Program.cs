@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using property_price_api.Models;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -7,6 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
+
+// Add services to the container.
+builder.Services.Configure<PropertyPriceApiDatabaseSettings>(
+    builder.Configuration.GetSection("PropertyPriceApiDatabase"));
 
 var app = builder.Build();
 
