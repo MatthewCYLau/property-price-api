@@ -31,6 +31,12 @@ namespace property_price_api.Services
 
         public async Task CreateAsync(Property property) =>
             await _propertiesCollection.InsertOneAsync(property);
+
+        public async Task UpdateAsync(string id, Property property) =>
+            await _propertiesCollection.ReplaceOneAsync(x => x.Id == id, property);
+
+        public async Task RemoveAsync(string id) =>
+            await _propertiesCollection.DeleteOneAsync(x => x.Id == id);
     }
 }
 
