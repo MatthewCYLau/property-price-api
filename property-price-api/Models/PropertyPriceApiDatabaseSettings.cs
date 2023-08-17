@@ -7,7 +7,7 @@ namespace property_price_api.Models
 
         public string DatabaseName { get; set; } = null!;
 
-        public string BooksCollectionName { get; set; } = null!;
+        public string PropertiesCollectionName { get; set; } = null!;
     }
 }
 
