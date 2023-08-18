@@ -1,4 +1,6 @@
-﻿using property_price_api.Models;
+﻿using AutoMapper;
+using property_price_api.Models;
+using property_price_api.Profiles;
 using property_price_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,16 @@ builder.Services.Configure<PropertyPriceApiDatabaseSettings>(
     builder.Configuration.GetSection("PropertyPriceApiDatabase"));
 builder.Services.AddSingleton<PropertyService>();
 builder.Services.AddSingleton<UserService>();
+
+
+// Auto Mapper Configurations
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new UserProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 

@@ -34,9 +34,9 @@ namespace property_price_api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(User user)
+        public async Task<IActionResult> Post(CreateUserDto createUserDto)
         {
-            await _userService.CreateAsync(user);
+            User user = await _userService.CreateAsync(createUserDto);
 
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         }
