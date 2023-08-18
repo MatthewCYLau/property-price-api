@@ -16,6 +16,11 @@ namespace property_price_api.Models
 
         public string Address { get; set; } = null!;
 
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserId { get; set; }
+
+        public User? User { get; set; }
+
     }
 }
 

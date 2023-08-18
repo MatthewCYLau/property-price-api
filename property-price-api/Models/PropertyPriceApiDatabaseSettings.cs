@@ -8,6 +8,9 @@ namespace property_price_api.Models
         public string DatabaseName { get; set; } = null!;
 
         public string PropertiesCollectionName { get; set; } = null!;
+
+        public string UsersCollectionName { get; set; } = null!;
+
     }
 }
 

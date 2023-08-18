@@ -24,7 +24,11 @@ namespace property_price_api.Services
         }
 
         public async Task<List<Property>> GetAsync() =>
-        await _propertiesCollection.Find(_ => true).ToListAsync();
+        await _propertiesCollection.Aggregate()
+            .Lookup("users", "UserId", "_id", @as: "User")
+            .Unwind("User")
+            .As<Property>()
+            .ToListAsync();
 
         public async Task<Property?> GetAsync(string id) =>
             await _propertiesCollection.Find(x => x.Id == id).FirstOrDefaultAsync();

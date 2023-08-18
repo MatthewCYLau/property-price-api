@@ -15,6 +15,7 @@ builder.Services.AddHealthChecks();
 builder.Services.Configure<PropertyPriceApiDatabaseSettings>(
     builder.Configuration.GetSection("PropertyPriceApiDatabase"));
 builder.Services.AddSingleton<PropertyService>();
+builder.Services.AddSingleton<UserService>();
 
 var app = builder.Build();
 
