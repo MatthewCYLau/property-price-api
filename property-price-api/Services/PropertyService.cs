@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using property_price_api.Models;
 
@@ -8,10 +9,12 @@ namespace property_price_api.Services
 	{
 
         private readonly IMongoCollection<Property> _propertiesCollection;
+        private readonly IMapper _mapper;
 
 
         public PropertyService(
-        IOptions<PropertyPriceApiDatabaseSettings> propertyPriceApiDatabaseSettings)
+        IOptions<PropertyPriceApiDatabaseSettings> propertyPriceApiDatabaseSettings,
+        IMapper mapper)
         {
             var mongoClient = new MongoClient(
                 propertyPriceApiDatabaseSettings.Value.ConnectionString);
@@ -21,15 +24,21 @@ namespace property_price_api.Services
 
             _propertiesCollection = mongoDatabase.GetCollection<Property>(
                 propertyPriceApiDatabaseSettings.Value.PropertiesCollectionName);
+            _mapper = mapper;
         }
 
-        public async Task<List<Property>> GetAsync() =>
-        await _propertiesCollection.Aggregate()
+        public async Task<List<PropertyDto>> GetAsync()
+        {
+            var properties = await _propertiesCollection.Aggregate()
             .Lookup("users", "UserId", "_id", @as: "User")
             .Unwind("User")
             .As<Property>()
             .ToListAsync();
 
+            var propertiesDto = _mapper.Map<List<PropertyDto>>(properties);
+            return propertiesDto;
+        }
+       
         public async Task<Property?> GetAsync(string id) =>
             await _propertiesCollection.Aggregate()
             .Match(x => x.Id == id)

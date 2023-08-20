@@ -15,7 +15,7 @@ namespace property_price_api.Controllers
             _propertyService = propertyService;
 
         [HttpGet]
-        public async Task<List<Property>> Get() =>
+        public async Task<List<PropertyDto>> Get() =>
             await _propertyService.GetAsync();
 
         [HttpGet("{id:length(24)}")]

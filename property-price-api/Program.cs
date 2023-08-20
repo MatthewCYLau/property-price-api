@@ -24,6 +24,7 @@ builder.Services.AddSingleton<UserService>();
 var mapperConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new UserProfile());
+    mc.AddProfile(new PropertyProfile());
 });
 
 IMapper mapper = mapperConfig.CreateMapper();
