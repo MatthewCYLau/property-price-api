@@ -12,6 +12,11 @@ namespace property_price_api.Profiles
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password)
                 );
 
+			CreateMap<User, UserDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email)
+                );
+
         }
 	}
 }

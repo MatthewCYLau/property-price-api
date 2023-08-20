@@ -26,14 +26,21 @@ namespace property_price_api.Services
             _mapper = mapper;
         }
 
-        public async Task<List<User>> GetAsync() =>
-            await _usersCollection.Find(_ => true).ToListAsync();
+        public async Task<List<UserDto>> GetAsync()
+        {
+            var _users = await _usersCollection.Find(_ => true).ToListAsync();
+            var _usersDto = _mapper.Map<List<UserDto>>(_users);
+            return _usersDto;
+        }
+            
 
-        public async Task<User>CreateAsync(CreateUserDto createUserDto)
+        public async Task<UserDto>CreateAsync(CreateUserDto createUserDto)
         {
             var _user = _mapper.Map<User>(createUserDto);
             await _usersCollection.InsertOneAsync(_user);
-            return _user;
+            var _createdUser = _mapper.Map<UserDto>(_user);
+
+            return _createdUser;
         }
           
     }

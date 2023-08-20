@@ -16,7 +16,7 @@ namespace property_price_api.Controllers
             _userService = userService;
 
         [HttpGet]
-        public async Task<List<User>> Get() =>
+        public async Task<List<UserDto>> Get() =>
             await _userService.GetAsync();
 
         //[HttpGet("{id:length(24)}")]
@@ -36,9 +36,9 @@ namespace property_price_api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateUserDto createUserDto)
         {
-            User user = await _userService.CreateAsync(createUserDto);
+            UserDto userDto = await _userService.CreateAsync(createUserDto);
 
-            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(Get), new { id = userDto.Id }, userDto);
         }
 
         //[HttpPut("{id:length(24)}")]
