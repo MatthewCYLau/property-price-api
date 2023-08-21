@@ -33,11 +33,11 @@ namespace property_price_api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(Property property)
+        public async Task<IActionResult> Post(CreatePropertyDto createPropertyDto)
         {
-            await _propertyService.CreateAsync(property);
+            var _propertyDto = await _propertyService.CreateAsync(createPropertyDto);
 
-            return CreatedAtAction(nameof(Get), new { id = property.Id }, property);
+            return CreatedAtAction(nameof(Get), new { id = _propertyDto.Id }, _propertyDto);
         }
 
         [HttpPut("{id:length(24)}")]

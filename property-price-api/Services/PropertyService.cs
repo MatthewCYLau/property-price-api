@@ -47,8 +47,15 @@ namespace property_price_api.Services
             .As<Property>()
             .SingleOrDefaultAsync();
 
-        public async Task CreateAsync(Property property) =>
-            await _propertiesCollection.InsertOneAsync(property);
+        public async Task<PropertyDto> CreateAsync(CreatePropertyDto createPropertyDto)
+        {
+            var _property = _mapper.Map<Property>(createPropertyDto);
+            await _propertiesCollection.InsertOneAsync(_property);
+            var _createdProperty = _mapper.Map<PropertyDto>(_property);
+
+            return _createdProperty;
+        }
+            
 
         public async Task UpdateAsync(string id, Property property) =>
             await _propertiesCollection.ReplaceOneAsync(x => x.Id == id, property);
