@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using property_price_api.Data;
 using property_price_api.Models;
 
 namespace property_price_api.Services
@@ -8,28 +8,19 @@ namespace property_price_api.Services
 	public class PropertyService
 	{
 
-        private readonly IMongoCollection<Property> _propertiesCollection;
+        private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
 
 
-        public PropertyService(
-        IOptions<PropertyPriceApiDatabaseSettings> propertyPriceApiDatabaseSettings,
-        IMapper mapper)
+        public PropertyService(MongoDbContext context, IMapper mapper)
         {
-            var mongoClient = new MongoClient(
-                propertyPriceApiDatabaseSettings.Value.ConnectionString);
-
-            var mongoDatabase = mongoClient.GetDatabase(
-                propertyPriceApiDatabaseSettings.Value.DatabaseName);
-
-            _propertiesCollection = mongoDatabase.GetCollection<Property>(
-                propertyPriceApiDatabaseSettings.Value.PropertiesCollectionName);
+            _context = context;
             _mapper = mapper;
         }
 
         public async Task<List<PropertyDto>> GetAsync()
         {
-            var properties = await _propertiesCollection.Aggregate()
+            var properties = await _context.Properties.Aggregate()
             .Lookup("users", "UserId", "_id", @as: "User")
             .Unwind("User")
             .As<Property>()
@@ -40,7 +31,7 @@ namespace property_price_api.Services
         }
        
         public async Task<Property?> GetAsync(string id) =>
-            await _propertiesCollection.Aggregate()
+            await _context.Properties.Aggregate()
             .Match(x => x.Id == id)
             .Lookup("users", "UserId", "_id", @as: "User")
             .Unwind("User")
@@ -50,7 +41,7 @@ namespace property_price_api.Services
         public async Task<PropertyDto> CreateAsync(CreatePropertyDto createPropertyDto)
         {
             var _property = _mapper.Map<Property>(createPropertyDto);
-            await _propertiesCollection.InsertOneAsync(_property);
+            await _context.Properties.InsertOneAsync(_property);
             var _createdProperty = _mapper.Map<PropertyDto>(_property);
 
             return _createdProperty;
@@ -58,10 +49,10 @@ namespace property_price_api.Services
             
 
         public async Task UpdateAsync(string id, Property property) =>
-            await _propertiesCollection.ReplaceOneAsync(x => x.Id == id, property);
+            await _context.Properties.ReplaceOneAsync(x => x.Id == id, property);
 
         public async Task RemoveAsync(string id) =>
-            await _propertiesCollection.DeleteOneAsync(x => x.Id == id);
+            await _context.Properties.DeleteOneAsync(x => x.Id == id);
     }
 }
 

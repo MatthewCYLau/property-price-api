@@ -1,5 +1,4 @@
-﻿using System;
-namespace property_price_api.Models
+﻿namespace property_price_api.Models
 {
 	public class PropertyPriceApiDatabaseSettings
 	{
