@@ -17,7 +17,14 @@ builder.Services.Configure<PropertyPriceApiDatabaseSettings>(
 builder.Services.AddSingleton(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<PropertyPriceApiDatabaseSettings>>().Value;
-    return new MongoDbContext(settings.ConnectionString, settings.DatabaseName);
+    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+    {
+        return new MongoDbContext(settings.ConnectionString, settings.DatabaseName);
+    } else
+    {
+        return new MongoDbContext(Environment.GetEnvironmentVariable("MONGO_DB_CONNECTION_STRING"), settings.DatabaseName);
+
+    }
 });
 
 builder.Services.AddSingleton<PropertyService>();
