@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHealthChecks();
 
 builder.Services.Configure<PropertyPriceApiDatabaseSettings>(
     builder.Configuration.GetSection("PropertyPriceApiDatabase"));
@@ -55,7 +54,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHealthChecks("/healthz");
+app.MapGet("/ping", () => "pong!");
 
 app.Run();
 

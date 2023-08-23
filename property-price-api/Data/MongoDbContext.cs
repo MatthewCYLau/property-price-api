@@ -14,6 +14,8 @@ namespace property_price_api.Data
         }
 
         public IMongoCollection<Property> Properties => _database.GetCollection<Property>("properties");
+        public IMongoCollection<User> Users => _database.GetCollection<User>("users");
+
     }
 }
 

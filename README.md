@@ -2,6 +2,8 @@
 
 An ASP.NET Core web API which returns suggested property offer price
 
+API URL here: [`https://property-price-api-3i2mtbjusq-ew.a.run.app`](https://property-price-api-3i2mtbjusq-ew.a.run.app)
+
 ## Pre-requisite
 
 Ensure you have installed [.NET SDK](https://dotnet.microsoft.com/en-us/download):
@@ -14,7 +16,7 @@ dotnet --version
 
 ```bash
 dotnet run
-curl http://localhost:5049/healthz
+curl http://localhost:5049/ping
 ```
 
 ## Build/run app via Docker
@@ -22,8 +24,8 @@ curl http://localhost:5049/healthz
 ```bash
 cd property-price-api
 docker build -t property-price-api:v1 .
-docker run -p 80:80 property-price-api:v1 
-curl http://localhost:80/healthz
+docker run -p 5001:8080 property-price-api:v1 
+curl http://localhost:5001/ping
 ```
 
 ## Contributing
