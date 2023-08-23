@@ -407,4 +407,4 @@ ASALocalRun/
 # dotnet build artifact
 **/out
 
-**/*.appsettings.Development.json
+**/*appsettings.Development.json
