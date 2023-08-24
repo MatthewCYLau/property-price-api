@@ -30,13 +30,18 @@ namespace property_price_api.Services
             return propertiesDto;
         }
        
-        public async Task<Property?> GetAsync(string id) =>
-            await _context.Properties.Aggregate()
+        public async Task<PropertyDto?> GetAsync(string id)
+        {
+            var property = await _context.Properties.Aggregate()
             .Match(x => x.Id == id)
             .Lookup("users", "UserId", "_id", @as: "User")
             .Unwind("User")
             .As<Property>()
             .SingleOrDefaultAsync();
+
+            var propertyDto = _mapper.Map<PropertyDto>(property);
+            return propertyDto;
+        }    
 
         public async Task<PropertyDto> CreateAsync(CreatePropertyDto createPropertyDto)
         {

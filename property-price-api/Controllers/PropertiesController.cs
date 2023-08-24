@@ -19,7 +19,7 @@ namespace property_price_api.Controllers
             await _propertyService.GetAsync();
 
         [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<Property>> Get(string id)
+        public async Task<ActionResult<PropertyDto>> Get(string id)
         {
             var property = await _propertyService.GetAsync(id);
 

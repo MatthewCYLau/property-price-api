@@ -54,7 +54,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/ping", () => "pong!");
+
+app.MapGet("/ping", () => "pong!")
+.WithDescription("Ping uptime check")
+.WithOpenApi();
 
 app.Run();
 
