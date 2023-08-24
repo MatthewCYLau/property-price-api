@@ -24,7 +24,7 @@ namespace property_price_api.Services
         }
             
 
-        public async Task<UserDto>CreateAsync(CreateUserDto createUserDto)
+        public async Task<UserDto>CreateUserAsync(CreateUserDto createUserDto)
         {
             var _user = _mapper.Map<User>(createUserDto);
             await _context.Users.InsertOneAsync(_user);
@@ -32,7 +32,14 @@ namespace property_price_api.Services
 
             return _createdUser;
         }
-          
+
+        public async Task<UserDto> GetUserByEmailAsync(string email)
+        {
+            var _user = await _context.Users.Find(x => x.Email == email).FirstOrDefaultAsync();
+            var _userDto = _mapper.Map<UserDto>(_user);
+            return _userDto;
+        }
+
     }
 }
 

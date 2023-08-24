@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using property_price_api.Models;
 using property_price_api.Services;
 
@@ -34,9 +33,14 @@ namespace property_price_api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(CreateUserDto createUserDto)
+        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
-            UserDto userDto = await _userService.CreateAsync(createUserDto);
+
+            var existingUser = await _userService.GetUserByEmailAsync(createUserDto.Email);
+            if (existingUser != null)
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response { Status = "Error", Message = "User already exists!" });
+            UserDto userDto = await _userService.CreateUserAsync(createUserDto);
 
             return CreatedAtAction(nameof(Get), new { id = userDto.Id }, userDto);
         }
