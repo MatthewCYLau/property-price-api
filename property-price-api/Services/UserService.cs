@@ -25,16 +25,25 @@ namespace property_price_api.Services
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(MongoDbContext context, IMapper mapper, IOptions<AppSettings> appSettings)
+        public UserService(
+            MongoDbContext context,
+            IMapper mapper,
+            IOptions<AppSettings> appSettings,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
             _appSettings = appSettings.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<UserDto>> GetAsync()
         {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var user = (Task<User>)httpContext.Items["User"];
+            Console.WriteLine(user.Result.Id);
             var _users = await _context.Users.Find(_ => true).ToListAsync();
             var _usersDto = _mapper.Map<List<UserDto>>(_users);
             return _usersDto;
