@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Services;
 
@@ -9,11 +10,25 @@ namespace property_price_api.Controllers
     public class UsersController : ControllerBase
     {
 
-        private readonly UserService _userService;
+        private IUserService _userService;
 
-        public UsersController(UserService userService) =>
+        public UsersController(IUserService userService)
+        {
             _userService = userService;
+        }
 
+        [HttpPost("authenticate")]
+        public async Task<ActionResult> Authenticate(AuthenticateRequest model)
+        {
+            var response = await _userService.Authenticate(model);
+
+            if (response == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(response);
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<List<UserDto>> Get() =>
             await _userService.GetAsync();

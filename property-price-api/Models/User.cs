@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Text.Json.Serialization;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
@@ -11,6 +12,7 @@ namespace property_price_api.Models
 
         public string Email { get; set; } = null!;
 
+        [JsonIgnore]
         public string Password { get; set; } = null!;
 
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using property_price_api.Data;
+using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Profiles;
 using property_price_api.Services;
@@ -27,7 +28,9 @@ builder.Services.AddSingleton(serviceProvider =>
 });
 
 builder.Services.AddSingleton<PropertyService>();
-builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<IUserService, UserService>();
+
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // Auto Mapper Configurations
 var mapperConfig = new MapperConfiguration(mc =>
@@ -54,6 +57,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseMiddleware<JwtMiddleware>();
 
 app.MapGet("/ping", () => "pong!")
 .WithDescription("Ping uptime check")
