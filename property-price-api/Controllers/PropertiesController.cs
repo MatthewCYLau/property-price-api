@@ -16,12 +16,12 @@ namespace property_price_api.Controllers
 
         [HttpGet]
         public async Task<List<PropertyDto>> Get() =>
-            await _propertyService.GetAsync();
+            await _propertyService.GetProperties();
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<PropertyDto>> Get(string id)
         {
-            var property = await _propertyService.GetAsync(id);
+            var property = await _propertyService.GetPropertyById(id);
 
             if (property is null)
             {
@@ -35,7 +35,7 @@ namespace property_price_api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreatePropertyDto createPropertyDto)
         {
-            var _propertyDto = await _propertyService.CreateAsync(createPropertyDto);
+            var _propertyDto = await _propertyService.CreateProperty(createPropertyDto);
 
             return CreatedAtAction(nameof(Get), new { id = _propertyDto.Id }, _propertyDto);
         }
@@ -43,7 +43,7 @@ namespace property_price_api.Controllers
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> Update(string id, Property updatedProperty)
         {
-            var property = await _propertyService.GetAsync(id);
+            var property = await _propertyService.GetPropertyById(id);
 
             if (property is null)
             {
@@ -52,7 +52,7 @@ namespace property_price_api.Controllers
 
             updatedProperty.Id = property.Id;
 
-            await _propertyService.UpdateAsync(id, updatedProperty);
+            await _propertyService.UpdateProperty(id, updatedProperty);
 
             return NoContent();
         }
@@ -60,14 +60,14 @@ namespace property_price_api.Controllers
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var property = await _propertyService.GetAsync(id);
+            var property = await _propertyService.GetPropertyById(id);
 
             if (property is null)
             {
                 return NotFound();
             }
 
-            await _propertyService.RemoveAsync(id);
+            await _propertyService.DeleteProperty(id);
 
             return NoContent();
         }

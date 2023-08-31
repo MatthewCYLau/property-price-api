@@ -5,7 +5,17 @@ using property_price_api.Models;
 
 namespace property_price_api.Services
 {
-	public class PropertyService
+
+    public interface IPropertyService
+    {
+        Task<List<PropertyDto>> GetProperties();
+        Task<PropertyDto?> GetPropertyById(string id);
+        Task<PropertyDto> CreateProperty(CreatePropertyDto createPropertyDto);
+        Task UpdateProperty(string id, Property property);
+        Task DeleteProperty(string id);
+    }
+
+    public class PropertyService: IPropertyService
 	{
 
         private readonly MongoDbContext _context;
@@ -18,7 +28,7 @@ namespace property_price_api.Services
             _mapper = mapper;
         }
 
-        public async Task<List<PropertyDto>> GetAsync()
+        public async Task<List<PropertyDto>> GetProperties()
         {
             var properties = await _context.Properties.Aggregate()
             .Lookup("users", "UserId", "_id", @as: "User")
@@ -30,7 +40,7 @@ namespace property_price_api.Services
             return propertiesDto;
         }
        
-        public async Task<PropertyDto?> GetAsync(string id)
+        public async Task<PropertyDto?> GetPropertyById(string id)
         {
             var property = await _context.Properties.Aggregate()
             .Match(x => x.Id == id)
@@ -43,7 +53,7 @@ namespace property_price_api.Services
             return propertyDto;
         }    
 
-        public async Task<PropertyDto> CreateAsync(CreatePropertyDto createPropertyDto)
+        public async Task<PropertyDto> CreateProperty(CreatePropertyDto createPropertyDto)
         {
             var _property = _mapper.Map<Property>(createPropertyDto);
             await _context.Properties.InsertOneAsync(_property);
@@ -53,10 +63,10 @@ namespace property_price_api.Services
         }
             
 
-        public async Task UpdateAsync(string id, Property property) =>
+        public async Task UpdateProperty(string id, Property property) =>
             await _context.Properties.ReplaceOneAsync(x => x.Id == id, property);
 
-        public async Task RemoveAsync(string id) =>
+        public async Task DeleteProperty(string id) =>
             await _context.Properties.DeleteOneAsync(x => x.Id == id);
     }
 }
