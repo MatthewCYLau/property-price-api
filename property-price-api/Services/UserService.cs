@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using BC = BCrypt.Net.BCrypt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
@@ -59,6 +60,7 @@ namespace property_price_api.Services
         public async Task<UserDto>CreateUserAsync(CreateUserDto createUserDto)
         {
             var _user = _mapper.Map<User>(createUserDto);
+            _user.Password = BC.HashPassword(_user.Password);
             await _context.Users.InsertOneAsync(_user);
             var _createdUser = _mapper.Map<UserDto>(_user);
 
@@ -75,9 +77,12 @@ namespace property_price_api.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var _user = await _context.Users.Find(x => x.Email == model.Email && x.Password == model.Password).FirstOrDefaultAsync();
+            var _user = await _context.Users.Find(x => x.Email == model.Email).FirstOrDefaultAsync();
 
-            if (_user == null) return null;
+            if (_user == null || !BC.Verify(model.Password, _user.Password))
+            {
+                return null;
+            }
 
             var token = generateJwtToken(_user);
 
