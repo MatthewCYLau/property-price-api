@@ -15,10 +15,11 @@ namespace property_price_api.Services
     public interface IUserService
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest model);
-        Task<List<UserDto>> GetAsync();
-        Task<UserDto> CreateUserAsync(CreateUserDto createUserDto);
-        Task<UserDto> GetUserByEmailAsync(string email);
+        Task<List<UserDto>> GetUsers();
+        Task<UserDto> CreateUser(CreateUserDto createUserDto);
+        Task<UserDto> GetUserByEmail(string email);
         Task<User> GetUserById(string id);
+        Task<bool> DeleteUser(string id);
     }
 
     public class UserService: IUserService
@@ -40,11 +41,8 @@ namespace property_price_api.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<List<UserDto>> GetAsync()
+        public async Task<List<UserDto>> GetUsers()
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var user = (Task<User>)httpContext.Items["User"];
-            Console.WriteLine(user.Result.Id);
             var _users = await _context.Users.Find(_ => true).ToListAsync();
             var _usersDto = _mapper.Map<List<UserDto>>(_users);
             return _usersDto;
@@ -57,7 +55,7 @@ namespace property_price_api.Services
         }
 
 
-        public async Task<UserDto>CreateUserAsync(CreateUserDto createUserDto)
+        public async Task<UserDto> CreateUser(CreateUserDto createUserDto)
         {
             var _user = _mapper.Map<User>(createUserDto);
             _user.Password = BC.HashPassword(_user.Password);
@@ -67,7 +65,7 @@ namespace property_price_api.Services
             return _createdUser;
         }
 
-        public async Task<UserDto> GetUserByEmailAsync(string email)
+        public async Task<UserDto> GetUserByEmail(string email)
         {
             var _user = await _context.Users.Find(x => x.Email == email).FirstOrDefaultAsync();
             var _userDto = _mapper.Map<UserDto>(_user);
@@ -88,6 +86,19 @@ namespace property_price_api.Services
 
             return new AuthenticateResponse(_user, token);
         }
+
+        public async Task<bool> DeleteUser(string id)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var user = (Task<User>)httpContext.Items["User"];
+            if (user.Result.Id != id)
+            {
+                return false;
+            }
+            await _context.Users.DeleteOneAsync(x => x.Id == id);
+            return true;
+        }
+        
 
         private string generateJwtToken(User user)
         {

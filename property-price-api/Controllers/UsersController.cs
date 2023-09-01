@@ -31,7 +31,7 @@ namespace property_price_api.Controllers
         [Authorize]
         [HttpGet]
         public async Task<List<UserDto>> Get() =>
-            await _userService.GetAsync();
+            await _userService.GetUsers();
 
         //[HttpGet("{id:length(24)}")]
         //public async Task<ActionResult<Property>> Get(string id)
@@ -51,11 +51,11 @@ namespace property_price_api.Controllers
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
 
-            var existingUser = await _userService.GetUserByEmailAsync(createUserDto.Email);
+            var existingUser = await _userService.GetUserByEmail(createUserDto.Email);
             if (existingUser != null)
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new Response { Status = "Error", Message = "User already exists!" });
-            UserDto userDto = await _userService.CreateUserAsync(createUserDto);
+            UserDto userDto = await _userService.CreateUser(createUserDto);
 
             return CreatedAtAction(nameof(Get), new { id = userDto.Id }, userDto);
         }
@@ -77,20 +77,24 @@ namespace property_price_api.Controllers
         //    return NoContent();
         //}
 
-        //[HttpDelete("{id:length(24)}")]
-        //public async Task<IActionResult> Delete(string id)
-        //{
-        //    var property = await _propertyService.GetAsync(id);
+        [HttpDelete("{id:length(24)}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _userService.GetUserById(id);
 
-        //    if (property is null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (user is null)
+            {
+                return NotFound();
+            }
 
-        //    await _propertyService.RemoveAsync(id);
+            if (!await _userService.DeleteUser(id))
+            {
+                return BadRequest(new { message = "Delete user went wrong!" });
+            }
 
-        //    return NoContent();
-        //}
+            return NoContent();
+
+        }
     }
 }
 
