@@ -91,10 +91,7 @@ namespace property_price_api.Services
 
         public async Task<bool> DeleteUser(string id)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var _userDto = (Task<UserDto>)httpContext.Items["User"];
-            if (_userDto.Result.Id != id)
-            {
+            if (!ValidatePermission(id)){
                 return false;
             }
             await _context.Users.DeleteOneAsync(x => x.Id == id);
@@ -103,12 +100,12 @@ namespace property_price_api.Services
 
         public async Task<bool> UpdateUserById(string id, UpdateUserRequest updateUserRequest)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var _userDto = (Task<UserDto>)httpContext.Items["User"];
-            if (_userDto.Result.Id != id)
+
+            if (!ValidatePermission(id))
             {
                 return false;
             }
+
             var _user = updateUserRequest.ToUser(id, updateUserRequest.Email, updateUserRequest.Password);
             _user.Password = BC.HashPassword(_user.Password);
             await _context.Users.ReplaceOneAsync(x => x.Id == id, _user);
@@ -129,6 +126,13 @@ namespace property_price_api.Services
             return tokenHandler.WriteToken(token);
         }
 
+
+        private bool ValidatePermission(string id)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var _userDto = (Task<UserDto>)httpContext.Items["User"];
+            return _userDto.Result.Id == id;
+        }
     }
 }
 

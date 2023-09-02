@@ -2,6 +2,8 @@
 
 An ASP.NET Core web API which returns suggested property offer price
 
+![cicd cloud run workflow](https://github.com/MatthewCYLau/property-price-api/actions/workflows/cicd-cloud-run.yaml/badge.svg)
+
 API URL here: [`https://property-price-api-3i2mtbjusq-ew.a.run.app`](https://property-price-api-3i2mtbjusq-ew.a.run.app)
 
 ## Pre-requisite
