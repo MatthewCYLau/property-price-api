@@ -119,7 +119,8 @@ namespace property_price_api.Services
         private string generateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            string jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _appSettings.Secret;
+            var key = Encoding.ASCII.GetBytes(jwtSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
