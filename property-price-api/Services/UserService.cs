@@ -20,6 +20,7 @@ namespace property_price_api.Services
         Task<UserDto> GetUserByEmail(string email);
         Task<UserDto> GetUserById(string id);
         Task<bool> DeleteUser(string id);
+        Task<bool> UpdateUserById(string id, UpdateUserRequest updateUserRequest);
     }
 
     public class UserService: IUserService
@@ -91,15 +92,28 @@ namespace property_price_api.Services
         public async Task<bool> DeleteUser(string id)
         {
             var httpContext = _httpContextAccessor.HttpContext;
-            var user = (Task<User>)httpContext.Items["User"];
-            if (user.Result.Id != id)
+            var _userDto = (Task<UserDto>)httpContext.Items["User"];
+            if (_userDto.Result.Id != id)
             {
                 return false;
             }
             await _context.Users.DeleteOneAsync(x => x.Id == id);
             return true;
         }
-        
+
+        public async Task<bool> UpdateUserById(string id, UpdateUserRequest updateUserRequest)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var _userDto = (Task<UserDto>)httpContext.Items["User"];
+            if (_userDto.Result.Id != id)
+            {
+                return false;
+            }
+            var _user = updateUserRequest.ToUser(id, updateUserRequest.Email, updateUserRequest.Password);
+            _user.Password = BC.HashPassword(_user.Password);
+            await _context.Users.ReplaceOneAsync(x => x.Id == id, _user);
+            return true;
+        }
 
         private string generateJwtToken(User user)
         {

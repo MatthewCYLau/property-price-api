@@ -61,22 +61,24 @@ namespace property_price_api.Controllers
             return CreatedAtAction(nameof(Get), new { id = userDto.Id }, userDto);
         }
 
-        //[HttpPut("{id:length(24)}")]
-        //public async Task<IActionResult> Update(string id, Property updatedProperty)
-        //{
-        //    var property = await _propertyService.GetAsync(id);
+        [Authorize]
+        [HttpPut("{id:length(24)}")]
+        public async Task<IActionResult> UpdateUserById(string id, UpdateUserRequest updateUserRequest)
+        {
+            var _userDto = await _userService.GetUserById(id);
 
-        //    if (property is null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (_userDto is null)
+            {
+                return NotFound();
+            }
 
-        //    updatedProperty.Id = property.Id;
+            if (!await _userService.UpdateUserById(id, updateUserRequest))
+            {
+                return BadRequest(new { message = "Updatd user went wrong!" });
+            }
 
-        //    await _propertyService.UpdateAsync(id, updatedProperty);
-
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> Delete(string id)
