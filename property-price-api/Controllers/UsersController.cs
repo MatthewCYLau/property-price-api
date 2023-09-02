@@ -33,18 +33,19 @@ namespace property_price_api.Controllers
         public async Task<List<UserDto>> Get() =>
             await _userService.GetUsers();
 
-        //[HttpGet("{id:length(24)}")]
-        //public async Task<ActionResult<Property>> Get(string id)
-        //{
-        //    var property = await _propertyService.GetAsync(id);
+        [Authorize]
+        [HttpGet("{id:length(24)}")]
+        public async Task<ActionResult<UserDto>> GetUserById(string id)
+        {
+            var userDto = await _userService.GetUserById(id);
 
-        //    if (property is null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (userDto is null)
+            {
+                return NotFound();
+            }
 
-        //    return property;
-        //}
+            return userDto;
+        }
 
 
         [HttpPost]
@@ -80,9 +81,9 @@ namespace property_price_api.Controllers
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = await _userService.GetUserById(id);
+            var userDto = await _userService.GetUserById(id);
 
-            if (user is null)
+            if (userDto is null)
             {
                 return NotFound();
             }
