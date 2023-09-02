@@ -33,7 +33,8 @@ namespace property_price_api.Helpers
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                string jwtSecret = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? _appSettings.Secret : Environment.GetEnvironmentVariable("JWT_SECRET");
+                var key = Encoding.ASCII.GetBytes(jwtSecret);
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
