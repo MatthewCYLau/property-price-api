@@ -25,17 +25,20 @@ namespace property_price_api.Services
 
     public class UserService: IUserService
 	{
+        private readonly ILogger _logger;
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserService(
+            ILogger<UserService> logger,
             MongoDbContext context,
             IMapper mapper,
             IOptions<AppSettings> appSettings,
             IHttpContextAccessor httpContextAccessor)
         {
+            _logger = logger;
             _context = context;
             _mapper = mapper;
             _appSettings = appSettings.Value;
@@ -103,6 +106,7 @@ namespace property_price_api.Services
 
             if (!ValidatePermission(id))
             {
+                _logger.LogWarning("User does not have permission to update user {0}", id);
                 return false;
             }
 
