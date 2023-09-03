@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Services;
 
@@ -31,13 +32,13 @@ namespace property_price_api.Controllers
             return property;
         }
 
-
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post(CreatePropertyDto createPropertyDto)
+        public async Task<ActionResult<CreatePropertyResponse>> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
-            var _propertyDto = await _propertyService.CreateProperty(createPropertyDto);
+            var _res = await _propertyService.CreateProperty(createPropertyRequest);
 
-            return CreatedAtAction(nameof(Get), new { id = _propertyDto.Id }, _propertyDto);
+            return CreatedAtAction(nameof(Get), new { id = _res.Id }, _res);
         }
 
         [HttpPut("{id:length(24)}")]

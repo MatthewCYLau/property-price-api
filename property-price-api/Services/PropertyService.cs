@@ -10,7 +10,7 @@ namespace property_price_api.Services
     {
         Task<List<PropertyDto>> GetProperties();
         Task<PropertyDto?> GetPropertyById(string id);
-        Task<PropertyDto> CreateProperty(CreatePropertyDto createPropertyDto);
+        Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
         Task UpdateProperty(string id, Property property);
         Task DeleteProperty(string id);
     }
@@ -20,12 +20,16 @@ namespace property_price_api.Services
 
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public PropertyService(MongoDbContext context, IMapper mapper)
+        public PropertyService(
+            MongoDbContext context,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<PropertyDto>> GetProperties()
@@ -53,13 +57,16 @@ namespace property_price_api.Services
             return propertyDto;
         }    
 
-        public async Task<PropertyDto> CreateProperty(CreatePropertyDto createPropertyDto)
+        public async Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
-            var _property = _mapper.Map<Property>(createPropertyDto);
+            var _property = _mapper.Map<Property>(createPropertyRequest);
+            var httpContext = _httpContextAccessor.HttpContext;
+            var _userDto = (Task<UserDto>)httpContext.Items["User"];
+            _property.UserId = _userDto.Result.Id;
             await _context.Properties.InsertOneAsync(_property);
-            var _createdProperty = _mapper.Map<PropertyDto>(_property);
+            var createPropertyResponse = _mapper.Map<CreatePropertyResponse>(_property);
 
-            return _createdProperty;
+            return createPropertyResponse;
         }
             
 

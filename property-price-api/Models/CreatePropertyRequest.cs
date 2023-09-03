@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
 {
-	public class CreatePropertyDto
+	public class CreatePropertyRequest
 	{
         [BsonElement("url")]
         public string ListingUrl { get; set; } = null!;
@@ -11,9 +11,6 @@ namespace property_price_api.Models
         public decimal AskingPrice { get; set; }
 
         public string Address { get; set; } = null!;
-
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; }
 
     }
 }
