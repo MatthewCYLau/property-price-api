@@ -17,16 +17,6 @@ namespace property_price_api.Controllers
             _userService = userService;
         }
 
-        [HttpPost("authenticate")]
-        public async Task<ActionResult> Authenticate(AuthenticateRequest model)
-        {
-            var response = await _userService.Authenticate(model);
-
-            if (response == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
-
-            return Ok(response);
-        }
 
         [Authorize]
         [HttpGet]
@@ -80,6 +70,7 @@ namespace property_price_api.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> Delete(string id)
         {

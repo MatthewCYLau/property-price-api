@@ -19,6 +19,7 @@ namespace property_price_api.Services
         Task<UserDto> CreateUser(CreateUserDto createUserDto);
         Task<UserDto> GetUserByEmail(string email);
         Task<UserDto> GetUserById(string id);
+        Task<UserDto> GetCurrentUser();
         Task<bool> DeleteUser(string id);
         Task<bool> UpdateUserById(string id, UpdateUserRequest updateUserRequest);
     }
@@ -55,6 +56,15 @@ namespace property_price_api.Services
         public async Task<UserDto> GetUserById(string id)
         {
             var _user = await _context.Users.Find(x => x.Id == id).FirstOrDefaultAsync();
+            var userDto = _mapper.Map<UserDto>(_user);
+            return userDto;
+        }
+
+        public async Task<UserDto> GetCurrentUser()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var _userDto = (Task<UserDto>)httpContext.Items["User"];
+            var _user = await _context.Users.Find(x => x.Id == _userDto.Result.Id).FirstOrDefaultAsync();
             var userDto = _mapper.Map<UserDto>(_user);
             return userDto;
         }
