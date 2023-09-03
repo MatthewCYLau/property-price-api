@@ -18,7 +18,7 @@ namespace property_price_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Authenticate(AuthenticateRequest model)
+        public async Task<ActionResult<AuthenticateResponse>> Authenticate(AuthenticateRequest model)
         {
             var response = await _userService.Authenticate(model);
 

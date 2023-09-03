@@ -16,7 +16,7 @@ namespace property_price_api.Services
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest model);
         Task<List<UserDto>> GetUsers();
-        Task<UserDto> CreateUser(CreateUserDto createUserDto);
+        Task<AuthenticateResponse> CreateUser(CreateUserRequest createUserDto);
         Task<UserDto> GetUserByEmail(string email);
         Task<UserDto> GetUserById(string id);
         Task<UserDto> GetCurrentUser();
@@ -70,14 +70,13 @@ namespace property_price_api.Services
         }
 
 
-        public async Task<UserDto> CreateUser(CreateUserDto createUserDto)
+        public async Task<AuthenticateResponse> CreateUser(CreateUserRequest createUserRequest)
         {
-            var _user = _mapper.Map<User>(createUserDto);
+            var _user = _mapper.Map<User>(createUserRequest);
             _user.Password = BC.HashPassword(_user.Password);
             await _context.Users.InsertOneAsync(_user);
-            var _createdUser = _mapper.Map<UserDto>(_user);
-
-            return _createdUser;
+            var token = generateJwtToken(_user);
+            return new AuthenticateResponse(_user, token);
         }
 
         public async Task<UserDto> GetUserByEmail(string email)

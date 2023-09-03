@@ -39,16 +39,16 @@ namespace property_price_api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
+        public async Task<ActionResult<AuthenticateResponse>> CreateUser(CreateUserRequest createUserRequest)
         {
 
-            var existingUser = await _userService.GetUserByEmail(createUserDto.Email);
+            var existingUser = await _userService.GetUserByEmail(createUserRequest.Email);
             if (existingUser != null)
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new Response { Status = "Error", Message = "User already exists!" });
-            UserDto userDto = await _userService.CreateUser(createUserDto);
+            AuthenticateResponse res = await _userService.CreateUser(createUserRequest);
 
-            return CreatedAtAction(nameof(Get), new { id = userDto.Id }, userDto);
+            return CreatedAtAction(nameof(Get), new { id = res.Id }, res);
         }
 
         [Authorize]

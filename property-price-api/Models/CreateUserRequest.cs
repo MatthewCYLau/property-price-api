@@ -2,7 +2,7 @@
 
 namespace property_price_api.Models
 {
-	public class CreateUserDto
+	public class CreateUserRequest
 	{
         [EmailAddress]
         [Required(ErrorMessage = "Email is required")]
