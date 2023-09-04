@@ -20,7 +20,7 @@ namespace property_price_api.Controllers
             await _propertyService.GetProperties();
 
         [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<PropertyDto>> Get(string id)
+        public async Task<ActionResult<PropertyDto>> GetPropertyById(string id)
         {
             var property = await _propertyService.GetPropertyById(id);
 
@@ -42,7 +42,7 @@ namespace property_price_api.Controllers
         }
 
         [HttpPut("{id:length(24)}")]
-        public async Task<IActionResult> Update(string id, Property updatedProperty)
+        public async Task<IActionResult> UpdatePropertyById(string id, Property updatedProperty)
         {
             var property = await _propertyService.GetPropertyById(id);
 
@@ -53,13 +53,13 @@ namespace property_price_api.Controllers
 
             updatedProperty.Id = property.Id;
 
-            await _propertyService.UpdateProperty(id, updatedProperty);
+            await _propertyService.UpdatePropertyById(id, updatedProperty);
 
             return NoContent();
         }
 
         [HttpDelete("{id:length(24)}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeletePropertyById(string id)
         {
             var property = await _propertyService.GetPropertyById(id);
 
@@ -68,7 +68,7 @@ namespace property_price_api.Controllers
                 return NotFound();
             }
 
-            await _propertyService.DeleteProperty(id);
+            await _propertyService.DeletePropertyById(id);
 
             return NoContent();
         }

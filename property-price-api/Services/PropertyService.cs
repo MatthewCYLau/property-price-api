@@ -11,8 +11,8 @@ namespace property_price_api.Services
         Task<List<PropertyDto>> GetProperties();
         Task<PropertyDto?> GetPropertyById(string id);
         Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
-        Task UpdateProperty(string id, Property property);
-        Task DeleteProperty(string id);
+        Task UpdatePropertyById(string id, Property property);
+        Task DeletePropertyById(string id);
     }
 
     public class PropertyService: IPropertyService
@@ -70,10 +70,10 @@ namespace property_price_api.Services
         }
             
 
-        public async Task UpdateProperty(string id, Property property) =>
+        public async Task UpdatePropertyById(string id, Property property) =>
             await _context.Properties.ReplaceOneAsync(x => x.Id == id, property);
 
-        public async Task DeleteProperty(string id) =>
+        public async Task DeletePropertyById(string id) =>
             await _context.Properties.DeleteOneAsync(x => x.Id == id);
     }
 }
