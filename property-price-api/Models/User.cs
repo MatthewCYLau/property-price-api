@@ -27,6 +27,7 @@ namespace property_price_api.Models
         [JsonIgnore]
         public string Password { get; set; } = null!;
 
+        public string UserType { get; set; } = null!;
     }
 }
 

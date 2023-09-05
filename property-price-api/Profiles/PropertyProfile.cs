@@ -29,7 +29,10 @@ namespace property_price_api.Profiles
                 .ForMember(dest => dest.AskingPrice, opt => opt.MapFrom(src => src.AskingPrice))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.UserDto, opt => opt.MapFrom(src => new UserDto(src.User.Id, src.User.Email))
+                .ForMember(dest => dest.UserDto, opt => opt.MapFrom(src => new UserDto(
+                    src.User.Id,
+                    src.User.Email,
+                    src.User.UserType))
                 );
         }
 	}

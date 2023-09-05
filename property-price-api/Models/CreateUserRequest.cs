@@ -10,6 +10,9 @@ namespace property_price_api.Models
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+
+        [Required(ErrorMessage = "User type is required")]
+        public string UserType { get; set; } = null!;
     }
 }
 

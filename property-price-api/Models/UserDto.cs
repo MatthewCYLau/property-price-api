@@ -10,10 +10,13 @@ namespace property_price_api.Models
 
         public string Email { get; set; } = null!;
 
-        public UserDto(string? id, string email)
+        public string UserType { get; set; } = null!;
+
+        public UserDto(string? id, string email, string userType)
         {
             Id = id;
             Email = email;
+            UserType = userType;
         }
     }
 }

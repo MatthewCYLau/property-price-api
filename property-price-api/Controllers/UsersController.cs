@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Services;
@@ -41,6 +42,14 @@ namespace property_price_api.Controllers
         [HttpPost]
         public async Task<ActionResult<AuthenticateResponse>> CreateUser(CreateUserRequest createUserRequest)
         {
+            foreach (var item in UserTypes.UserTypesList)
+            {
+                Console.WriteLine(item);
+            }
+            if (!UserTypes.UserTypesList.Contains(createUserRequest.UserType))
+            {
+                new Response { Status = "Error", Message = "Invalid user type" };
+            }
 
             var existingUser = await _userService.GetUserByEmail(createUserRequest.Email);
             if (existingUser != null)
