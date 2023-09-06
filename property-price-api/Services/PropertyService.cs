@@ -63,6 +63,12 @@ namespace property_price_api.Services
             var httpContext = _httpContextAccessor.HttpContext;
             var _userDto = (Task<UserDto>)httpContext.Items["User"];
             _property.UserId = _userDto.Result.Id;
+
+            if (createPropertyRequest.AskingPrice > 100)
+            {
+                throw new CustomException("Property is too expensive!");
+            }
+
             await _context.Properties.InsertOneAsync(_property);
             var createPropertyResponse = _mapper.Map<CreatePropertyResponse>(_property);
 
