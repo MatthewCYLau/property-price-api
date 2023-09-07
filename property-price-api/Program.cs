@@ -25,6 +25,7 @@ builder.Services.AddSingleton(serviceProvider =>
 
 builder.Services.AddSingleton<PropertyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IOfferPriceSuggestionService, OfferPriceSuggestionService>();
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
