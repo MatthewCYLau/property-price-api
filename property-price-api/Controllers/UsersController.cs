@@ -78,7 +78,7 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpDelete("{id:length(24)}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteUserById(string id)
         {
             var userDto = await _userService.GetUserById(id);
 

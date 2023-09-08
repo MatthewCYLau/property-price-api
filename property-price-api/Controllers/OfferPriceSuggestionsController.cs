@@ -31,6 +31,23 @@ namespace property_price_api.Controllers
 
             return CreatedAtAction(nameof(GetOfferPriceSuggestions), new { id = offerPriceSuggestion.Id }, offerPriceSuggestion);
         }
+
+        [Authorize]
+        [HttpDelete("{id:length(24)}")]
+        public async Task<IActionResult> DeletePropertyPriceSuggestionById(string id)
+        {
+            var suggestion = await _offerPriceSuggestionService.GetOfferPriceSuggestionById(id);
+
+            if (suggestion is null)
+            {
+                return NotFound();
+            }
+
+            await _offerPriceSuggestionService.DeleteOfferPriceSuggestionById(id);
+
+            return NoContent();
+
+        }
     }
 }
 

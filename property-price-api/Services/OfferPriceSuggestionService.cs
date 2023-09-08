@@ -7,7 +7,10 @@ namespace property_price_api.Services
     public interface IOfferPriceSuggestionService
     {
         Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions();
+        Task<OfferPriceSuggestion?> GetOfferPriceSuggestionById(string id);
         Task CreateOfferPriceSuggestion(OfferPriceSuggestion offerPriceSuggestion);
+        Task DeleteOfferPriceSuggestionById(string id);
+
     }
 
     public class OfferPriceSuggestionService: IOfferPriceSuggestionService
@@ -33,6 +36,15 @@ namespace property_price_api.Services
             }
             await _context.OfferPriceSuggestions.InsertOneAsync(offerPriceSuggestion);
         }
+
+        public async Task<OfferPriceSuggestion> GetOfferPriceSuggestionById(string id)
+        {
+            var suggestion = await _context.OfferPriceSuggestions.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return suggestion;
+        }
+
+        public async Task DeleteOfferPriceSuggestionById(string id) =>
+          await _context.OfferPriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
         public async Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions()
         {
