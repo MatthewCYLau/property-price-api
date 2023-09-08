@@ -23,7 +23,7 @@ builder.Services.AddSingleton(serviceProvider =>
         settings.DatabaseName);
 });
 
-builder.Services.AddSingleton<PropertyService>();
+builder.Services.AddSingleton<IPropertyService, PropertyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IOfferPriceSuggestionService, OfferPriceSuggestionService>();
 

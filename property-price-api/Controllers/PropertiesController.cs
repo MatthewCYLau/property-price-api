@@ -10,9 +10,9 @@ namespace property_price_api.Controllers
     public class PropertiesController: ControllerBase
     {
 
-        private readonly PropertyService _propertyService;
+        private readonly IPropertyService _propertyService;
 
-        public PropertiesController(PropertyService propertyService) =>
+        public PropertiesController(IPropertyService propertyService) =>
             _propertyService = propertyService;
 
         [HttpGet]
