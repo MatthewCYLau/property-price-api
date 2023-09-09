@@ -6,7 +6,7 @@ namespace property_price_api.Services
 {
     public interface IOfferPriceSuggestionService
     {
-        Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions();
+        Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions(string propertyId);
         Task<OfferPriceSuggestion?> GetOfferPriceSuggestionById(string id);
         Task CreateOfferPriceSuggestion(OfferPriceSuggestion offerPriceSuggestion);
         Task DeleteOfferPriceSuggestionById(string id);
@@ -46,10 +46,28 @@ namespace property_price_api.Services
         public async Task DeleteOfferPriceSuggestionById(string id) =>
           await _context.OfferPriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
-        public async Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions()
+        public async Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions(string propertyId)
         {
-            var _offerPriceSuggestions = await _context.OfferPriceSuggestions.Find(_ => true).ToListAsync();
-            return _offerPriceSuggestions;
+            
+            if (propertyId != null)
+            {
+                ValidatePropertyId(propertyId);
+                return await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
+
+            } else
+            {
+                return await _context.OfferPriceSuggestions.Find(_ => true).ToListAsync();
+            }
+            
+        }
+
+
+        private void ValidatePropertyId(string propertyId)
+        {
+            if (_propertyService.GetPropertyById(propertyId).Result == null)
+            {
+                throw new CustomException("Invalid property ID");
+            }
         }
     }
 }

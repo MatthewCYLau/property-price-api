@@ -19,8 +19,8 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions() =>
-            await _offerPriceSuggestionService.GetOfferPriceSuggestions();
+        public async Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions([FromQuery] OfferPriceSuggestionQueryParameters parameters) =>
+            await _offerPriceSuggestionService.GetOfferPriceSuggestions(parameters.PropertyId);
 
         [Authorize]
         [HttpPost]
