@@ -19,6 +19,14 @@ namespace property_price_api.Controllers
         public async Task<List<PropertyDto>> Get() =>
             await _propertyService.GetProperties();
 
+        [HttpPost("{id:length(24)}/price-analysis")]
+        public async Task<IActionResult> GetPropertyPriceAnalysisById(string id)
+        {
+            await _propertyService.GeneratePriceAnalysisByPropertyId(id);
+            return Ok();
+        }
+
+
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<PropertyDto>> GetPropertyById(string id)
         {

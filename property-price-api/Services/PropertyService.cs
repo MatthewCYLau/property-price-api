@@ -13,6 +13,7 @@ namespace property_price_api.Services
         Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
         Task UpdatePropertyById(string id, Property property);
         Task DeletePropertyById(string id);
+        Task GeneratePriceAnalysisByPropertyId(string id);
     }
 
     public class PropertyService: IPropertyService
@@ -81,6 +82,14 @@ namespace property_price_api.Services
 
         public async Task DeletePropertyById(string id) =>
             await _context.Properties.DeleteOneAsync(x => x.Id == id);
+
+        public async Task GeneratePriceAnalysisByPropertyId(string propertyId)
+        {
+            var priceSuggestions = await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
+            List<int> differenceInPercentageList = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
+            var askingPrice = GetPropertyById(propertyId).Result.AskingPrice;
+            var meanSuggestedPrice = differenceInPercentageList.Select(i => i / 100 * askingPrice).Sum() / differenceInPercentageList.Count;
+            Console.WriteLine(meanSuggestedPrice);
+        }
     }
 }
-
