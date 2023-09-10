@@ -86,7 +86,7 @@ namespace property_price_api.Services
         public async Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? propertyId)
         {
             var priceSuggestions = await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
-            List<int> percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
+            var percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
             var askingPrice = GetPropertyById(propertyId).Result.AskingPrice;           
             var meanSuggestedPrice = MeanSuggestedPrice(percentages, askingPrice);
             return new PriceAnalysisResponse(Math.Round(meanSuggestedPrice, 2));
