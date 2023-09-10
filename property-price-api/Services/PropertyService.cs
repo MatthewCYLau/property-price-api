@@ -9,11 +9,11 @@ namespace property_price_api.Services
     public interface IPropertyService
     {
         Task<List<PropertyDto>> GetProperties();
-        Task<PropertyDto?> GetPropertyById(string id);
+        Task<PropertyDto?> GetPropertyById(string? id);
         Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
-        Task UpdatePropertyById(string id, Property property);
-        Task DeletePropertyById(string id);
-        Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string id);
+        Task UpdatePropertyById(string? id, Property property);
+        Task DeletePropertyById(string? id);
+        Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? id);
     }
 
     public class PropertyService: IPropertyService
@@ -45,7 +45,7 @@ namespace property_price_api.Services
             return propertiesDto;
         }
        
-        public async Task<PropertyDto?> GetPropertyById(string id)
+        public async Task<PropertyDto?> GetPropertyById(string? id)
         {
             var property = await _context.Properties.Aggregate()
             .Match(x => x.Id == id)
@@ -77,13 +77,13 @@ namespace property_price_api.Services
         }
             
 
-        public async Task UpdatePropertyById(string id, Property property) =>
+        public async Task UpdatePropertyById(string? id, Property property) =>
             await _context.Properties.ReplaceOneAsync(x => x.Id == id, property);
 
-        public async Task DeletePropertyById(string id) =>
+        public async Task DeletePropertyById(string? id) =>
             await _context.Properties.DeleteOneAsync(x => x.Id == id);
 
-        public async Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string propertyId)
+        public async Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? propertyId)
         {
             var priceSuggestions = await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
             List<int> percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();

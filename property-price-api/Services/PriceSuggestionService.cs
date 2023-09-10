@@ -4,21 +4,21 @@ using property_price_api.Models;
 
 namespace property_price_api.Services
 {
-    public interface IOfferPriceSuggestionService
+    public interface IPriceSuggestionService
     {
-        Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions(string propertyId);
-        Task<OfferPriceSuggestion?> GetOfferPriceSuggestionById(string id);
-        Task CreateOfferPriceSuggestion(OfferPriceSuggestion offerPriceSuggestion);
-        Task DeleteOfferPriceSuggestionById(string id);
+        Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId);
+        Task<PriceSuggestion?> GetPriceSuggestionById(string id);
+        Task CreatePriceSuggestion(PriceSuggestion priceSuggestion);
+        Task DeletePriceSuggestionById(string id);
 
     }
 
-    public class OfferPriceSuggestionService: IOfferPriceSuggestionService
+    public class PriceSuggestionService: IPriceSuggestionService
     {
         private readonly MongoDbContext _context;
         private readonly IPropertyService _propertyService;
 
-        public OfferPriceSuggestionService(
+        public PriceSuggestionService(
            MongoDbContext context,
            IPropertyService propertyService
 )
@@ -28,25 +28,25 @@ namespace property_price_api.Services
 
         }
 
-        public async Task CreateOfferPriceSuggestion(OfferPriceSuggestion offerPriceSuggestion)
+        public async Task CreatePriceSuggestion(PriceSuggestion priceSuggestion)
         {
-            if (_propertyService.GetPropertyById(offerPriceSuggestion.PropertyId).Result == null)
+            if (_propertyService.GetPropertyById(priceSuggestion.PropertyId).Result == null)
             {
                 throw new CustomException("Invalid property ID");
             }
-            await _context.OfferPriceSuggestions.InsertOneAsync(offerPriceSuggestion);
+            await _context.OfferPriceSuggestions.InsertOneAsync(priceSuggestion);
         }
 
-        public async Task<OfferPriceSuggestion> GetOfferPriceSuggestionById(string id)
+        public async Task<PriceSuggestion> GetPriceSuggestionById(string id)
         {
             var suggestion = await _context.OfferPriceSuggestions.Find(x => x.Id == id).FirstOrDefaultAsync();
             return suggestion;
         }
 
-        public async Task DeleteOfferPriceSuggestionById(string id) =>
+        public async Task DeletePriceSuggestionById(string id) =>
           await _context.OfferPriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
-        public async Task<List<OfferPriceSuggestion>> GetOfferPriceSuggestions(string propertyId)
+        public async Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId)
         {
             
             if (propertyId != null)
@@ -62,7 +62,7 @@ namespace property_price_api.Services
         }
 
 
-        private void ValidatePropertyId(string propertyId)
+        private void ValidatePropertyId(string? propertyId)
         {
             if (_propertyService.GetPropertyById(propertyId).Result == null)
             {

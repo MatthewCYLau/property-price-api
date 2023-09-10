@@ -20,7 +20,7 @@ namespace property_price_api.Controllers
             await _propertyService.GetProperties();
 
         [HttpGet("{id:length(24)}/price-analysis")]
-        public async Task<ActionResult<PriceAnalysisResponse>> GetPropertyPriceAnalysisById(string id)
+        public async Task<ActionResult<PriceAnalysisResponse>> GetPropertyPriceAnalysisById(string? id)
         {
             var res = await _propertyService.GeneratePriceAnalysisByPropertyId(id);
             return Ok(res);
@@ -28,7 +28,7 @@ namespace property_price_api.Controllers
 
 
         [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<PropertyDto>> GetPropertyById(string id)
+        public async Task<ActionResult<PropertyDto>> GetPropertyById(string? id)
         {
             var property = await _propertyService.GetPropertyById(id);
 
@@ -50,7 +50,7 @@ namespace property_price_api.Controllers
         }
 
         [HttpPut("{id:length(24)}")]
-        public async Task<IActionResult> UpdatePropertyById(string id, Property updatedProperty)
+        public async Task<IActionResult> UpdatePropertyById(string? id, Property updatedProperty)
         {
             var property = await _propertyService.GetPropertyById(id);
 
@@ -67,7 +67,7 @@ namespace property_price_api.Controllers
         }
 
         [HttpDelete("{id:length(24)}")]
-        public async Task<IActionResult> DeletePropertyById(string id)
+        public async Task<IActionResult> DeletePropertyById(string? id)
         {
             var property = await _propertyService.GetPropertyById(id);
 

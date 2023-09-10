@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
 {
-	public class OfferPriceSuggestion
+	public class PriceSuggestion
 	{
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -12,7 +12,7 @@ namespace property_price_api.Models
         public int DifferenceInPercentage { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
-        public string PropertyId { get; set; }
+        public string? PropertyId { get; set; }
     }
 }
 
