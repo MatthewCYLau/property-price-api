@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
@@ -9,6 +10,7 @@ namespace property_price_api.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
+        [Range(-100, 100)]
         public int DifferenceInPercentage { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]

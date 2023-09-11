@@ -26,9 +26,7 @@ namespace property_price_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response>> CreatePriceSuggestion(PriceSuggestion priceSuggestion)
         {
-
             await _priceSuggestionService.CreatePriceSuggestion(priceSuggestion);
-
             return CreatedAtAction(nameof(GetPriceSuggestions), new { id = priceSuggestion.Id }, priceSuggestion);
         }
 
