@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using property_price_api.Models;
 using property_price_api.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -23,17 +22,17 @@ namespace property_price_api.Helpers
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
-                attachUserToContext(context, userService, token);
+                AttachUserToContext(context, userService, token);
 
             await _next(context);
         }
 
-        private void attachUserToContext(HttpContext context, IUserService userService, string token)
+        private void AttachUserToContext(HttpContext context, IUserService userService, string token)
         {
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                string jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _appSettings.Secret;
+                var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _appSettings.Secret;
                 var key = Encoding.ASCII.GetBytes(jwtSecret);
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {

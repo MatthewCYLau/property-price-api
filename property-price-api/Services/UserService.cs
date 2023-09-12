@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using property_price_api.Data;
+using property_price_api.Helpers;
 using property_price_api.Models;
 
 namespace property_price_api.Services
@@ -48,9 +49,9 @@ namespace property_price_api.Services
 
         public async Task<List<UserDto>> GetUsers()
         {
-            var _users = await _context.Users.Find(_ => true).ToListAsync();
-            var _usersDto = _mapper.Map<List<UserDto>>(_users);
-            return _usersDto;
+            var users = await _context.Users.Find(_ => true).ToListAsync();
+            var usersDto = _mapper.Map<List<UserDto>>(users);
+            return usersDto;
         }
 
         public async Task<UserDto> GetUserById(string id)
@@ -75,7 +76,7 @@ namespace property_price_api.Services
             var _user = _mapper.Map<User>(createUserRequest);
             _user.Password = BC.HashPassword(_user.Password);
             await _context.Users.InsertOneAsync(_user);
-            var token = generateJwtToken(_user);
+            var token = GenerateJwtToken(_user);
             return new AuthenticateResponse(_user, token);
         }
 
@@ -96,7 +97,7 @@ namespace property_price_api.Services
                 return null;
             }
 
-            var token = generateJwtToken(_user);
+            var token = GenerateJwtToken(_user);
 
             return new AuthenticateResponse(_user, token);
         }
@@ -125,7 +126,7 @@ namespace property_price_api.Services
             return true;
         }
 
-        private string generateJwtToken(User user)
+        private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             string jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _appSettings.Secret;

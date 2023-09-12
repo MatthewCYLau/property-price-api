@@ -1,4 +1,4 @@
-﻿namespace property_price_api.Models
+﻿namespace property_price_api.Helpers
 {
     public class AppSettings
     {

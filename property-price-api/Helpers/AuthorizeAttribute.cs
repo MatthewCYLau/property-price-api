@@ -9,7 +9,7 @@ namespace property_price_api.Helpers
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var user = (Task<UserDto>)context.HttpContext.Items["User"];
+            var user = context.HttpContext.Items["User"] as Task<UserDto>;
             if (user == null)
             {
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
