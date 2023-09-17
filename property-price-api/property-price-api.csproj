@@ -32,6 +32,5 @@
     <Folder Include="Services\" />
     <Folder Include="Profiles\" />
     <Folder Include="Data\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

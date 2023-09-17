@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MongoDB.Driver;
 using property_price_api.Data;
+using property_price_api.Helpers;
 using property_price_api.Models;
 
 namespace property_price_api.Services
@@ -88,14 +89,8 @@ namespace property_price_api.Services
             var priceSuggestions = await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
             var percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
             var askingPrice = GetPropertyById(propertyId).Result.AskingPrice;           
-            var meanSuggestedPrice = MeanSuggestedPrice(percentages, askingPrice);
+            var meanSuggestedPrice = Calculations.MeanSuggestedPrice(percentages, askingPrice);
             return new PriceAnalysisResponse(Math.Round(meanSuggestedPrice, 2));
-        }
-
-        private decimal MeanSuggestedPrice(List<int> percentages, decimal askingPrice)
-        {
-            var meanSuggestedPrice = percentages.Select(i => (decimal)i / 100 * askingPrice).Sum() / percentages.Count;
-            return meanSuggestedPrice;
         }
     }
 }
