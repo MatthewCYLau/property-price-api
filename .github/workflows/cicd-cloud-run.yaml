@@ -26,9 +26,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
