@@ -2,12 +2,12 @@
 {
 	public class PriceAnalysisResponse
 	{
-        public PriceAnalysisResponse(decimal suggestedPrice)
+        public PriceAnalysisResponse(int suggestedPrice)
         {
             SuggestedPrice = suggestedPrice;
         }
 
-        public decimal SuggestedPrice { get; set; }
+        public int SuggestedPrice { get; set; }
 
     }
 }

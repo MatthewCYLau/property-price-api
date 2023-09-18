@@ -66,7 +66,7 @@ namespace property_price_api.Services
             var _userDto = (Task<UserDto>)httpContext.Items["User"];
             _property.UserId = _userDto.Result.Id;
 
-            if (createPropertyRequest.AskingPrice > 100)
+            if (createPropertyRequest.AskingPrice > 1000000)
             {
                 throw new CustomException("Property is too expensive!");
             }
@@ -86,11 +86,11 @@ namespace property_price_api.Services
 
         public async Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? propertyId)
         {
-            var priceSuggestions = await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
+            var priceSuggestions = await _context.PriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
             var percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
             var askingPrice = GetPropertyById(propertyId).Result.AskingPrice;           
             var meanSuggestedPrice = Calculations.MeanSuggestedPrice(percentages, askingPrice);
-            return new PriceAnalysisResponse(Math.Round(meanSuggestedPrice, 2));
+            return new PriceAnalysisResponse(meanSuggestedPrice);
         }
     }
 }

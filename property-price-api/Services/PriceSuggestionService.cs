@@ -34,17 +34,17 @@ namespace property_price_api.Services
             {
                 throw new CustomException("Invalid property ID");
             }
-            await _context.OfferPriceSuggestions.InsertOneAsync(priceSuggestion);
+            await _context.PriceSuggestions.InsertOneAsync(priceSuggestion);
         }
 
         public async Task<PriceSuggestion> GetPriceSuggestionById(string id)
         {
-            var suggestion = await _context.OfferPriceSuggestions.Find(x => x.Id == id).FirstOrDefaultAsync();
+            var suggestion = await _context.PriceSuggestions.Find(x => x.Id == id).FirstOrDefaultAsync();
             return suggestion;
         }
 
         public async Task DeletePriceSuggestionById(string id) =>
-          await _context.OfferPriceSuggestions.DeleteOneAsync(x => x.Id == id);
+          await _context.PriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
         public async Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId)
         {
@@ -52,11 +52,11 @@ namespace property_price_api.Services
             if (propertyId != null)
             {
                 ValidatePropertyId(propertyId);
-                return await _context.OfferPriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
+                return await _context.PriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
 
             } else
             {
-                return await _context.OfferPriceSuggestions.Find(_ => true).ToListAsync();
+                return await _context.PriceSuggestions.Find(_ => true).ToListAsync();
             }
             
         }

@@ -12,7 +12,7 @@ namespace property_price_api.Models
         [BsonElement("url")]
         public string ListingUrl { get; set; } = null!;
 
-        public decimal AskingPrice { get; set; }
+        public int AskingPrice { get; set; }
 
         public string Address { get; set; } = null!;
 

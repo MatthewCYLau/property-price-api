@@ -42,7 +42,7 @@ namespace property_price_api.Controllers
         public async Task<ActionResult<AuthenticateResponse>> CreateUser(CreateUserRequest createUserRequest)
         {
 
-            if (!UserTypes.UserTypesList.Any(n => n == createUserRequest.UserType))
+            if (UserTypes.UserTypesList.All(n => n != createUserRequest.UserType))
             {
                 return StatusCode(StatusCodes.Status400BadRequest,
                    new Response { Status = "Error", Message = "Invalid user type" });
@@ -50,7 +50,7 @@ namespace property_price_api.Controllers
 
             var existingUser = await _userService.GetUserByEmail(createUserRequest.Email);
             if (existingUser != null)
-                return StatusCode(StatusCodes.Status500InternalServerError,
+                return StatusCode(StatusCodes.Status400BadRequest,
                     new Response { Status = "Error", Message = "User already exists!" });
             AuthenticateResponse res = await _userService.CreateUser(createUserRequest);
 
@@ -70,7 +70,7 @@ namespace property_price_api.Controllers
 
             if (!await _userService.UpdateUserById(id, updateUserRequest))
             {
-                return BadRequest(new { message = "Updatd user went wrong!" });
+                return BadRequest(new { message = "Update user went wrong!" });
             }
 
             return NoContent();

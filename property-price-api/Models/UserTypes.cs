@@ -4,24 +4,18 @@ namespace property_price_api.Models
 {
 	public static class UserTypes
 	{
-        public const string Renter = "Renter";
-        public const string FirstTimeBuyer = "FirstTimeBuyer";
-        public const string HomeOwner = "HomeOwner";
-        public const string Landlord = "Landlord";
+        private const string Renter = "Renter";
+        private const string FirstTimeBuyer = "FirstTimeBuyer";
+        private const string HomeOwner = "HomeOwner";
+        private const string Landlord = "Landlord";
 
-        private static readonly ReadOnlyCollection<string> _userTypes =
-        new ReadOnlyCollection<string>(new[]
+        public static ReadOnlyCollection<string> UserTypesList { get; } = new(new[]
         {
             Renter,
             FirstTimeBuyer,
             HomeOwner,
             Landlord
         });
-
-        public static ReadOnlyCollection<string> UserTypesList
-        {
-            get { return _userTypes; }
-        }
     }
 
 }

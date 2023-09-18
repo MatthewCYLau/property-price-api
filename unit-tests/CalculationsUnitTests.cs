@@ -9,8 +9,8 @@ public class CalculationsUnitTests
     public void ShouldReturnCorrectMeanSuggestedPrice()
     {
         
-        var percentages = new List<int> { 80, 90, 100, 110 };
+        var percentages = new List<int> { 10, 15, -10};
         const int askingPrice = 200000;
-        Assert.That( 190000, Is.EqualTo(Calculations.MeanSuggestedPrice(percentages, askingPrice)));
+        Assert.That( 210000, Is.EqualTo(Calculations.MeanSuggestedPrice(percentages, askingPrice)));
     }
 }
