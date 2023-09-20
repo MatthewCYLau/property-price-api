@@ -11,7 +11,7 @@ public class CalculationsUnitTests
         
         var percentages = new List<int> { 10, 15, -10, 20};
         const int askingPrice = 200000;
-        Assert.That( 217500, Is.EqualTo(Calculations.MeanSuggestedPrice(percentages, askingPrice)));
+        Assert.That( Calculations.MeanSuggestedPrice(percentages, askingPrice), Is.EqualTo(217500));
     }
     
     [Test]
@@ -20,6 +20,6 @@ public class CalculationsUnitTests
         
         var percentages = new List<int> { -10, 15, -10, -20};
         const int askingPrice = 200000;
-        Assert.That( 187500, Is.EqualTo(Calculations.MeanSuggestedPrice(percentages, askingPrice)));
+        Assert.That( Calculations.MeanSuggestedPrice(percentages, askingPrice), Is.EqualTo(187500));
     }
 }
