@@ -25,6 +25,7 @@ namespace property_price_api.Profiles
 
             CreateMap<Property, PropertyDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created))
                 .ForMember(dest => dest.ListingUrl, opt => opt.MapFrom(src => src.ListingUrl))
                 .ForMember(dest => dest.AskingPrice, opt => opt.MapFrom(src => src.AskingPrice))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))

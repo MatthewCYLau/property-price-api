@@ -8,6 +8,9 @@ namespace property_price_api.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+        
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime Created { get; set; }
 
         [BsonElement("url")]
         public string ListingUrl { get; set; } = null!;
