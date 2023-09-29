@@ -15,6 +15,8 @@ namespace property_price_api.Models
 
         [BsonRepresentation(BsonType.ObjectId)]
         public string? PropertyId { get; set; }
+        
+        public Property? Property { get; set; }
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
+using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
 
@@ -48,17 +49,23 @@ namespace property_price_api.Services
 
         public async Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId)
         {
-            
+            Expression<Func<PriceSuggestion,bool>> expression;
             if (propertyId != null)
             {
                 ValidatePropertyId(propertyId);
-                return await _context.PriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
-
-            } else
-            {
-                return await _context.PriceSuggestions.Find(_ => true).ToListAsync();
+                 expression = x => x.PropertyId == propertyId;
             }
-            
+            else
+            {
+                expression = _ => true;
+            }
+            var priceSuggestions = await _context.PriceSuggestions.Aggregate()
+                .Match(expression)
+                .Lookup("properties", "PropertyId", "_id", @as: "Property")
+                .Unwind("Property")
+                .As<PriceSuggestion>()
+                .ToListAsync();
+            return priceSuggestions;
         }
 
 
