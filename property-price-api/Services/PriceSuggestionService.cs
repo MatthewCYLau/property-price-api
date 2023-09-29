@@ -61,7 +61,7 @@ namespace property_price_api.Services
             }
             var priceSuggestions = await _context.PriceSuggestions.Aggregate()
                 .Match(expression)
-                .Lookup("properties", "PropertyId", "_id", @as: "Property")
+                .Lookup(CollectionNames.PropertiesCollection, "PropertyId", "_id", @as: "Property")
                 .Unwind("Property")
                 .As<PriceSuggestion>()
                 .ToListAsync();

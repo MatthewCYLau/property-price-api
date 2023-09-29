@@ -37,7 +37,7 @@ namespace property_price_api.Services
         public async Task<List<PropertyDto>> GetProperties()
         {
             var properties = await _context.Properties.Aggregate()
-            .Lookup("users", "UserId", "_id", @as: "User")
+            .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
             .Unwind("User")
             .As<Property>()
             .SortByDescending(i => i.Created)
@@ -51,7 +51,7 @@ namespace property_price_api.Services
         {
             var property = await _context.Properties.Aggregate()
             .Match(x => x.Id == id)
-            .Lookup("users", "UserId", "_id", @as: "User")
+            .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
             .Unwind("User")
             .As<Property>()
             .SingleOrDefaultAsync();
