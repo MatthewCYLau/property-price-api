@@ -90,9 +90,10 @@ namespace property_price_api.Services
         {
             var priceSuggestions = await _context.PriceSuggestions.Find(x => x.PropertyId == propertyId).ToListAsync();
             var percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
-            var askingPrice = GetPropertyById(propertyId).Result.AskingPrice;           
+            var askingPrice = GetPropertyById(propertyId).Result!.AskingPrice;           
             var meanSuggestedPrice = Calculations.MeanSuggestedPrice(percentages, askingPrice);
-            return new PriceAnalysisResponse(meanSuggestedPrice);
+            var percentageDifferenceFromAskingPrice = meanSuggestedPrice * 100 / askingPrice - 100;
+            return new PriceAnalysisResponse(meanSuggestedPrice, percentageDifferenceFromAskingPrice);
         }
     }
 }

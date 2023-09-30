@@ -2,12 +2,14 @@
 {
 	public class PriceAnalysisResponse
 	{
-        public PriceAnalysisResponse(int suggestedPrice)
-        {
-            SuggestedPrice = suggestedPrice;
-        }
+		public PriceAnalysisResponse(int suggestedPrice, int percentageDifferenceFromAskingPrice)
+		{
+			SuggestedPrice = suggestedPrice;
+			PercentageDifferenceFromAskingPrice = percentageDifferenceFromAskingPrice;
+		}
 
-        public int SuggestedPrice { get; set; }
+		public int SuggestedPrice { get; set; }
+        public int PercentageDifferenceFromAskingPrice { get; set; }
 
     }
 }
