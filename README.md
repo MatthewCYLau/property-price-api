@@ -6,6 +6,11 @@ An ASP.NET Core web API which returns suggested property offer price
 
 API URL here: [`https://property-price-api-3i2mtbjusq-ew.a.run.app`](https://property-price-api-3i2mtbjusq-ew.a.run.app)
 
+The list of repositories are as follow:
+
+- ASP.NET Core web API repository [here](https://github.com/MatthewCYLau/property-price-api)
+- React with Vite client repository [here](https://github.com/MatthewCYLau/property-price-client)
+
 ## Pre-requisite
 
 Ensure you have installed [.NET SDK](https://dotnet.microsoft.com/en-us/download):
