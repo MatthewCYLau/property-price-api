@@ -44,7 +44,8 @@ builder.Services.AddHttpContextAccessor();
 // Configure CORS
 builder.Services.AddCors(policyBuilder =>
     policyBuilder.AddDefaultPolicy(policy =>
-        policy.WithOrigins("*").AllowAnyHeader().AllowAnyHeader())
+        policy.WithOrigins("*").WithMethods("GET", "POST", "DELETE", "PUT")
+            .AllowAnyHeader())
 );
 
 var app = builder.Build();
