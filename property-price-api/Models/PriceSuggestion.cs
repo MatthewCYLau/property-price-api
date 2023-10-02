@@ -12,6 +12,9 @@ namespace property_price_api.Models
 
         [Range(-100, 100)]
         public int DifferenceInPercentage { get; set; }
+        
+        [Required(ErrorMessage = "Note is required")]
+        public string Note { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
         public string? PropertyId { get; set; }
