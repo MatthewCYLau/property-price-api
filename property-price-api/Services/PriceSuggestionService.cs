@@ -18,15 +18,18 @@ namespace property_price_api.Services
     {
         private readonly MongoDbContext _context;
         private readonly IPropertyService _propertyService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public PriceSuggestionService(
            MongoDbContext context,
-           IPropertyService propertyService
-)
+           IPropertyService propertyService,
+           IHttpContextAccessor httpContextAccessor
+           )
+
         {
             _context = context;
             _propertyService = propertyService;
-
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task CreatePriceSuggestion(PriceSuggestion priceSuggestion)
@@ -35,6 +38,12 @@ namespace property_price_api.Services
             {
                 throw new CustomException("Invalid property ID");
             }
+            
+            priceSuggestion.Created = DateTime.Now;
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userDto = (Task<UserDto>)httpContext.Items["User"];
+            priceSuggestion.UserId = userDto.Result.Id;
+            
             await _context.PriceSuggestions.InsertOneAsync(priceSuggestion);
         }
 

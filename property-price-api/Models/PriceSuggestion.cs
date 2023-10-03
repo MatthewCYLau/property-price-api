@@ -9,6 +9,9 @@ namespace property_price_api.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+        
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime Created { get; set; }
 
         [Range(-100, 100)]
         public int DifferenceInPercentage { get; set; }
@@ -18,6 +21,9 @@ namespace property_price_api.Models
 
         [BsonRepresentation(BsonType.ObjectId)]
         public string? PropertyId { get; set; }
+        
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserId { get; set; }
         
         public Property? Property { get; set; }
     }
