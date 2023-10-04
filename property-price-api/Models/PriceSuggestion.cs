@@ -23,7 +23,7 @@ namespace property_price_api.Models
         public string? PropertyId { get; set; }
         
         [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         
         public Property? Property { get; set; }
     }
