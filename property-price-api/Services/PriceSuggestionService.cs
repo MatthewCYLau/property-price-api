@@ -34,15 +34,23 @@ namespace property_price_api.Services
 
         public async Task CreatePriceSuggestion(PriceSuggestion priceSuggestion)
         {
+            
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userDto = (Task<UserDto>)httpContext!.Items["User"];
+            var userId = userDto.Result.Id;
+            
             if (_propertyService.GetPropertyById(priceSuggestion.PropertyId).Result == null)
             {
                 throw new CustomException("Invalid property ID");
             }
             
+            if (GetPriceSuggestionByUserId(userId).Result != null)
+            {
+                throw new CustomException("User has already created price suggestion for property");
+            }
+            
             priceSuggestion.Created = DateTime.Now;
-            var httpContext = _httpContextAccessor.HttpContext;
-            var userDto = (Task<UserDto>)httpContext.Items["User"];
-            priceSuggestion.UserId = userDto.Result.Id;
+            priceSuggestion.UserId = userId;
             
             await _context.PriceSuggestions.InsertOneAsync(priceSuggestion);
         }
@@ -50,6 +58,12 @@ namespace property_price_api.Services
         public async Task<PriceSuggestion> GetPriceSuggestionById(string id)
         {
             var suggestion = await _context.PriceSuggestions.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return suggestion;
+        }
+        
+        private async Task<PriceSuggestion> GetPriceSuggestionByUserId(string userId)
+        {
+            var suggestion = await _context.PriceSuggestions.Find(x => x.UserId == userId).FirstOrDefaultAsync();
             return suggestion;
         }
 
