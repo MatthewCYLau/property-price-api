@@ -16,6 +16,7 @@ namespace property_price_api.Profiles
 			CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created))
                 .ForMember(dest => dest.UserType, opt => opt.MapFrom(src => src.UserType)
                 );
 

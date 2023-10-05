@@ -4,14 +4,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
 {
-	public class PriceSuggestion
+	public class PriceSuggestion: BaseModel
 	{
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-        
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime Created { get; set; }
 
         [Range(-100, 100)]
         public int DifferenceInPercentage { get; set; }

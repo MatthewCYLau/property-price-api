@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
 {
-	public record UserDto
+	public class UserDto: BaseModel
 	{
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }

@@ -73,11 +73,12 @@ namespace property_price_api.Services
 
         public async Task<AuthenticateResponse> CreateUser(CreateUserRequest createUserRequest)
         {
-            var _user = _mapper.Map<User>(createUserRequest);
-            _user.Password = BC.HashPassword(_user.Password);
-            await _context.Users.InsertOneAsync(_user);
-            var token = GenerateJwtToken(_user);
-            return new AuthenticateResponse(_user, token);
+            var user = _mapper.Map<User>(createUserRequest);
+            user.Password = BC.HashPassword(user.Password);
+            user.Created = DateTime.Now;
+            await _context.Users.InsertOneAsync(user);
+            var token = GenerateJwtToken(user);
+            return new AuthenticateResponse(user, token);
         }
 
         public async Task<UserDto> GetUserByEmail(string email)

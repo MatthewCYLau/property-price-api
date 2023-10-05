@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace property_price_api.Models
 {
-    public class User
+    public class User: BaseModel
     {
         public User(string? id, string email, string password)
         {
