@@ -44,7 +44,7 @@ namespace property_price_api.Services
                 throw new CustomException("Invalid property ID");
             }
             
-            if (GetPriceSuggestionByUserId(userId).Result != null)
+            if (GetPriceSuggestionByPropertyIdByUserId(priceSuggestion.PropertyId, userId).Result != null)
             {
                 throw new CustomException("User has already created price suggestion for property");
             }
@@ -61,9 +61,10 @@ namespace property_price_api.Services
             return suggestion;
         }
         
-        private async Task<PriceSuggestion> GetPriceSuggestionByUserId(string userId)
+        private async Task<PriceSuggestion> GetPriceSuggestionByPropertyIdByUserId(string propertyId, string userId)
         {
-            var suggestion = await _context.PriceSuggestions.Find(x => x.UserId == userId).FirstOrDefaultAsync();
+            Expression<Func<PriceSuggestion, bool>> filter = x => x.PropertyId == propertyId && x.UserId == userId;
+            var suggestion = await _context.PriceSuggestions.Find(filter).FirstOrDefaultAsync();
             return suggestion;
         }
 
