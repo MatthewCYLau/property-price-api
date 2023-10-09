@@ -2,10 +2,11 @@
 {
 	public class UpdateUserRequest: AuthenticateRequest
 	{
-		public User ToUser(string? id, string email, string password)
-		{
-			return new User(id, email, password);
-		}
-	}
+
+        public string? Password { get; set; }
+
+        public string UserType { get; set; } = null!;
+
+    }
 }
 

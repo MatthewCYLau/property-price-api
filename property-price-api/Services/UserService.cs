@@ -121,9 +121,17 @@ namespace property_price_api.Services
                 return false;
             }
 
-            var _user = updateUserRequest.ToUser(id, updateUserRequest.Email, updateUserRequest.Password);
-            _user.Password = BC.HashPassword(_user.Password);
-            await _context.Users.ReplaceOneAsync(x => x.Id == id, _user);
+            var filter = Builders<User>.Filter.Where(x => x.Id == id);
+            var update = Builders<User>.Update.Set(x => x.UserType, updateUserRequest.UserType);
+
+            if (updateUserRequest.Password != null)
+            {
+                update = Builders<User>.Update.Set(x => x.Password, BC.HashPassword(updateUserRequest.Password));
+            }
+
+            var options = new FindOneAndUpdateOptions<User>();
+            await _context.Users.FindOneAndUpdateAsync(filter, update, options);
+
             return true;
         }
 

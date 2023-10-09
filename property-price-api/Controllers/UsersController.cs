@@ -58,7 +58,7 @@ namespace property_price_api.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id:length(24)}")]
+        [HttpPatch("{id:length(24)}")]
         public async Task<IActionResult> UpdateUserById(string id, UpdateUserRequest updateUserRequest)
         {
             var _userDto = await _userService.GetUserById(id);
