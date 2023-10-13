@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
@@ -7,7 +9,7 @@ namespace property_price_api.Services
 {
     public interface IPriceSuggestionService
     {
-        Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId);
+        Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId, int? page, int? pageSize);
         Task<PriceSuggestion?> GetPriceSuggestionById(string id);
         Task CreatePriceSuggestion(PriceSuggestion priceSuggestion);
         Task DeletePriceSuggestionById(string id);
@@ -71,7 +73,7 @@ namespace property_price_api.Services
         public async Task DeletePriceSuggestionById(string id) =>
           await _context.PriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
-        public async Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId)
+        public async Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId, int? page, int? pageSize = 5)
         {
             Expression<Func<PriceSuggestion,bool>> expression;
             if (propertyId != null)
@@ -86,6 +88,8 @@ namespace property_price_api.Services
             var priceSuggestions = await _context.PriceSuggestions.Aggregate()
                 .Match(expression)
                 .Lookup(CollectionNames.PropertiesCollection, "PropertyId", "_id", @as: "Property")
+                .Skip((long)((page - 1) * pageSize))
+                .Limit((long)pageSize)
                 .Unwind("Property")
                 .As<PriceSuggestion>()
                 .ToListAsync();
