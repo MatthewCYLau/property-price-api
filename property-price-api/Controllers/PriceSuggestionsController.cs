@@ -19,7 +19,7 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<List<PriceSuggestion>> GetPriceSuggestions([FromQuery] PriceSuggestionQueryParameters parameters) =>
+        public async Task<PriceSuggestionResponse> GetPriceSuggestions([FromQuery] PriceSuggestionQueryParameters parameters) =>
             await _priceSuggestionService.GetPriceSuggestions(parameters.PropertyId, parameters.Page, parameters.PageSize);
 
         [Authorize]

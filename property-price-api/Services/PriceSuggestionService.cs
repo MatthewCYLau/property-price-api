@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using System.Linq.Expressions;
 using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
@@ -9,7 +7,7 @@ namespace property_price_api.Services
 {
     public interface IPriceSuggestionService
     {
-        Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId, int? page, int? pageSize);
+        Task<PriceSuggestionResponse> GetPriceSuggestions(string? propertyId, int? page, int? pageSize);
         Task<PriceSuggestion?> GetPriceSuggestionById(string id);
         Task CreatePriceSuggestion(PriceSuggestion priceSuggestion);
         Task DeletePriceSuggestionById(string id);
@@ -73,7 +71,7 @@ namespace property_price_api.Services
         public async Task DeletePriceSuggestionById(string id) =>
           await _context.PriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
-        public async Task<List<PriceSuggestion>> GetPriceSuggestions(string? propertyId, int? page, int? pageSize = 5)
+        public async Task<PriceSuggestionResponse> GetPriceSuggestions(string? propertyId, int? page, int? pageSize = 5)
         {
             Expression<Func<PriceSuggestion,bool>> expression;
             if (propertyId != null)
@@ -85,6 +83,9 @@ namespace property_price_api.Services
             {
                 expression = _ => true;
             }
+
+            var totalRecordsCount = await _context.PriceSuggestions.Find(expression).CountDocumentsAsync();
+
             var priceSuggestions = await _context.PriceSuggestions.Aggregate()
                 .Match(expression)
                 .Lookup(CollectionNames.PropertiesCollection, "PropertyId", "_id", @as: "Property")
@@ -93,7 +94,8 @@ namespace property_price_api.Services
                 .Unwind("Property")
                 .As<PriceSuggestion>()
                 .ToListAsync();
-            return priceSuggestions;
+
+            return new PriceSuggestionResponse( new PaginationMetadata((int)totalRecordsCount, currentPage: (int)page, (int)(totalRecordsCount / pageSize)), priceSuggestions);
         }
 
 
