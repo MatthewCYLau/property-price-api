@@ -95,7 +95,7 @@ namespace property_price_api.Services
                 .As<PriceSuggestion>()
                 .ToListAsync();
 
-            return new PriceSuggestionResponse( new PaginationMetadata((int)totalRecordsCount, currentPage: (int)page, (int)(totalRecordsCount / pageSize)), priceSuggestions);
+            return new PriceSuggestionResponse( new PaginationMetadata((int)totalRecordsCount, currentPage: (int)page, (int)Math.Ceiling(totalRecordsCount / (double)pageSize)), priceSuggestions);
         }
 
 
