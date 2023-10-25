@@ -83,8 +83,12 @@ namespace property_price_api.Services
         public async Task UpdatePropertyById(string? id, Property property) =>
             await _context.Properties.ReplaceOneAsync(x => x.Id == id, property);
 
-        public async Task DeletePropertyById(string? id) =>
+        public async Task DeletePropertyById(string? id)
+        {
             await _context.Properties.DeleteOneAsync(x => x.Id == id);
+            await _context.PriceSuggestions.DeleteManyAsync(x => x.PropertyId == id);
+        }
+           
 
         public async Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? propertyId)
         {
