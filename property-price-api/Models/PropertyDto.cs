@@ -20,6 +20,8 @@ namespace property_price_api.Models
         public string UserId { get; set; }
 
         public UserDto? UserDto { get; set; }
+
+        public int AvatarId { get; set; }
     }
 }
 

@@ -64,6 +64,7 @@ namespace property_price_api.Services
         {
             var property = _mapper.Map<Property>(createPropertyRequest);
             property.Created = DateTime.Now;
+            property.AvatarId = new Random().Next(1, 4);
             var httpContext = _httpContextAccessor.HttpContext;
             var userDto = (Task<UserDto>)httpContext.Items["User"];
             property.UserId = userDto.Result.Id;

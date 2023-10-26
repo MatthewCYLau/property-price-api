@@ -20,7 +20,8 @@ namespace property_price_api.Profiles
                .ForMember(dest => dest.ListingUrl, opt => opt.MapFrom(src => src.ListingUrl))
                .ForMember(dest => dest.AskingPrice, opt => opt.MapFrom(src => src.AskingPrice))
                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId)
+               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+               .ForMember(dest => dest.AvatarId, opt => opt.MapFrom(src => src.AvatarId)
                );
 
             CreateMap<Property, PropertyDto>()
@@ -30,6 +31,7 @@ namespace property_price_api.Profiles
                 .ForMember(dest => dest.AskingPrice, opt => opt.MapFrom(src => src.AskingPrice))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.AvatarId, opt => opt.MapFrom(src => src.AvatarId))
                 .ForMember(dest => dest.UserDto, opt => opt.MapFrom(src => new UserDto(
                     src.User.Id,
                     src.User.Email,
