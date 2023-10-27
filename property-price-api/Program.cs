@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using property_price_api.Data;
 using property_price_api.Helpers;
 using property_price_api.Models;
@@ -47,6 +48,15 @@ builder.Services.AddCors(policyBuilder =>
         policy.WithOrigins("*").WithMethods("GET", "POST", "DELETE", "PUT", "PATCH")
             .AllowAnyHeader())
 );
+
+
+// Configure HTTP client
+builder.Services.AddHttpClient("JsonPlaceholder", httpClient =>
+{
+    httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
+    httpClient.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+});
 
 var app = builder.Build();
 
