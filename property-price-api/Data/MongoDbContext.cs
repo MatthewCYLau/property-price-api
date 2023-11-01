@@ -16,7 +16,7 @@ namespace property_price_api.Data
         public IMongoCollection<Property> Properties => _database.GetCollection<Property>(CollectionNames.PropertiesCollection);
         public IMongoCollection<User> Users => _database.GetCollection<User>(CollectionNames.UsersCollection);
         public IMongoCollection<PriceSuggestion> PriceSuggestions => _database.GetCollection<PriceSuggestion>(CollectionNames.PriceSuggestionCollection);
-
+        public IMongoCollection<Notification> Notifications => _database.GetCollection<Notification>(CollectionNames.NotificationCollection);
     }
 }
 
