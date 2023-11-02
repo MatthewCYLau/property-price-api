@@ -18,11 +18,13 @@ namespace property_price_api.Services
     {
         private readonly MongoDbContext _context;
         private readonly IPropertyService _propertyService;
+        private readonly INotificationService _notificationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public PriceSuggestionService(
            MongoDbContext context,
            IPropertyService propertyService,
+           INotificationService notificationService,
            IHttpContextAccessor httpContextAccessor
            )
 
@@ -30,6 +32,7 @@ namespace property_price_api.Services
             _context = context;
             _propertyService = propertyService;
             _httpContextAccessor = httpContextAccessor;
+            _notificationService = notificationService;
         }
 
         public async Task CreatePriceSuggestion(PriceSuggestion priceSuggestion)
@@ -38,8 +41,8 @@ namespace property_price_api.Services
             var httpContext = _httpContextAccessor.HttpContext;
             var userDto = (Task<UserDto>)httpContext!.Items["User"];
             var userId = userDto.Result.Id;
-            
-            if (_propertyService.GetPropertyById(priceSuggestion.PropertyId).Result == null)
+            var property = _propertyService.GetPropertyById(priceSuggestion.PropertyId).Result;
+            if (property is null)
             {
                 throw new CustomException("Invalid property ID");
             }
@@ -51,8 +54,12 @@ namespace property_price_api.Services
             
             priceSuggestion.Created = DateTime.Now;
             priceSuggestion.UserId = userId;
-            
+
             await _context.PriceSuggestions.InsertOneAsync(priceSuggestion);
+
+            var notification = new Notification(false, priceSuggestion.Id, userId, property.UserId, NotificationTypes.AboveAsking);
+            notification.Created = DateTime.Now;
+            await _notificationService.CreateNotification(notification);
         }
 
         public async Task<PriceSuggestion> GetPriceSuggestionById(string id)

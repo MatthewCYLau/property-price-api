@@ -2,8 +2,9 @@
 {
 	public static class NotificationTypes
 	{
-        private const string AboveAsking = "AboveAsking";
-        private const string BelowAsking = "BelowAsking";
+        public const string AboveAsking = "AboveAsking";
+        public const string BelowAsking = "BelowAsking";
+        public const string Asking = "Asking";
     }
 }
 
