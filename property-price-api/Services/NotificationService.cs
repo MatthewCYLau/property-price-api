@@ -1,10 +1,12 @@
-﻿using property_price_api.Data;
+﻿using MongoDB.Driver;
+using property_price_api.Data;
 using property_price_api.Models;
 
 namespace property_price_api.Services
 {
     public interface INotificationService
     {
+        Task<List<Notification>> GetNotifications();
         Task CreateNotification(Notification notification);
     }
 
@@ -18,6 +20,12 @@ namespace property_price_api.Services
             _context = context;
         }
 
+
+        public async Task<List<Notification>> GetNotifications()
+        {
+            var notifications = await _context.Notifications.Find(_ => true).ToListAsync();
+            return notifications;
+        }
 
         public async Task CreateNotification(Notification notification)
         {
