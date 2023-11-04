@@ -21,6 +21,21 @@ namespace property_price_api.Controllers
         [HttpGet]
         public async Task<List<Notification>> Get() =>
             await _notificationService.GetNotifications();
+
+        [Authorize]
+        [HttpPatch("{id:length(24)}")]
+        public async Task<ActionResult<Notification>> UpdateNotificationById(string id, UpdateNotificationRequest updateNotificationRequest)
+        {
+            //var _userDto = await _userService.GetUserById(id);
+
+            //if (_userDto is null)
+            //{
+            //    return NotFound();
+            //}
+
+            var notification = await _notificationService.UpdateNotificationById(id, updateNotificationRequest);
+            return Ok(notification);
+        }
     }
 }
 
