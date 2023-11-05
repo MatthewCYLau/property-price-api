@@ -9,6 +9,7 @@ namespace property_price_api.Services
         Task<List<Notification>> GetNotifications();
         Task CreateNotification(Notification notification);
         Task<Notification> UpdateNotificationById(string id, UpdateNotificationRequest request);
+        Task<Notification> GeNotificationById(string id);
     }
 
     public class NotificationService: INotificationService
@@ -40,6 +41,11 @@ namespace property_price_api.Services
             var options = new FindOneAndUpdateOptions<Notification>() { ReturnDocument = ReturnDocument.After };
             var notification = await _context.Notifications.FindOneAndUpdateAsync(filter, update, options);
             return notification;
+        }
+
+        public async Task<Notification> GeNotificationById(string id)
+        {
+            return await _context.Notifications.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
     }
 }
