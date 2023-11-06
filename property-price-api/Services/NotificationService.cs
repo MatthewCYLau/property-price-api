@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
+using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
 
@@ -6,7 +7,7 @@ namespace property_price_api.Services
 {
     public interface INotificationService
     {
-        Task<List<Notification>> GetNotifications();
+        Task<List<Notification>> GetNotifications(string? notifierId);
         Task CreateNotification(Notification notification);
         Task<Notification> UpdateNotificationById(string id, UpdateNotificationRequest request);
         Task<Notification> GeNotificationById(string id);
@@ -23,10 +24,22 @@ namespace property_price_api.Services
         }
 
 
-        public async Task<List<Notification>> GetNotifications()
+        public async Task<List<Notification>> GetNotifications(string? notifierId)
         {
-            var notifications = await _context.Notifications.Find(_ => true).ToListAsync();
-            return notifications;
+
+            Expression<Func<Notification, bool>> expression;
+            if (notifierId is not null)
+            {
+                expression = x => x.NotifierId == notifierId;
+            }
+
+            else
+            {
+                expression = _ => true;
+            }
+
+            return await _context.Notifications.Find(expression).ToListAsync();
+
         }
 
         public async Task CreateNotification(Notification notification)

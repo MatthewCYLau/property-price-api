@@ -19,8 +19,8 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<List<Notification>> Get() =>
-            await _notificationService.GetNotifications();
+        public async Task<List<Notification>> GetNotifications([FromQuery] NotificationQueryParameters parameters) =>
+            await _notificationService.GetNotifications(parameters.NotifierId);
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Notification>> GetPropertyById(string id)
