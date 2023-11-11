@@ -22,10 +22,16 @@ namespace property_price_api.Controllers
         public async Task<List<Notification>> GetNotifications([FromQuery] NotificationQueryParameters parameters) =>
             await _notificationService.GetNotifications(parameters.NotifierId);
 
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<List<Notification>> GetNotificationsForCurrentUser([FromQuery] NotificationQueryParameters parameters) =>
+            await _notificationService.GetNotificationsForCurrentUser(parameters.ReadStatus);
+
         [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<Notification>> GetPropertyById(string id)
+        public async Task<ActionResult<Notification>> GetNotificationById(string id)
         {
-            var notification = await _notificationService.GeNotificationById(id);
+            var notification = await _notificationService.GetNotificationById(id);
 
             if (notification is null)
             {
@@ -39,7 +45,7 @@ namespace property_price_api.Controllers
         [HttpPatch("{id:length(24)}")]
         public async Task<ActionResult<Notification>> UpdateNotificationById(string id, UpdateNotificationRequest updateNotificationRequest)
         {
-            var _notification = await _notificationService.GeNotificationById(id);
+            var _notification = await _notificationService.GetNotificationById(id);
 
             if (_notification is null)
             {
