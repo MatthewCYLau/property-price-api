@@ -16,6 +16,7 @@ namespace property_price_api.Services
         Task UpdatePropertyById(string? id, Property property);
         Task DeletePropertyById(string? id);
         Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? id);
+        void CreateSeedProperties();
     }
 
     public class Post
@@ -136,6 +137,11 @@ namespace property_price_api.Services
             var meanSuggestedPrice = Calculations.MeanSuggestedPrice(percentages, askingPrice);
             var percentageDifferenceFromAskingPrice = meanSuggestedPrice * 100 / askingPrice - 100;
             return new PriceAnalysisResponse(meanSuggestedPrice, percentageDifferenceFromAskingPrice);
+        }
+
+        public void CreateSeedProperties()
+        {
+            Console.WriteLine("Creating seed properties...");
         }
     }
 }

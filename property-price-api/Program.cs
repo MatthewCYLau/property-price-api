@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using property_price_api.Data;
@@ -78,6 +79,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseMiddleware<JwtMiddleware>();
+
+app.Services.GetRequiredService<IPropertyService>().CreateSeedProperties();
 
 app.MapGet("/ping", () => "pong!")
 .WithDescription("Ping uptime check")
