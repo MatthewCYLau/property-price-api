@@ -57,7 +57,7 @@ namespace property_price_api.Services
 
             await _context.PriceSuggestions.InsertOneAsync(priceSuggestion);
 
-            var notification = new Notification(false, priceSuggestion.Id, userId, property.UserId, NotificationTypes.AboveAsking);
+            var notification = new Notification(false, priceSuggestion.Id, priceSuggestion.PropertyId, userId, property.UserId, NotificationTypes.AboveAsking);
             notification.Created = DateTime.Now;
             await _notificationService.CreateNotification(notification);
         }

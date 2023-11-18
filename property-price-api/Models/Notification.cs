@@ -15,6 +15,9 @@ namespace property_price_api.Models
         public string PriceSuggestionId { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
+        public string PropertyId { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
         public string ActorId { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
@@ -25,12 +28,14 @@ namespace property_price_api.Models
         public Notification(
             bool readStatus,
             string priceSuggestionId,
+            string propertyId,
             string actorId,
             string notifierId,
             string notificationType)
         {
             ReadStatus = readStatus;
             PriceSuggestionId = priceSuggestionId;
+            PropertyId = propertyId;
             ActorId = actorId;
             NotifierId = notifierId;
             NotificationType = notificationType;
