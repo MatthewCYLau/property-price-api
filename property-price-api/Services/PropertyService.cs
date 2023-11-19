@@ -16,7 +16,7 @@ namespace property_price_api.Services
         Task UpdatePropertyById(string? id, Property property);
         Task DeletePropertyById(string? id);
         Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? id);
-        void CreateSeedProperties();
+        Task CreateSeedProperties();
     }
 
     public class Post
@@ -30,17 +30,20 @@ namespace property_price_api.Services
     public class PropertyService: IPropertyService
 	{
 
+        private readonly ILogger _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public PropertyService(
+            ILogger<UserService> logger,
             IHttpClientFactory httpClientFactory,
             MongoDbContext context,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
+            _logger = logger;
             _context = context;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -139,9 +142,16 @@ namespace property_price_api.Services
             return new PriceAnalysisResponse(meanSuggestedPrice, percentageDifferenceFromAskingPrice);
         }
 
-        public void CreateSeedProperties()
+        public async Task CreateSeedProperties()
         {
-            Console.WriteLine("Creating seed properties...");
+            _logger.LogInformation("Creating seed properties...");
+            var count = await _context.Properties.EstimatedDocumentCountAsync();
+            if (count != 0)
+            {
+                _logger.LogInformation("Collection has {0} documents. Skip creation of seed properties.", count);
+                return;
+            }
+
         }
     }
 }
