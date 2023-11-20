@@ -37,7 +37,7 @@ namespace property_price_api.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public PropertyService(
-            ILogger<UserService> logger,
+            ILogger<PropertyService> logger,
             IHttpClientFactory httpClientFactory,
             MongoDbContext context,
             IMapper mapper,
