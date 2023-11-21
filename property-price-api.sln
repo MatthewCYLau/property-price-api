@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unit-tests", "unit-tests\unit-tests.csproj", "{05A53FBF-5365-479F-83B5-C91FF40F6C5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-ingest", "property-price-ingest\property-price-ingest.csproj", "{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{05A53FBF-5365-479F-83B5-C91FF40F6C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05A53FBF-5365-479F-83B5-C91FF40F6C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05A53FBF-5365-479F-83B5-C91FF40F6C5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

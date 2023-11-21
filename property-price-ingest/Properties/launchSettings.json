@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "property_price_ingest": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    }
+  }
+}
