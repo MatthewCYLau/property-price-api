@@ -4,7 +4,7 @@ namespace property_price_api.Models
 {
 	public static class UserTypes
 	{
-        private const string Renter = "Renter";
+        public const string Renter = "Renter";
         private const string FirstTimeBuyer = "FirstTimeBuyer";
         private const string HomeOwner = "HomeOwner";
         private const string Landlord = "Landlord";

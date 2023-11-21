@@ -35,10 +35,12 @@ namespace property_price_api.Services
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserService _userService;
 
         public PropertyService(
             ILogger<PropertyService> logger,
             IHttpClientFactory httpClientFactory,
+            IUserService userService,
             MongoDbContext context,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
@@ -48,6 +50,7 @@ namespace property_price_api.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _httpClientFactory = httpClientFactory;
+            _userService = userService;
         }
 
         public async Task<List<PropertyDto>> GetProperties()
@@ -150,6 +153,23 @@ namespace property_price_api.Services
             {
                 _logger.LogInformation("Collection has {0} documents. Skip creation of seed properties.", count);
                 return;
+            }
+
+            var placeholderEmail = "user@example.com";
+            var plaerholderUser = await _context.Users.Find(x => x.Email == placeholderEmail).FirstOrDefaultAsync();
+            if (plaerholderUser is null)
+            {
+                _logger.LogInformation("Creating placeholder user {0}", placeholderEmail);
+                var newUser = new User();
+                newUser.Email = placeholderEmail;
+                newUser.Password = "password";
+                newUser.UserType = UserTypes.Renter;
+                newUser.Created = DateTime.Now;
+                await _context.Users.InsertOneAsync(newUser);
+                _logger.LogInformation("Created placeholder user: {0}", newUser.Id);
+            } else
+            {
+                _logger.LogInformation("Placeholder user already exists.");
             }
 
         }

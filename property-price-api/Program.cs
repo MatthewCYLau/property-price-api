@@ -80,7 +80,7 @@ app.MapControllers();
 
 app.UseMiddleware<JwtMiddleware>();
 
-app.Services.GetRequiredService<IPropertyService>().CreateSeedProperties();
+await app.Services.GetRequiredService<IPropertyService>().CreateSeedProperties();
 
 app.MapGet("/ping", () => "pong!")
 .WithDescription("Ping uptime check")

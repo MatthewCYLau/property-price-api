@@ -13,6 +13,13 @@ namespace property_price_api.Models
 
         [Required(ErrorMessage = "User type is required")]
         public string UserType { get; set; } = null!;
+
+        public CreateUserRequest(string email, string password, string userType)
+        {
+            Email = email;
+            Password = password;
+            UserType = userType;
+        }
     }
 }
 
