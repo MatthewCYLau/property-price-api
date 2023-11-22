@@ -6,11 +6,13 @@ public sealed class ScopedBackgroundService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ScopedBackgroundService> _logger;
+    private readonly IHostApplicationLifetime _lifetime;
 
     public ScopedBackgroundService(
         IServiceProvider serviceProvider,
-        ILogger<ScopedBackgroundService> logger) =>
-        (_serviceProvider, _logger) = (serviceProvider, logger);
+        ILogger<ScopedBackgroundService> logger,
+        IHostApplicationLifetime lifeTime) =>
+        (_serviceProvider, _logger, _lifetime) = (serviceProvider, logger, lifeTime);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -32,6 +34,9 @@ public sealed class ScopedBackgroundService : BackgroundService
 
             await scopedProcessingService.DoWorkAsync(stoppingToken);
         }
+
+        _lifetime.StopApplication();
+
     }
 
     public override async Task StopAsync(CancellationToken stoppingToken)
