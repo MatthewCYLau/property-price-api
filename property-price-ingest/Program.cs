@@ -17,7 +17,7 @@ builder.Services.AddSingleton(serviceProvider =>
         settings.DatabaseName);
 });
 
-builder.Services.AddHostedService<ScopedBackgroundService>();
+builder.Services.AddHostedService<IngestWorker>();
 builder.Services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
 
 IHost host = builder.Build();

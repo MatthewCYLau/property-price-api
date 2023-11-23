@@ -5,7 +5,7 @@ namespace property_price_ingest.Services
 {
 	public class ScopedProcessingService : IScopedProcessingService
     {
-        private int _executionCount;
+        private int _executionCount = 1;
         private readonly ILogger<ScopedProcessingService> _logger;
         private readonly MongoDbContext _context;
 
@@ -17,22 +17,17 @@ namespace property_price_ingest.Services
             _context = context;
         }
 
-        public async Task DoWorkAsync(CancellationToken stoppingToken)
+        public async Task GetPropertiesCount(CancellationToken stoppingToken, int maxExecutionCount)
         {
-            while (!stoppingToken.IsCancellationRequested && _executionCount < 2)
+            while (!stoppingToken.IsCancellationRequested && _executionCount <= maxExecutionCount)
             {
+                var propertiesCount = await _context.Properties.Find(_ => true).CountDocumentsAsync();
+
+                _logger.LogInformation("Properties count: {0}. Database query execution count: {1}", propertiesCount, _executionCount);
+                await Task.Delay(5_000);
                 ++_executionCount;
-
-                _logger.LogInformation(
-                    "{ServiceName} working, execution count: {Count}",
-                    nameof(ScopedProcessingService),
-                _executionCount);
-
-                var properties = await _context.Users.Find(_ => true).ToListAsync();
-
-                properties.ForEach(n => _logger.LogInformation(n.Email));
-                await Task.Delay(5_000, stoppingToken);
             }
+            return;
         }
     }
 }

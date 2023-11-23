@@ -2,7 +2,7 @@
 {
 	public interface IScopedProcessingService
 	{
-        Task DoWorkAsync(CancellationToken stoppingToken);
+        Task GetPropertiesCount(CancellationToken stoppingToken, int maxExecutionCount);
     }
 }
 
