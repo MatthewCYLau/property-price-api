@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-property_price_ingest-c0d5481d-4ea8-4e32-886c-9e4b4d28bfb6</UserSecretsId>
     <RootNamespace>property_price_ingest</RootNamespace>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,4 +22,11 @@
   <ItemGroup>
     <ProjectReference Include="..\property-price-api\property-price-api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="appsettings.json;appsettings.Development.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+</ItemGroup>
 </Project>

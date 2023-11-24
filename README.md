@@ -26,6 +26,15 @@ dotnet run
 curl http://localhost:5049/ping
 ```
 
+## Build/run app locally via dotnet
+
+```bash
+dotnet restore
+dotnet publish -c Release -o out
+cd out
+dotnet property-price-api.dll --environment=Development
+```
+
 ## Build/run app via Docker
 
 ```bash
