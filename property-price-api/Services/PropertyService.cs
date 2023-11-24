@@ -155,21 +155,34 @@ namespace property_price_api.Services
                 return;
             }
 
-            var placeholderEmail = "user@example.com";
+            var placeholderEmail = UserConstants.PlaceholderUserEmail;
             var plaerholderUser = await _context.Users.Find(x => x.Email == placeholderEmail).FirstOrDefaultAsync();
             if (plaerholderUser is null)
             {
                 _logger.LogInformation("Creating placeholder user {0}", placeholderEmail);
                 var newUser = new User();
                 newUser.Email = placeholderEmail;
-                newUser.Password = "password";
+                newUser.Password = UserConstants.PlaceholderUserPassword;
                 newUser.UserType = UserTypes.Renter;
                 newUser.Created = DateTime.Now;
                 await _context.Users.InsertOneAsync(newUser);
                 _logger.LogInformation("Created placeholder user: {0}", newUser.Id);
-            } else
+
+                var newProperty = new Property();
+                newProperty.Created = DateTime.Now;
+                newProperty.AskingPrice = 200_000;
+                newProperty.Address = "London";
+                newProperty.ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY";
+                newProperty.AvatarId = new Random().Next(1, 4);
+                newProperty.UserId = newUser.Id;
+
+                await _context.Properties.InsertOneAsync(newProperty);
+                _logger.LogInformation("Created placeholder property: {0}", newProperty.Id);
+
+            }
+            else
             {
-                _logger.LogInformation("Placeholder user already exists.");
+                _logger.LogInformation("Placeholder data already exist.");
             }
 
         }

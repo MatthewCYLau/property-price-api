@@ -91,6 +91,11 @@ namespace property_price_api.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
+            if (model.Email == UserConstants.PlaceholderUserEmail)
+            {
+                throw new CustomException("Authentication via placeholder user not allowed!");
+            }
+
             var _user = await _context.Users.Find(x => x.Email == model.Email).FirstOrDefaultAsync();
 
             if (_user == null || !BC.Verify(model.Password, _user.Password))
