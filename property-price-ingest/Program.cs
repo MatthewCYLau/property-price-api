@@ -3,6 +3,7 @@ using property_price_api.Models;
 using property_price_api.Data;
 using property_price_ingest;
 using property_price_ingest.Services;
+using Microsoft.Net.Http.Headers;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
@@ -19,6 +20,14 @@ builder.Services.AddSingleton(serviceProvider =>
 
 builder.Services.AddHostedService<IngestWorker>();
 builder.Services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+
+// Configure HTTP client
+builder.Services.AddHttpClient(HttpClientConstants.jsonPlaceholderHttpClientName, httpClient =>
+{
+    httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
+    httpClient.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+});
 
 IHost host = builder.Build();
 host.Run();

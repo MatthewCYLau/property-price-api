@@ -50,15 +50,6 @@ builder.Services.AddCors(policyBuilder =>
             .AllowAnyHeader())
 );
 
-
-// Configure HTTP client
-builder.Services.AddHttpClient("JsonPlaceholder", httpClient =>
-{
-    httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
-    httpClient.DefaultRequestHeaders.Add(
-        HeaderNames.Accept, "application/json");
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

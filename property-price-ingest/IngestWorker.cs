@@ -24,7 +24,7 @@ public sealed class IngestWorker : BackgroundService
         _logger.LogInformation("{0} is running...", nameof(IngestWorker));
         using var scope = _serviceScopeFactory.CreateScope();
         var processService = scope.ServiceProvider.GetService<IScopedProcessingService>();
-        await processService.GetPropertiesCount(stoppingToken, 5);
+        await processService.GetDataAsync(stoppingToken, 2);
         _lifetime.StopApplication();
        
     }

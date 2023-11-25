@@ -1,5 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using System.Text.Json;
+using MongoDB.Driver;
 using property_price_api.Data;
+using property_price_api.Models;
 
 namespace property_price_ingest.Services
 {
@@ -8,26 +10,57 @@ namespace property_price_ingest.Services
         private int _executionCount = 1;
         private readonly ILogger<ScopedProcessingService> _logger;
         private readonly MongoDbContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
+
 
         public ScopedProcessingService(
             ILogger<ScopedProcessingService> logger,
-            MongoDbContext context)
+            MongoDbContext context,
+            IHttpClientFactory httpClientFactory
+            )
         {
             _logger = logger;
             _context = context;
+            _httpClientFactory = httpClientFactory;
         }
 
-        public async Task GetPropertiesCount(CancellationToken stoppingToken, int maxExecutionCount)
+        public async Task GetDataAsync(CancellationToken stoppingToken, int maxExecutionCount)
         {
             while (!stoppingToken.IsCancellationRequested && _executionCount <= maxExecutionCount)
             {
                 var propertiesCount = await _context.Properties.Find(_ => true).CountDocumentsAsync();
 
                 _logger.LogInformation("Properties count: {0}. Database query execution count: {1}", propertiesCount, _executionCount);
+
+                var posts = GetJsonPlaceholderPosts();
+
+                posts.Result.ForEach(n =>
+                {
+                    _logger.LogInformation(n.body);
+                });
+
                 await Task.Delay(5_000);
                 ++_executionCount;
             }
             return;
+        }
+
+        private async Task<List<Post>> GetJsonPlaceholderPosts()
+        {
+            var httpClient = _httpClientFactory.CreateClient(HttpClientConstants.jsonPlaceholderHttpClientName);
+            var httpResponseMessage = await httpClient.GetAsync(
+                "posts?_start=0&_limit=2");
+
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                using var contentStream =
+                    await httpResponseMessage.Content.ReadAsStreamAsync();
+
+                return (List<Post>)await JsonSerializer.DeserializeAsync
+                   <IEnumerable<Post>>(contentStream);
+            }
+
+            return new List<Post>();
         }
     }
 }
