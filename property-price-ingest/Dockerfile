@@ -15,4 +15,6 @@ RUN dotnet publish "property-price-ingest.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS=http://+:
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "property-price-ingest.dll"]
