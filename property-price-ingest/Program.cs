@@ -4,8 +4,9 @@ using property_price_api.Data;
 using property_price_ingest;
 using property_price_ingest.Services;
 using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Builder;
 
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<PropertyPriceApiDatabaseSettings>(
     builder.Configuration.GetSection("PropertyPriceApiDatabase"));
@@ -29,5 +30,7 @@ builder.Services.AddHttpClient(HttpClientConstants.jsonPlaceholderHttpClientName
         HeaderNames.Accept, "application/json");
 });
 
-IHost host = builder.Build();
-host.Run();
+var app = builder.Build();
+app.MapGet("/", () => "up!");
+
+app.Run();
