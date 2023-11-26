@@ -7,7 +7,8 @@ on:
 
 env:
   PROJECT_ID: open-source-apps-001
-  IMAGE: property-price-api
+  API_IMAGE: property-price-api
+  INGEST_IMAGE: property-price-ingest
   REGISTRY_HOSTNAME: gcr.io
   CLOUD_RUN_SERVICE: property-price-api
 
@@ -16,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [ '7.0.x' ]
+        dotnet-version: ["7.0.x"]
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
@@ -43,25 +44,40 @@ jobs:
       - name: Authenticate with Container Registry
         run: |
           gcloud --quiet auth configure-docker
-      # Build the Docker image
-      - name: Build
+      # Build the API Docker image
+      - name: Build API
         run: |-
           cd property-price-api
           docker build -t \
-          "$REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:$GITHUB_SHA" -t \
-          "$REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:latest" .
+          "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:$GITHUB_SHA" -t \
+          "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:latest" .
           cd ..
       # Push the Docker image to Google Container Registry
       - name: Push
         run: |
           cd property-price-api
-          docker push "$REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:$GITHUB_SHA" 
-          docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$IMAGE":latest
+          docker push "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:$GITHUB_SHA" 
+          docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$API_IMAGE":latest
+          cd ..
+      # Build the ingest engine Docker image
+      - name: Build ingest engine
+        run: |-
+          cd property-price-ingest
+          docker build -t \
+          "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" -t \
+          "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:latest" .
+          cd ..
+      # Push the ingest engine Docker image to Google Container Registry
+      - name: Push
+        run: |
+          cd property-price-ingest
+          docker push "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" 
+          docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$INGEST_IMAGE":latest
           cd ..
       - name: Deploy
         run: |
           cd property-price-api
-          gcloud run deploy ${CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:$GITHUB_SHA" --region europe-west1 \
+          gcloud run deploy ${CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:$GITHUB_SHA" --region europe-west1 \
           --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest\
           ,JWT_SECRET=jwt-secret:latest
           cd ..
