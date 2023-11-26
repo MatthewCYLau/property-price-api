@@ -16,5 +16,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
 ENTRYPOINT ["dotnet", "property-price-ingest.dll"]
