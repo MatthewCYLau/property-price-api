@@ -62,18 +62,14 @@ jobs:
       # Build the ingest engine Docker image
       - name: Build ingest engine
         run: |-
-          cd property-price-ingest
-          docker build -t \
+          docker build -f property-price-ingest/Dockerfile -t \
           "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" -t \
           "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:latest" .
-          cd ..
       # Push the ingest engine Docker image to Google Container Registry
       - name: Push
         run: |
-          cd property-price-ingest
           docker push "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" 
           docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$INGEST_IMAGE":latest
-          cd ..
       - name: Deploy
         run: |
           cd property-price-api

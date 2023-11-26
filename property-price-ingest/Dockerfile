@@ -1,16 +1,18 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /app
 
-# Copy everything
-COPY . ./
+COPY ["property-price-api/property-price-api.csproj", "property-price-api/"]
+COPY ["property-price-ingest/property-price-ingest.csproj", "property-price-ingest/"]
 
-# Restore as distinct layers
-RUN dotnet restore
-# Build and publish a release
-RUN dotnet publish -c Release -o out
+RUN dotnet restore "property-price-ingest/property-price-ingest.csproj"
+COPY . .
+WORKDIR /app/property-price-ingest
+RUN dotnet build "property-price-ingest.csproj" -c Release -o /app/build
 
-# Build runtime image
+FROM build-env AS publish
+RUN dotnet publish "property-price-ingest.csproj" -c Release -o /app/publish
+
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
-COPY --from=build-env /app/out .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "property-price-ingest.dll"]
