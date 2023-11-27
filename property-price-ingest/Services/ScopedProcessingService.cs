@@ -37,10 +37,10 @@ namespace property_price_ingest.Services
 
                 var posts = GetJsonPlaceholderPosts();
 
-                posts.Result.ForEach(n =>
+                foreach (Post post in posts.Result)
                 {
-                    _logger.LogInformation(n.body);
-                });
+                    _logger.LogInformation(post.body);
+                }
 
                 await Task.Delay(5_000);
                 ++_executionCount;
