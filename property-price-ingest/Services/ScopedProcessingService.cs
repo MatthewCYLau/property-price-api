@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
@@ -26,6 +27,8 @@ namespace property_price_ingest.Services
 
         public async Task GetDataAsync(CancellationToken stoppingToken, int maxExecutionCount)
         {
+            var timer = new Stopwatch();
+            timer.Start();
             while (!stoppingToken.IsCancellationRequested && _executionCount <= maxExecutionCount)
             {
                 var propertiesCount = await _context.Properties.Find(_ => true).CountDocumentsAsync();
@@ -42,6 +45,7 @@ namespace property_price_ingest.Services
                 await Task.Delay(5_000);
                 ++_executionCount;
             }
+            _logger.LogInformation("Operation complete. Time taken in seconds: {0}", timer.Elapsed.TotalSeconds);
             return;
         }
 
