@@ -3,6 +3,7 @@ using System.Text.Json;
 using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
+using property_price_api.Helpers;
 
 namespace property_price_ingest.Services
 {
@@ -40,6 +41,10 @@ namespace property_price_ingest.Services
                 foreach (Post post in posts.Result)
                 {
                     _logger.LogInformation(post.body);
+                    string[] copies = post.body.Split(' ');
+                    var upperCaseWords = copies.Select(StringHelpers.UpperCaseWord);
+                    var output = string.Join(" ", upperCaseWords);
+                    _logger.LogInformation(output);
                 }
 
                 await Task.Delay(5_000);
