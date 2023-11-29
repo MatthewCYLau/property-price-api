@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using property_price_api.Data;
 using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Profiles;
 using property_price_api.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +49,8 @@ builder.Services.AddCors(policyBuilder =>
         policy.WithOrigins("*").WithMethods("GET", "POST", "DELETE", "PUT", "PATCH")
             .AllowAnyHeader())
 );
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 
 var app = builder.Build();
 

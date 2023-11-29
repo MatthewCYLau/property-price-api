@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Helpers;
 using property_price_api.Models;
+using StackExchange.Redis;
 
 namespace property_price_api.Services
 {
@@ -25,17 +26,20 @@ namespace property_price_api.Services
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDatabase _redis;
 
         public PropertyService(
             ILogger<PropertyService> logger,
             MongoDbContext context,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IConnectionMultiplexer muxer)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;            
+            _httpContextAccessor = httpContextAccessor;
+            _redis = muxer.GetDatabase();
         }
 
         public async Task<List<PropertyDto>> GetProperties()
@@ -53,16 +57,41 @@ namespace property_price_api.Services
        
         public async Task<PropertyDto?> GetPropertyById(string? id)
         {
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                string json;
+                json = await _redis.StringGetAsync(id);
+                if (string.IsNullOrEmpty(json))
+                {
+                    PropertyDto propertyDto = await GetPropertyFromDatabaseById(id);
+                    var setTask = _redis.StringSetAsync(id, Newtonsoft.Json.JsonConvert.SerializeObject(propertyDto));
+                    var expireTask = _redis.KeyExpireAsync(id, TimeSpan.FromSeconds(3600));
+                    await Task.WhenAll(setTask, expireTask);
+                    return propertyDto;
+                }
+                else
+                {
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<PropertyDto>(json);
+                }
+            } else
+            {
+                return await GetPropertyFromDatabaseById(id);
+            }
+            
+        }
+
+        private async Task<PropertyDto> GetPropertyFromDatabaseById(string? id)
+        {
             var property = await _context.Properties.Aggregate()
-            .Match(x => x.Id == id)
-            .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
-            .Unwind("User")
-            .As<Property>()
-            .SingleOrDefaultAsync();
+                            .Match(x => x.Id == id)
+                            .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
+                            .Unwind("User")
+                            .As<Property>()
+                            .SingleOrDefaultAsync();
 
             var propertyDto = _mapper.Map<PropertyDto>(property);
             return propertyDto;
-        }    
+        }
 
         public async Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {

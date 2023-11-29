@@ -18,6 +18,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
