@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using property_price_api.Data;
 using property_price_api.Helpers;
 using property_price_api.Models;
