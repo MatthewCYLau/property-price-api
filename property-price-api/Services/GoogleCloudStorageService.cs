@@ -13,6 +13,7 @@ namespace property_price_api.Services
         private readonly StorageClient _storageClient;
         private readonly string _bucketName;
         private readonly ILogger _logger;
+        private const string GOOGLE_CLOUD_STORAGE_BASE_URL = "https://storage.googleapis.com";
 
         public GoogleCloudStorageService(IConfiguration configuration, ILogger<GoogleCloudStorageService> logger)
         {
@@ -28,8 +29,9 @@ namespace property_price_api.Services
                 await imageFile.CopyToAsync(memoryStream);
                 _logger.LogInformation("Uploading image {0} to Google Cloud Storage bucket {1}", imageFile.FileName, _bucketName);
                 var timestamp = DateTime.Now.ToFileTime();
-                var dataObject = await _storageClient.UploadObjectAsync(_bucketName, string.Concat(timestamp, "-", imageFile.FileName), imageFile.ContentType, memoryStream);
-                return dataObject.MediaLink;
+                string uniqueFileName = string.Concat(timestamp, "-", imageFile.FileName);
+                var dataObject = await _storageClient.UploadObjectAsync(_bucketName, uniqueFileName, imageFile.ContentType, memoryStream);
+                return string.Format("{0}/{1}/{2}", GOOGLE_CLOUD_STORAGE_BASE_URL, _bucketName, uniqueFileName);
             }
         }
     }
