@@ -12,7 +12,7 @@ namespace property_price_api.Services
         Task<List<PropertyDto>> GetProperties();
         Task<PropertyDto?> GetPropertyById(string? id);
         Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
-        Task UpdatePropertyById(string? id, Property property);
+        Task<bool> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest);
         Task DeletePropertyById(string? id);
         Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? id);
         Task CreateSeedProperties();
@@ -85,8 +85,21 @@ namespace property_price_api.Services
         }
             
 
-        public async Task UpdatePropertyById(string? id, Property property) =>
-            await _context.Properties.ReplaceOneAsync(x => x.Id == id, property);
+        public async Task<bool> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest)
+        {
+ 
+            var filter = Builders<Property>.Filter.Where(x => x.Id == id);
+            var update = Builders<Property>.Update
+                .Set(x => x.ListingUrl, updatePropertyRequest.ListingUrl)
+                .Set(x => x.AskingPrice, updatePropertyRequest.AskingPrice)
+                .Set(x => x.Address, updatePropertyRequest.Address)
+                .Set(x => x.AvatarUrl, updatePropertyRequest.AvatarUrl);
+
+            var options = new FindOneAndUpdateOptions<Property>();
+            await _context.Properties.FindOneAndUpdateAsync(filter, update, options);
+
+            return true;
+        }
 
         public async Task DeletePropertyById(string? id)
         {

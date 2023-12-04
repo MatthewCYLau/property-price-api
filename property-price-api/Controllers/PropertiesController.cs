@@ -50,7 +50,7 @@ namespace property_price_api.Controllers
         }
 
         [HttpPut("{id:length(24)}")]
-        public async Task<IActionResult> UpdatePropertyById(string? id, Property updatedProperty)
+        public async Task<IActionResult> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest)
         {
             var property = await _propertyService.GetPropertyById(id);
 
@@ -59,9 +59,10 @@ namespace property_price_api.Controllers
                 return NotFound();
             }
 
-            updatedProperty.Id = property.Id;
-
-            await _propertyService.UpdatePropertyById(id, updatedProperty);
+            if (!await _propertyService.UpdatePropertyById(id, updatePropertyRequest))
+            {
+                return BadRequest(new { message = "Update property went wrong!" });
+            }
 
             return NoContent();
         }
