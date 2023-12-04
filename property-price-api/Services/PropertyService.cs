@@ -68,7 +68,7 @@ namespace property_price_api.Services
         {
             var property = _mapper.Map<Property>(createPropertyRequest);
             property.Created = DateTime.Now;
-            property.AvatarId = new Random().Next(1, 4);
+            property.AvatarUrl = new Random().Next(1, 4).ToString();
             var httpContext = _httpContextAccessor.HttpContext;
             var userDto = (Task<UserDto>)httpContext.Items["User"];
             property.UserId = userDto.Result.Id;
@@ -137,7 +137,7 @@ namespace property_price_api.Services
                 newProperty.AskingPrice = 200_000;
                 newProperty.Address = "London";
                 newProperty.ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY";
-                newProperty.AvatarId = new Random().Next(1, 4);
+                newProperty.AvatarUrl = new Random().Next(1, 4).ToString();
                 newProperty.UserId = newUser.Id;
 
                 await _context.Properties.InsertOneAsync(newProperty);

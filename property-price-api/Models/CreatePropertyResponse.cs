@@ -12,7 +12,7 @@ namespace property_price_api.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string UserId { get; set; }
 
-        public int AvatarId { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }
 

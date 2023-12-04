@@ -21,7 +21,7 @@ namespace property_price_api.Models
 
         public UserDto? UserDto { get; set; }
 
-        public int AvatarId { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }
 
