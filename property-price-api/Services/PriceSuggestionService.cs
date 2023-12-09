@@ -116,15 +116,20 @@ namespace property_price_api.Services
 
         public async Task<PriceSuggestionsStatisticsResponse> GetPriceSuggestionsStatistics()
         {
-            Expression<Func<PriceSuggestion, bool>> expression;
-            expression = x => x.DifferenceInPercentage > 0;
+            var aboveAskingCount = await GetPriceSuggestionsStatisticsByExpression(x => x.DifferenceInPercentage > 0);
+            var atAskingCount = await GetPriceSuggestionsStatisticsByExpression(x => x.DifferenceInPercentage == 0);
+            var belowAskingCount = await GetPriceSuggestionsStatisticsByExpression(x => x.DifferenceInPercentage < 0);
 
-            var aboveAskingResults = await _context.PriceSuggestions.Aggregate().Match(expression).Count().SingleAsync();
-            var aboveAskingCount = aboveAskingResults.Count;
+            return new PriceSuggestionsStatisticsResponse(
+                (int) aboveAskingCount,
+                (int) atAskingCount,
+                (int) belowAskingCount
+                );
+        }
 
-            return new PriceSuggestionsStatisticsResponse((int)aboveAskingCount, 0, 0);
-
-
+        private async Task<long> GetPriceSuggestionsStatisticsByExpression(Expression<Func<PriceSuggestion, bool>> expression)
+        {
+            return await _context.PriceSuggestions.CountDocumentsAsync(Builders<PriceSuggestion>.Filter.Where(expression));
         }
     }
 }
