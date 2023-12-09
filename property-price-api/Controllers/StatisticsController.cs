@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using property_price_api.Helpers;
 using property_price_api.Models;
+using property_price_api.Services;
 
 namespace property_price_api.Controllers
 {
@@ -10,12 +11,19 @@ namespace property_price_api.Controllers
     public class StatisticsController : ControllerBase
     {
 
+        private readonly IPriceSuggestionService _priceSuggestionService;
+
+        public StatisticsController(IPriceSuggestionService priceSuggestionService)
+        {
+            _priceSuggestionService = priceSuggestionService;
+        }
+
         [Authorize]
         [HttpGet("price-suggestions")]
-        public ActionResult<PriceSuggestionsStatisticsResponse> GetPriceSuggestionsStatistics()
+        public async Task<ActionResult<PriceSuggestionsStatisticsResponse>> GetPriceSuggestionsStatistics()
         {
             
-            return Ok(new PriceSuggestionsStatisticsResponse(0, 0, 0));
+            return await _priceSuggestionService.GetPriceSuggestionsStatistics();
         }
     }
 }

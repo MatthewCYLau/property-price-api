@@ -11,7 +11,7 @@ namespace property_price_api.Services
         Task<PriceSuggestion?> GetPriceSuggestionById(string id);
         Task CreatePriceSuggestion(PriceSuggestion priceSuggestion);
         Task DeletePriceSuggestionById(string id);
-
+        Task<PriceSuggestionsStatisticsResponse> GetPriceSuggestionsStatistics();
     }
 
     public class PriceSuggestionService: IPriceSuggestionService
@@ -112,6 +112,19 @@ namespace property_price_api.Services
             {
                 throw new CustomException("Invalid property ID");
             }
+        }
+
+        public async Task<PriceSuggestionsStatisticsResponse> GetPriceSuggestionsStatistics()
+        {
+            Expression<Func<PriceSuggestion, bool>> expression;
+            expression = x => x.DifferenceInPercentage > 0;
+
+            var aboveAskingResults = await _context.PriceSuggestions.Aggregate().Match(expression).Count().SingleAsync();
+            var aboveAskingCount = aboveAskingResults.Count;
+
+            return new PriceSuggestionsStatisticsResponse((int)aboveAskingCount, 0, 0);
+
+
         }
     }
 }
