@@ -11,6 +11,7 @@ env:
   INGEST_IMAGE: property-price-ingest
   REGISTRY_HOSTNAME: gcr.io
   CLOUD_RUN_SERVICE: property-price-api
+  INGEST_CLOUD_RUN_SERVICE: property-price-ingest
 
 jobs:
   build-test:
@@ -72,8 +73,8 @@ jobs:
           docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$INGEST_IMAGE":latest
       - name: Deploy
         run: |
-          cd property-price-api
           gcloud run deploy ${CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:$GITHUB_SHA" --region europe-west1 \
           --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest\
           ,JWT_SECRET=jwt-secret:latest
-          cd ..
+          gcloud run deploy ${INGEST_CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" --region europe-west1 \
+          --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest
