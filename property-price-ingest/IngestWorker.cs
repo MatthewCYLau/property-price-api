@@ -24,9 +24,8 @@ public sealed class IngestWorker : BackgroundService
         _logger.LogInformation("{0} is running...", nameof(IngestWorker));
         using var scope = _serviceScopeFactory.CreateScope();
         var processService = scope.ServiceProvider.GetService<IScopedProcessingService>();
-        await processService.GetDataAsync(stoppingToken, 5);
-        _lifetime.StopApplication();
-       
+        var cloudPubSubService = scope.ServiceProvider.GetService<ICloudPubSubMessagePullService>();
+        await cloudPubSubService.PullMessagesAsync(stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken stoppingToken)

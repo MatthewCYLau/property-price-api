@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
-using property_price_api.Models;
 using property_price_api.Data;
 using property_price_ingest;
 using property_price_ingest.Services;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Builder;
+using property_price_ingest.Models;
+using property_price_api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,11 @@ builder.Services.AddSingleton(serviceProvider =>
         settings.DatabaseName);
 });
 
+builder.Services.Configure<CloudPubSubConsumerOptions>(
+    builder.Configuration.GetSection(CloudPubSubConsumerOptions.CloudPubSub));
 builder.Services.AddHostedService<IngestWorker>();
 builder.Services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+builder.Services.AddScoped<ICloudPubSubMessagePullService, CloudPubSubMessagePullService>();
 
 // Configure HTTP client
 builder.Services.AddHttpClient(HttpClientConstants.jsonPlaceholderHttpClientName, httpClient =>
