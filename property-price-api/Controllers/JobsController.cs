@@ -20,10 +20,14 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task CreateIngestJob(CloudPubSubMessage message)
+        public async Task<ActionResult<CreateJobResponse>> CreateIngestJob(CloudPubSubMessage message)
         {
             
-            await _cloudPubSubService.PublishMessagesAsync(message);
+            var messageId = await _cloudPubSubService.PublishMessagesAsync(message);
+            var res = new CreateJobResponse(messageId);
+
+            return CreatedAtAction(nameof(CreateIngestJob), res);
+
         }
     }
 }
