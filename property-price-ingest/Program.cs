@@ -4,8 +4,8 @@ using property_price_ingest;
 using property_price_ingest.Services;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Builder;
-using property_price_ingest.Models;
 using property_price_api.Models;
+using Google.Cloud.PubSub.V1;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +20,12 @@ builder.Services.AddSingleton(serviceProvider =>
         settings.DatabaseName);
 });
 
-builder.Services.Configure<CloudPubSubConsumerOptions>(
-    builder.Configuration.GetSection(CloudPubSubConsumerOptions.CloudPubSub));
 builder.Services.AddHostedService<IngestWorker>();
 builder.Services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
-builder.Services.AddScoped<ICloudPubSubMessagePullService, CloudPubSubMessagePullService>();
+SubscriptionName subscriptionName = SubscriptionName.FromProjectSubscription(
+    builder.Configuration.GetValue<string>("CloudPubSub:GcpProjectId"),
+    builder.Configuration.GetValue<string>("CloudPubSub:SubscriptionName"));
+builder.Services.AddSubscriberClient(subscriptionName);
 
 // Configure HTTP client
 builder.Services.AddHttpClient(HttpClientConstants.jsonPlaceholderHttpClientName, httpClient =>

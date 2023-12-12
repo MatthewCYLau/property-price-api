@@ -16,11 +16,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Services\" />
-    <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\property-price-api\property-price-api.csproj" />
