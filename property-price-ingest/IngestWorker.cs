@@ -1,4 +1,6 @@
 ﻿using Google.Cloud.PubSub.V1;
+using Newtonsoft.Json;
+using property_price_api.Models;
 
 namespace property_price_ingest;
 
@@ -30,7 +32,9 @@ public sealed class IngestWorker : BackgroundService
         await _subscriberClient.StartAsync((message, token) =>
         {
             string text = System.Text.Encoding.UTF8.GetString(message.Data.ToArray());
-            _logger.LogInformation("Received message from Cloud Pub Sub: {0} {1}", message.MessageId, text);
+            _logger.LogInformation("Received message from Cloud Pub Sub: {0}", message.MessageId);
+            var result = JsonConvert.DeserializeObject<CloudPubSubMessage>(text);
+            _logger.LogInformation("Ingest job ID: {0}; postcode: {0}", result.JobId, result.PostCode);
             return Task.FromResult(SubscriberClient.Reply.Ack);
         });
     }
