@@ -29,6 +29,7 @@ builder.Services.Configure<CloudPubSubOptions>(
 builder.Services.AddSingleton<IPropertyService, PropertyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IPriceSuggestionService, PriceSuggestionService>();
+builder.Services.AddSingleton<IIngestJobService, IngestJobService>();
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 builder.Services.AddSingleton<IGoogleCloudStorageService, GoogleCloudStorageService>();
 builder.Services.AddSingleton<ICloudPubSubService, CloudPubSubService>();

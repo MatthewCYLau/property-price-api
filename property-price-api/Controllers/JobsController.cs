@@ -12,19 +12,22 @@ namespace property_price_api.Controllers
     {
 
         private readonly ICloudPubSubService _cloudPubSubService;
+        private readonly IIngestJobService _ingestJobService;
 
-        public JobsController(ICloudPubSubService cloudPubSubService)
+        public JobsController(ICloudPubSubService cloudPubSubService, IIngestJobService ingestJobService)
         {
             _cloudPubSubService = cloudPubSubService;
+            _ingestJobService = ingestJobService;
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CreateJobResponse>> CreateIngestJob(CloudPubSubMessage message)
+        public async Task<ActionResult<CreateJobResponse>> CreateIngestJob(CreateJobRequest request)
         {
-            
-            var messageId = await _cloudPubSubService.PublishMessagesAsync(message);
-            var res = new CreateJobResponse(messageId);
+
+            var jobId = await _ingestJobService.CreateIngestJob(request.Postcode);
+            var messageId = await _cloudPubSubService.PublishMessagesAsync(new CloudPubSubMessage(jobId, request.Postcode));
+            var res = new CreateJobResponse(messageId, jobId);
 
             return CreatedAtAction(nameof(CreateIngestJob), res);
 

@@ -2,11 +2,13 @@
 {
 	public class CreateJobResponse
 	{
-		public string JobId { get; set; }
+        public string MessageId { get; set; }
+        public string IngestJobId { get; set; }
 
-        public CreateJobResponse(string jobId)
+        public CreateJobResponse(string messageId, string ingestJobId)
         {
-            JobId = jobId;
+            MessageId = messageId;
+            IngestJobId = ingestJobId;
         }
     }
 }
