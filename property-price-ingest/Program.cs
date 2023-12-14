@@ -6,6 +6,7 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Builder;
 using property_price_api.Models;
 using Google.Cloud.PubSub.V1;
+using property_price_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ SubscriptionName subscriptionName = SubscriptionName.FromProjectSubscription(
     builder.Configuration.GetValue<string>("CloudPubSub:GcpProjectId"),
     builder.Configuration.GetValue<string>("CloudPubSub:SubscriptionName"));
 builder.Services.AddSubscriberClient(subscriptionName);
+builder.Services.AddSingleton<IIngestJobService, IngestJobService>();
 
 // Configure HTTP client
 builder.Services.AddHttpClient(HttpClientConstants.jsonPlaceholderHttpClientName, httpClient =>

@@ -11,7 +11,7 @@ namespace property_price_api.Models
 
         public string Postcode { get; set; } = null!;
 
-        public decimal TransactionPrice { get; set; } = 0;
+        public int TransactionPrice { get; set; } = 0;
 
         public IngestJob(string postcode)
         {
