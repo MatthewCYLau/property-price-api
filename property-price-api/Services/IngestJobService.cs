@@ -8,7 +8,7 @@ namespace property_price_api.Services
     {
         Task<string> CreateIngestJob(string postcode);
         Task<bool> UpdateIngestJobById(string id, int transactionPrice);
-
+        Task<IngestJob> GetIngestJobById(string? id);
     }
 
     public class IngestJobService : IIngestJobService
@@ -29,6 +29,12 @@ namespace property_price_api.Services
             };
             await _context.IngestJobs.InsertOneAsync(job);
             return job.Id;
+        }
+
+        public async Task<IngestJob> GetIngestJobById(string? id)
+        {
+            var ingestJob = await _context.IngestJobs.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return ingestJob;
         }
 
         public async Task<bool> UpdateIngestJobById(string id, int transactionPrice)

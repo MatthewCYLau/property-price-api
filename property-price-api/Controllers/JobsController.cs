@@ -32,6 +32,19 @@ namespace property_price_api.Controllers
             return CreatedAtAction(nameof(CreateIngestJob), res);
 
         }
+
+        [HttpGet("{id:length(24)}")]
+        public async Task<ActionResult<IngestJob>> GetIngestJobById(string id)
+        {
+            var ingestJob = await _ingestJobService.GetIngestJobById(id);
+
+            if (ingestJob is null)
+            {
+                return NotFound();
+            }
+
+            return ingestJob;
+        }
     }
 }
 
