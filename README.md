@@ -10,6 +10,7 @@ The list of repositories are as follow:
 
 - ASP.NET Core web API repository [here](https://github.com/MatthewCYLau/property-price-api)
 - React with Vite client repository [here](https://github.com/MatthewCYLau/property-price-client)
+- Google Cloud Platform (GCP) with Terraform infrastructure repository [here](https://github.com/MatthewCYLau/property-price-infrastructure)
 
 ## Pre-requisite
 
@@ -40,7 +41,7 @@ dotnet property-price-api.dll --environment=Development
 ```bash
 cd property-price-api
 docker build -t property-price-api:v1 .
-docker run -p 5001:8080 property-price-api:v1 
+docker run -p 5001:8080 property-price-api:v1
 curl http://localhost:5001/ping
 ```
 
