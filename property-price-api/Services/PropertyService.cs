@@ -145,16 +145,35 @@ namespace property_price_api.Services
                 await _context.Users.InsertOneAsync(newUser);
                 _logger.LogInformation("Created placeholder user: {0}", newUser.Id);
 
-                var newProperty = new Property();
-                newProperty.Created = DateTime.Now;
-                newProperty.AskingPrice = 200_000;
-                newProperty.Address = "London";
-                newProperty.ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY";
-                newProperty.AvatarUrl = new Random().Next(1, 4).ToString();
-                newProperty.UserId = newUser.Id;
+                List<CreatePropertyRequest> requests = new List<CreatePropertyRequest>
+                {
+                   new CreatePropertyRequest {
+                       ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY",
+                       Address = "Cardinal Close, Worcester Park",
+                       AskingPrice = 555_000 },
+                    new CreatePropertyRequest {
+                       ListingUrl = "https://www.rightmove.co.uk/properties/137372225#/?channel=RES_BUY",
+                       Address = "Inveresk Gardens, Worcester Park, KT4",
+                       AskingPrice = 600_000 },
+                     new CreatePropertyRequest {
+                       ListingUrl = "https://www.rightmove.co.uk/properties/86360589#/?channel=RES_BUY",
+                       Address = "Edenfield Gardens, Worcester Park, Surrey, KT4",
+                       AskingPrice = 855_000 },
+                };
 
-                await _context.Properties.InsertOneAsync(newProperty);
-                _logger.LogInformation("Created placeholder property: {0}", newProperty.Id);
+                foreach (CreatePropertyRequest request in requests)
+                {
+                    var newProperty = new Property();
+                    newProperty.Created = DateTime.Now;
+                    newProperty.AskingPrice = request.AskingPrice;
+                    newProperty.Address = request.Address;
+                    newProperty.ListingUrl = request.ListingUrl;
+                    newProperty.AvatarUrl = new Random().Next(1, 4).ToString();
+                    newProperty.UserId = newUser.Id;
+
+                    await _context.Properties.InsertOneAsync(newProperty);
+                    _logger.LogInformation("Created placeholder property: {0}", newProperty.Id);
+                }
 
             }
             else
