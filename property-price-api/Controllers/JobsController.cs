@@ -25,6 +25,11 @@ namespace property_price_api.Controllers
         public async Task<ActionResult<CreateJobResponse>> CreateIngestJob(CreateJobRequest request)
         {
 
+            if (!StringHelpers.IsValidateUkPostcode(request.Postcode))
+            {
+                return BadRequest(new { message = "Invalid UK postcode!" });
+            }
+
             var jobId = await _ingestJobService.CreateIngestJob(request.Postcode);
             var messageId = await _cloudPubSubService.PublishMessagesAsync(new CloudPubSubMessage(jobId, request.Postcode));
             var res = new CreateJobResponse(messageId, jobId);
