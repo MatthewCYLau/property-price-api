@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
+using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Models;
 
@@ -23,6 +24,7 @@ namespace property_price_api.Services
 
         public async Task<string> CreateIngestJob(string postcode)
         {
+
             var job = new IngestJob(postcode)
             {
                 Created = DateTime.Now
@@ -47,6 +49,13 @@ namespace property_price_api.Services
             await _context.IngestJobs.FindOneAndUpdateAsync(filter, update, options);
 
             return true;
+        }
+
+        private async Task GetIngestJobsCreatedTodayCount()
+        {
+            Expression<Func<IngestJob, bool>> expression;
+            expression = x => x.Created > DateTime.Today;
+            var count = await _context.IngestJobs.CountDocumentsAsync(Builders<IngestJob>.Filter.Where(expression));
         }
     }
 }
