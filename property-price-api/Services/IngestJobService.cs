@@ -16,14 +16,27 @@ namespace property_price_api.Services
     {
 
         private readonly MongoDbContext _context;
+        public static readonly int DAILY_LIMIT = 5;
+        private readonly ILogger _logger;
 
-        public IngestJobService(MongoDbContext context)
+        public IngestJobService(
+            MongoDbContext context,
+            ILogger<IngestJobService> logger
+            )
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<string> CreateIngestJob(string postcode)
         {
+
+            long count = await GetIngestJobsCreatedTodayCount();
+
+            if (count > DAILY_LIMIT)
+            {
+                throw new CustomException("Ingest job creation daily limit reached");
+            }
 
             var job = new IngestJob(postcode)
             {
@@ -51,11 +64,13 @@ namespace property_price_api.Services
             return true;
         }
 
-        private async Task GetIngestJobsCreatedTodayCount()
+        private async Task<long> GetIngestJobsCreatedTodayCount()
         {
             Expression<Func<IngestJob, bool>> expression;
             expression = x => x.Created > DateTime.Today;
             var count = await _context.IngestJobs.CountDocumentsAsync(Builders<IngestJob>.Filter.Where(expression));
+            _logger.LogWarning("Ingest jobs created today count: {0}", count);
+            return count;
         }
     }
 }
