@@ -41,7 +41,7 @@ public sealed class IngestWorker : BackgroundService
             _logger.LogInformation("Ingest job ID: {0}; postcode: {0}", result.JobId, result.PostCode);
             try
             {
-                _ingestJobService.UpdateIngestJobById(result.JobId, 100_000);
+                _ingestJobService.UpdateIngestJobById(result.JobId, new Random().Next(500_000, 1_000_000));
                 _logger.LogInformation("Update job complete: {0}", result.JobId);
                 return Task.FromResult(SubscriberClient.Reply.Ack);
             }
