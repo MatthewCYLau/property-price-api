@@ -7,6 +7,7 @@ namespace property_price_api.Services
 {
     public interface IIngestJobService
     {
+        Task<List<IngestJob>> GetIngestJobs();
         Task<string> CreateIngestJob(string postcode);
         Task<bool> UpdateIngestJobById(string id, int transactionPrice);
         Task<IngestJob> GetIngestJobById(string? id);
@@ -71,6 +72,11 @@ namespace property_price_api.Services
             var count = await _context.IngestJobs.CountDocumentsAsync(Builders<IngestJob>.Filter.Where(expression));
             _logger.LogWarning("Ingest jobs created today count: {0}", count);
             return count;
+        }
+
+        public async Task<List<IngestJob>> GetIngestJobs()
+        {
+            return await _context.IngestJobs.Find(_ => true).ToListAsync();
         }
     }
 }

@@ -38,6 +38,14 @@ namespace property_price_api.Controllers
 
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<List<IngestJob>>> GetIngestJobs()
+        {
+            return await _ingestJobService.GetIngestJobs();
+        }
+
+
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<IngestJob>> GetIngestJobById(string id)
         {
