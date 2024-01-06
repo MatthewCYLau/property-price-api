@@ -40,9 +40,9 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<List<IngestJob>>> GetIngestJobs()
+        public async Task<ActionResult<List<IngestJob>>> GetIngestJobs([FromQuery] bool complete = false, string postcode = "")
         {
-            return await _ingestJobService.GetIngestJobs();
+            return await _ingestJobService.GetIngestJobs(complete, postcode);
         }
 
 

@@ -7,9 +7,9 @@ namespace property_price_api.Services
 {
     public interface IIngestJobService
     {
-        Task<List<IngestJob>> GetIngestJobs();
+        Task<List<IngestJob>> GetIngestJobs(bool complete = false, string postcode = "");
         Task<string> CreateIngestJob(string postcode);
-        Task<bool> UpdateIngestJobById(string id, int transactionPrice);
+        Task<bool> UpdateIngestJobPriceById(string id, int transactionPrice);
         Task<IngestJob> GetIngestJobById(string? id);
     }
 
@@ -53,11 +53,12 @@ namespace property_price_api.Services
             return ingestJob;
         }
 
-        public async Task<bool> UpdateIngestJobById(string id, int transactionPrice)
+        public async Task<bool> UpdateIngestJobPriceById(string id, int transactionPrice)
         {
             var filter = Builders<IngestJob>.Filter.Where(x => x.Id == id);
             var update = Builders<IngestJob>.Update
-                .Set(x => x.TransactionPrice, transactionPrice);
+                .Set(x => x.TransactionPrice, transactionPrice)
+                .Set(x => x.Complete, true);
 
             var options = new FindOneAndUpdateOptions<IngestJob>();
             await _context.IngestJobs.FindOneAndUpdateAsync(filter, update, options);
@@ -74,9 +75,20 @@ namespace property_price_api.Services
             return count;
         }
 
-        public async Task<List<IngestJob>> GetIngestJobs()
+        public async Task<List<IngestJob>> GetIngestJobs(bool complete = false, string postcode = "")
         {
-            return await _context.IngestJobs.Find(_ => true).ToListAsync();
+
+            Expression<Func<IngestJob, bool>> expression;
+            if (string.IsNullOrEmpty(postcode))
+            {
+                expression = x => x.Complete == complete;
+            }
+            else
+            {   
+                expression = x => x.Postcode == postcode && x.Complete == complete;
+            }
+
+            return await _context.IngestJobs.Find(expression).ToListAsync();
         }
     }
 }

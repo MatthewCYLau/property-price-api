@@ -13,6 +13,8 @@ namespace property_price_api.Models
 
         public int TransactionPrice { get; set; } = 0;
 
+        public bool Complete { get; set; } = false;
+
         public IngestJob(string postcode)
         {
             Postcode = postcode;
