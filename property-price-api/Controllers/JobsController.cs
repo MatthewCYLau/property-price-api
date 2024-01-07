@@ -7,7 +7,7 @@ namespace property_price_api.Controllers
 {
 
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api")]
     public class JobsController : ControllerBase
     {
 
@@ -21,7 +21,7 @@ namespace property_price_api.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("jobs")]
         public async Task<ActionResult<CreateJobResponse>> CreateIngestJob(CreateJobRequest request)
         {
 
@@ -39,14 +39,14 @@ namespace property_price_api.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("jobs")]
         public async Task<ActionResult<List<IngestJob>>> GetIngestJobs([FromQuery] bool complete = false, string postcode = "")
         {
             return await _ingestJobService.GetIngestJobs(complete, postcode);
         }
 
 
-        [HttpGet("{id:length(24)}")]
+        [HttpGet("jobs/{id:length(24)}")]
         public async Task<ActionResult<IngestJob>> GetIngestJobById(string id)
         {
             var ingestJob = await _ingestJobService.GetIngestJobById(id);
@@ -57,6 +57,22 @@ namespace property_price_api.Controllers
             }
 
             return ingestJob;
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("ingested-price")]
+        public async Task<ActionResult<IngestedPriceResponse>> GetIngestedTransactionPrice([FromQuery] string postcode)
+        {
+            var jobs = await _ingestJobService.GetIngestJobs(true, postcode);
+            if (!jobs.Any())
+            {
+                return NotFound();
+            }
+            var meanIngestedPrice = jobs.Select(x => x.TransactionPrice).Average();
+            var res = new IngestedPriceResponse(postcode, (int)meanIngestedPrice);
+            return Ok(res);
+
         }
     }
 }
