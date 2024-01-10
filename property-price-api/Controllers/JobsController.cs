@@ -74,6 +74,23 @@ namespace property_price_api.Controllers
             return Ok(res);
 
         }
+
+        [Authorize]
+        [HttpDelete("jobs/{id:length(24)}")]
+        public async Task<IActionResult> DeleteIngestJobById(string id)
+        {
+            var job = await _ingestJobService.GetIngestJobById(id);
+
+            if (job is null)
+            {
+                return NotFound();
+            }
+
+            await _ingestJobService.DeleteIngestJobById(id);
+
+            return NoContent();
+
+        }
     }
 }
 

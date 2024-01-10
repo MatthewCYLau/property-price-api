@@ -11,6 +11,7 @@ namespace property_price_api.Services
         Task<string> CreateIngestJob(string postcode);
         Task<bool> UpdateIngestJobPriceById(string id, int transactionPrice);
         Task<IngestJob> GetIngestJobById(string? id);
+        Task DeleteIngestJobById(string id);
     }
 
     public class IngestJobService : IIngestJobService
@@ -90,6 +91,9 @@ namespace property_price_api.Services
 
             return await _context.IngestJobs.Find(expression).ToListAsync();
         }
+
+        public async Task DeleteIngestJobById(string id) =>
+         await _context.IngestJobs.DeleteOneAsync(x => x.Id == id);
     }
 }
 
