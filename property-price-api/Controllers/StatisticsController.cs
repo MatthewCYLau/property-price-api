@@ -12,10 +12,13 @@ namespace property_price_api.Controllers
     {
 
         private readonly IPriceSuggestionService _priceSuggestionService;
+        private readonly IUserService _userService;
 
-        public StatisticsController(IPriceSuggestionService priceSuggestionService)
+
+        public StatisticsController(IPriceSuggestionService priceSuggestionService, IUserService userService)
         {
             _priceSuggestionService = priceSuggestionService;
+            _userService = userService;
         }
 
         [Authorize]
@@ -24,6 +27,14 @@ namespace property_price_api.Controllers
         {
             
             return await _priceSuggestionService.GetPriceSuggestionsStatistics();
+        }
+
+        [Authorize]
+        [HttpGet("users")]
+        public async Task<ActionResult<UsersStatisticsResponse>> GetUsersStatistics()
+        {
+
+            return await _userService.GetUsersStatistics();
         }
     }
 }

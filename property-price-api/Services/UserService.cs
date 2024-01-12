@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Helpers;
 using property_price_api.Models;
+using System.Linq.Expressions;
 
 namespace property_price_api.Services
 {
@@ -23,6 +24,7 @@ namespace property_price_api.Services
         Task<UserDto> GetCurrentUser();
         Task<bool> DeleteUser(string id);
         Task<bool> UpdateUserById(string id, UpdateUserRequest updateUserRequest);
+        Task<UsersStatisticsResponse> GetUsersStatistics();
     }
 
     public class UserService: IUserService
@@ -161,6 +163,20 @@ namespace property_price_api.Services
             var httpContext = _httpContextAccessor.HttpContext;
             var _userDto = (Task<UserDto>)httpContext.Items["User"];
             return _userDto.Result.Id == id;
+        }
+
+        public async Task<UsersStatisticsResponse> GetUsersStatistics()
+        {
+            var renterCount = await GetUsersStatisticsByExpression(x => x.UserType == UserTypes.Renter);
+
+            return new UsersStatisticsResponse(
+                (int)renterCount
+                );
+        }
+
+        private async Task<long> GetUsersStatisticsByExpression(Expression<Func<User, bool>> expression)
+        {
+            return await _context.Users.CountDocumentsAsync(Builders<User>.Filter.Where(expression));
         }
     }
 }
