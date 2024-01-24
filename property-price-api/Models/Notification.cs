@@ -23,7 +23,7 @@ namespace property_price_api.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string NotifierId { get; set; }
 
-        public string NotificationType { get; set; } = null!;
+        public string NotificationType { get; set; }
 
         public Notification(
             bool readStatus,

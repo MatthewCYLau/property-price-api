@@ -9,7 +9,7 @@ namespace property_price_api.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        public string Postcode { get; set; } = null!;
+        public string Postcode { get; set; }
 
         public int TransactionPrice { get; set; } = 0;
 
