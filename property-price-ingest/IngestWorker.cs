@@ -33,9 +33,9 @@ public sealed class IngestWorker : BackgroundService
     {
         _logger.LogInformation("{0} is running...", nameof(IngestWorker));
         _logger.LogInformation("Start listening to messages from Cloud Pub/Sub...");
-        await _subscriberClient.StartAsync((message, token) =>
+        await _subscriberClient.StartAsync((message, _) =>
         {
-            string text = System.Text.Encoding.UTF8.GetString(message.Data.ToArray());
+            var text = System.Text.Encoding.UTF8.GetString(message.Data.ToArray());
             _logger.LogInformation("Received message from Cloud Pub Sub: {0}", message.MessageId);
             var result = JsonConvert.DeserializeObject<CloudPubSubMessage>(text);
             _logger.LogInformation("Ingest job ID: {0}; postcode: {0}", result.JobId, result.PostCode);
@@ -47,7 +47,7 @@ public sealed class IngestWorker : BackgroundService
             }
             catch (Exception e)
             {
-                _logger.LogError("Update job failed: {0} with execption {1}", result.JobId, e.Message);
+                _logger.LogError("Update job failed: {0} with exception {1}", result.JobId, e.Message);
                 return Task.FromResult(SubscriberClient.Reply.Nack);
             }
             

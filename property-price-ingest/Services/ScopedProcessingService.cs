@@ -51,7 +51,6 @@ namespace property_price_ingest.Services
                 ++_executionCount;
             }
             _logger.LogInformation("Operation complete. Time taken in seconds: {0}", timer.Elapsed.TotalSeconds);
-            return;
         }
 
         private async Task<List<Post>> GetJsonPlaceholderPosts()
