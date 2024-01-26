@@ -24,15 +24,13 @@ namespace property_price_api.Services
 
         public async Task<string> UploadFileAsync(IFormFile imageFile)
         {
-            using (var memoryStream = new MemoryStream())
-            {
-                await imageFile.CopyToAsync(memoryStream);
-                _logger.LogInformation("Uploading image {0} to Google Cloud Storage bucket {1}", imageFile.FileName, _bucketName);
-                var timestamp = DateTime.Now.ToFileTime();
-                string uniqueFileName = string.Concat(timestamp, "-", imageFile.FileName);
-                var dataObject = await _storageClient.UploadObjectAsync(_bucketName, uniqueFileName, imageFile.ContentType, memoryStream);
-                return string.Format("{0}/{1}/{2}", GOOGLE_CLOUD_STORAGE_BASE_URL, _bucketName, uniqueFileName);
-            }
+            using var memoryStream = new MemoryStream();
+            await imageFile.CopyToAsync(memoryStream);
+            _logger.LogInformation("Uploading image {0} to Google Cloud Storage bucket {1}", imageFile.FileName, _bucketName);
+            var timestamp = DateTime.Now.ToFileTime();
+            string uniqueFileName = string.Concat(timestamp, "-", imageFile.FileName);
+            await _storageClient.UploadObjectAsync(_bucketName, uniqueFileName, imageFile.ContentType, memoryStream);
+            return $"{GOOGLE_CLOUD_STORAGE_BASE_URL}/{_bucketName}/{uniqueFileName}";
         }
     }
 }
