@@ -1,3 +1,5 @@
+using property_price_purchase_service.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -5,6 +7,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDbContext<PostgreSQLDbContext>();
 
 // Configure CORS
 builder.Services.AddCors(policyBuilder =>
