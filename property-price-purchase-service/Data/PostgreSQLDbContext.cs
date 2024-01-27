@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using property_price_purchase_service.Models;
 
 namespace property_price_purchase_service.Data;
 
@@ -16,4 +17,6 @@ public class PostgreSQLDbContext: DbContext
         const string sectionName = "PostgreSQLDatabase";
         options.UseNpgsql(Configuration.GetConnectionString(sectionName));
     }
+    
+    public DbSet<Order> Orders { get; set; }
 }
