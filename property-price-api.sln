@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unit-tests", "unit-tests\un
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-ingest", "property-price-ingest\property-price-ingest.csproj", "{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-purchase-service", "property-price-purchase-service\property-price-purchase-service.csproj", "{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BADCB96D-B7BF-4E3A-9232-E56EACB23C4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
