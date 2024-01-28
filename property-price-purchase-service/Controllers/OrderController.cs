@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using property_price_purchase_service.Services;
 
 namespace property_price_purchase_service.Controllers;
 
@@ -6,6 +7,17 @@ namespace property_price_purchase_service.Controllers;
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {
+    private readonly IOrdersService _ordersService;
+
+    public OrdersController(IOrdersService ordersService)
+    {
+        _ordersService = ordersService;
+    }
+
     [HttpGet]
-    public string Ping() => "pong!";
+    public IActionResult GetOrders()
+    {
+        var orders =_ordersService.GetOrders();
+        return Ok(orders);
+    }
 }
