@@ -1,4 +1,6 @@
+using AutoMapper;
 using property_price_purchase_service.Data;
+using property_price_purchase_service.Profiles;
 using property_price_purchase_service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,14 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<PostgreSQLDbContext>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
+
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new OrderProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 // Configure CORS
 builder.Services.AddCors(policyBuilder =>

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using property_price_purchase_service.Models;
 using property_price_purchase_service.Services;
 
 namespace property_price_purchase_service.Controllers;
@@ -19,5 +20,12 @@ public class OrdersController : ControllerBase
     {
         var orders =_ordersService.GetOrders();
         return Ok(orders);
+    }
+    
+    [HttpPost]
+    public IActionResult CreateOrder(CreateOrderRequest request)
+    {
+        _ordersService.CreateOrder(request);
+        return Ok(new { message = "Order created" });
     }
 }

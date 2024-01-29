@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.15">
           <PrivateAssets>all</PrivateAssets>
@@ -23,6 +24,7 @@
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
+
 
 
 </Project>

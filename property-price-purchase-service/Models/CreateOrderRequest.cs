@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace property_price_purchase_service.Models;
 
-public class Order
+public class CreateOrderRequest
 {
-    public int Id { get; set; }
+    [Required]
     public string Reference { get; set; }
 }
