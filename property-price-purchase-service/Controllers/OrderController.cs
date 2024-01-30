@@ -28,4 +28,18 @@ public class OrdersController : ControllerBase
         _ordersService.CreateOrder(request);
         return Ok(new { message = "Order created" });
     }
+    
+    [HttpGet("{id}")]
+    public ActionResult<Order> GetOrderById(int id)
+    {
+        var order =_ordersService.GetOrderById(id);
+        return Ok(order);
+    }
+    
+    [HttpDelete("{id}")]
+    public IActionResult DeleteOrderById(int id)
+    {
+        _ordersService.DeleteOrderById(id);
+        return Ok(new { message = "Order deleted" });
+    }
 }

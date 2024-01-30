@@ -8,6 +8,8 @@ public interface IOrdersService
 {
     IEnumerable<Order> GetOrders();
     void CreateOrder(CreateOrderRequest request);
+    void DeleteOrderById(int id);
+    Order GetOrderById(int id);
 }
 
 public class OrdersService : IOrdersService
@@ -31,5 +33,19 @@ public class OrdersService : IOrdersService
         var order = _mapper.Map<Order>(request);
         _dbContext.Orders.Add(order);
         _dbContext.SaveChanges();
+    }
+    
+    public void DeleteOrderById(int id)
+    {
+        var order = GetOrderById(id);
+        _dbContext.Orders.Remove(order);
+        _dbContext.SaveChanges();
+    }
+    
+    public Order GetOrderById(int id)
+    {
+        var user = _dbContext.Orders.Find(id);
+        if (user == null) throw new KeyNotFoundException("Order not found");
+        return user;
     }
 } 
