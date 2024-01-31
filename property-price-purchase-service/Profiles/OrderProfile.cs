@@ -7,6 +7,6 @@ public class OrderProfile: Profile
 {
     public OrderProfile()
     {
-        CreateMap<CreateOrderRequest, Order>();
+        CreateMap<OrderRequest, Order>();
     }
 }

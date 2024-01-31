@@ -23,7 +23,7 @@ public class OrdersController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult CreateOrder(CreateOrderRequest request)
+    public IActionResult CreateOrder(OrderRequest request)
     {
         _ordersService.CreateOrder(request);
         return Ok(new { message = "Order created" });
@@ -33,6 +33,13 @@ public class OrdersController : ControllerBase
     public ActionResult<Order> GetOrderById(int id)
     {
         var order =_ordersService.GetOrderById(id);
+        return Ok(order);
+    }
+    
+    [HttpPatch("{id}")]
+    public ActionResult<Order> UpdateOrderById(int id, OrderRequest request)
+    {
+        var order =_ordersService.UpdateOrderById(id, request);
         return Ok(order);
     }
     

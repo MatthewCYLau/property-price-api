@@ -7,8 +7,9 @@ namespace property_price_purchase_service.Services;
 public interface IOrdersService
 {
     IEnumerable<Order> GetOrders();
-    void CreateOrder(CreateOrderRequest request);
+    void CreateOrder(OrderRequest request);
     void DeleteOrderById(int id);
+    Order UpdateOrderById(int id, OrderRequest request);
     Order GetOrderById(int id);
 }
 
@@ -28,7 +29,7 @@ public class OrdersService : IOrdersService
         return _dbContext.Orders;
     }
 
-    public void CreateOrder(CreateOrderRequest request)
+    public void CreateOrder(OrderRequest request)
     {
         var order = _mapper.Map<Order>(request);
         _dbContext.Orders.Add(order);
@@ -47,5 +48,14 @@ public class OrdersService : IOrdersService
         var user = _dbContext.Orders.Find(id);
         if (user == null) throw new KeyNotFoundException("Order not found");
         return user;
+    }
+    
+    public Order UpdateOrderById(int id, OrderRequest request)
+    {
+        var order = _dbContext.Orders.Find(id);
+        _mapper.Map(request, order);
+        _dbContext.Orders.Update(order);
+        _dbContext.SaveChanges();
+        return order;
     }
 } 
