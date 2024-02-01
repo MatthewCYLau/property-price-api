@@ -9,6 +9,7 @@ public class Order
     public int Id { get; set; }
     public string Reference { get; set; }
     
-    [ForeignKey("ProductFK")]
+    [ForeignKey(nameof(Product))]
+    public int ProductId { get; set; }
     public Product Product { get; set; }
 }
