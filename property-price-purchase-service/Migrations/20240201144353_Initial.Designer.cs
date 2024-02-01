@@ -11,8 +11,8 @@ using property_price_purchase_service.Data;
 namespace property_price_purchase_service.Migrations
 {
     [DbContext(typeof(PostgreSQLDbContext))]
-    [Migration("20240129180236_OrderReference")]
-    partial class OrderReference
+    [Migration("20240201144353_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,13 +32,46 @@ namespace property_price_purchase_service.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ProductFK")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Reference")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductFK");
+
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("property_price_purchase_service.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("property_price_purchase_service.Models.Order", b =>
+                {
+                    b.HasOne("property_price_purchase_service.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

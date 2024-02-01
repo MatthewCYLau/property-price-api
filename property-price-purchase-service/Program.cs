@@ -13,10 +13,13 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<PostgreSQLDbContext>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
+builder.Services.AddScoped<IProductsService, ProductsService>();
+
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new OrderProfile());
+    mc.AddProfile(new ProductProfile());
 });
 
 IMapper mapper = mapperConfig.CreateMapper();

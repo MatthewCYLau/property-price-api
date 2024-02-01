@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using property_price_purchase_service.Data;
 using property_price_purchase_service.Models;
 
@@ -17,21 +18,24 @@ public class OrdersService : IOrdersService
 {
     private readonly PostgreSQLDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly IProductsService _productsService;
     
-    public OrdersService(PostgreSQLDbContext dbContext, IMapper mapper)
+    public OrdersService(PostgreSQLDbContext dbContext, IMapper mapper, IProductsService productsService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _productsService = productsService;
     }
     
     public IEnumerable<Order> GetOrders()
     {
-        return _dbContext.Orders;
+        return _dbContext.Orders.Include(x => x.Product);
     }
 
     public void CreateOrder(OrderRequest request)
     {
         var order = _mapper.Map<Order>(request);
+        order.Product = _productsService.GetProductById(1);
         _dbContext.Orders.Add(order);
         _dbContext.SaveChanges();
     }
