@@ -10,6 +10,7 @@ public interface IProductsService
 
     void CreateProduct(ProductRequest request);
     Product GetProductById(int id);
+    void DeleteProductById(int id);
 }
 
 public class ProductsService: IProductsService
@@ -40,5 +41,12 @@ public class ProductsService: IProductsService
         var product = _dbContext.Products.Find(id);
         if (product == null) throw new KeyNotFoundException("Product not found");
         return product;
+    }
+    
+    public void DeleteProductById(int id)
+    {
+        var product = GetProductById(id);
+        _dbContext.Products.Remove(product);
+        _dbContext.SaveChanges();
     }
 }

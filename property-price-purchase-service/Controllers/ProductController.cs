@@ -28,4 +28,11 @@ public class ProductController: ControllerBase
         _productsService.CreateProduct(request);
         return Ok(new { message = "Product created" });
     }
+    
+    [HttpDelete("{id}")]
+    public IActionResult DeleteProductById(int id)
+    {
+        _productsService.DeleteProductById(id);
+        return Ok(new { message = "Product deleted" });
+    }
 }
