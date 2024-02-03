@@ -8,4 +8,5 @@ public class Product
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ProductId { get; set; }
     public string Name { get; set; }
+    public ICollection<Order> Orders { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AutoMapper;
 using property_price_purchase_service.Data;
 using property_price_purchase_service.Profiles;
@@ -31,6 +32,12 @@ builder.Services.AddCors(policyBuilder =>
         policy.WithOrigins("*").WithMethods("GET", "POST", "DELETE", "PUT", "PATCH")
             .AllowAnyHeader())
 );
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 var app = builder.Build();
 
