@@ -45,6 +45,15 @@ docker run -p 5001:8080 property-price-api:v1
 curl http://localhost:5001/ping
 ```
 
+## EF Core migration
+
+- See documentation [here](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
+
+```bash
+dotnet ef migrations add AddNewColumn
+dotnet ef database update
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
