@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace property_price_purchase_service.Models;
 
-public class Order
+public class Order: Base
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderId { get; set; }

@@ -20,5 +20,23 @@ public class PostgreSQLDbContext: DbContext
     
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
+    
+    public override int SaveChanges()
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e is { Entity: Base, State: EntityState.Added or EntityState.Modified });
 
+        foreach (var entityEntry in entries)
+        {
+            ((Base)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
+
+            if (entityEntry.State == EntityState.Added)
+            {
+                ((Base)entityEntry.Entity).CreatedDate = DateTime.UtcNow;
+            }
+        }
+
+        return base.SaveChanges();
+    }
 }
