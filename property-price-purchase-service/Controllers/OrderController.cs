@@ -36,7 +36,7 @@ public class OrdersController : ControllerBase
         return Ok(order);
     }
     
-    [HttpPatch("{id}")]
+    [HttpPut("{id}")]
     public ActionResult<Order> UpdateOrderById(int id, OrderRequest request)
     {
         var order =_ordersService.UpdateOrderById(id, request);

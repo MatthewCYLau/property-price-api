@@ -35,4 +35,11 @@ public class ProductController: ControllerBase
         _productsService.DeleteProductById(id);
         return Ok(new { message = "Product deleted" });
     }
+    
+    [HttpPut("{id}")]
+    public ActionResult<Product> UpdateProductById(int id, ProductRequest request)
+    {
+        var order =_productsService.UpdateProductById(id, request);
+        return Ok(order);
+    }
 }

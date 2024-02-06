@@ -12,6 +12,7 @@ public interface IProductsService
     void CreateProduct(ProductRequest request);
     Product GetProductById(int id);
     void DeleteProductById(int id);
+    Product UpdateProductById(int id, ProductRequest request);
 }
 
 public class ProductsService: IProductsService
@@ -49,5 +50,14 @@ public class ProductsService: IProductsService
         var product = GetProductById(id);
         _dbContext.Products.Remove(product);
         _dbContext.SaveChanges();
+    }
+    
+    public Product UpdateProductById(int id, ProductRequest request)
+    {
+        var product = _dbContext.Products.Find(id);
+        _mapper.Map(request, product);
+        _dbContext.Products.Update(product);
+        _dbContext.SaveChanges();
+        return product;
     }
 }
