@@ -31,18 +31,18 @@ public sealed class IngestWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("{0} is running...", nameof(IngestWorker));
+        _logger.LogInformation("{worker} is running...", nameof(IngestWorker));
         _logger.LogInformation("Start listening to messages from Cloud Pub/Sub...");
         await _subscriberClient.StartAsync((message, _) =>
         {
             var text = System.Text.Encoding.UTF8.GetString(message.Data.ToArray());
-            _logger.LogInformation("Received message from Cloud Pub Sub: {0}", message.MessageId);
+            _logger.LogInformation("Received message from Cloud Pub Sub: {id}", message.MessageId);
             var result = JsonConvert.DeserializeObject<CloudPubSubMessage>(text);
-            _logger.LogInformation("Ingest job ID: {0}; postcode: {0}", result.JobId, result.PostCode);
+            _logger.LogInformation("Ingest job ID: {jodId}; postcode: {postcode}", result.JobId, result.PostCode);
             try
             {
                 _ingestJobService.UpdateIngestJobPriceById(result.JobId, new Random().Next(500_000, 1_000_000));
-                _logger.LogInformation("Update job complete: {0}", result.JobId);
+                _logger.LogInformation("Update job complete: {jodId}", result.JobId);
                 return Task.FromResult(SubscriberClient.Reply.Ack);
             }
             catch (Exception e)
@@ -56,7 +56,7 @@ public sealed class IngestWorker : BackgroundService
 
     public override async Task StopAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("{0} is stopping...", nameof(IngestWorker));
+        _logger.LogInformation("{worker} is stopping...", nameof(IngestWorker));
         _logger.LogInformation("Stop listening to messages from Cloud Pub/Sub...");
         await _subscriberClient.StopAsync(stoppingToken);
         await base.StopAsync(stoppingToken);
