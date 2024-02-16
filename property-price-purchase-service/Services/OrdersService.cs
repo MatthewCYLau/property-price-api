@@ -43,6 +43,12 @@ public class OrdersService : IOrdersService
     public void DeleteOrderById(int id)
     {
         var order = GetOrderById(id);
+        
+        if ((DateTime.Now - order.CreatedDate).TotalDays < 1)
+        {
+            throw new BadHttpRequestException("Cannot delete order created within one day");
+        }
+        
         _dbContext.Orders.Remove(order);
         _dbContext.SaveChanges();
     }
