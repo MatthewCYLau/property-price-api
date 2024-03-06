@@ -22,6 +22,13 @@ public class ProductController: ControllerBase
         return Ok(products);
     }
     
+    [HttpGet("{id}")]
+    public ActionResult<Order> GetProductById(int id)
+    {
+        var product =_productsService.GetProductById(id);
+        return Ok(product);
+    }
+    
     [HttpPost]
     public IActionResult CreateProduct(ProductRequest request)
     {

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using property_price_purchase_service.Data;
 using property_price_purchase_service.Models;
 
@@ -17,13 +18,15 @@ public interface IProductsService
 
 public class ProductsService: IProductsService
 {
+    private readonly IConfiguration _configuration;
     private readonly PostgreSQLDbContext _dbContext;
     private readonly IMapper _mapper;
     
-    public ProductsService(PostgreSQLDbContext dbContext, IMapper mapper)
+    public ProductsService(IConfiguration configuration, PostgreSQLDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _configuration = configuration;
     }
     
     public IEnumerable<Product> GetProducts()
@@ -40,9 +43,28 @@ public class ProductsService: IProductsService
     
     public Product GetProductById(int id)
     {
-        var product = _dbContext.Products.Find(id);
-        if (product == null) throw new KeyNotFoundException("Product not found");
-        return product;
+        const string queryString = "SELECT * FROM \"Products\" WHERE \"ProductId\" = @productId;";
+        const string sectionName = "PostgreSQLDatabase";
+        using var connection = new NpgsqlConnection(_configuration.GetConnectionString(sectionName));
+        var command = new NpgsqlCommand(queryString, connection);
+        command.Parameters.AddWithValue("@productId", id);
+
+        var product = new Product();
+        {
+            connection.Open();
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                product.ProductId = (int)reader["ProductId"];
+                product.Name = reader["Name"].ToString();
+                product.CreatedDate = (DateTime)reader["CreatedDate"];
+                product.UpdatedDate = (DateTime)reader["UpdatedDate"];
+
+            }
+            
+            reader.Close();
+            return product;
+        }
     }
     
     public void DeleteProductById(int id)
