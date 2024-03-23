@@ -37,24 +37,25 @@ public sealed class IngestWorker : BackgroundService
     {
         _logger.LogInformation("{worker} is running...", nameof(IngestWorker));
         _logger.LogInformation("Start listening to messages from Cloud Pub/Sub...");
-        await _subscriberClient.StartAsync((message, _) =>
+        await _subscriberClient.StartAsync(async (message, _) =>
         {
             var text = System.Text.Encoding.UTF8.GetString(message.Data.ToArray());
             _logger.LogInformation("Received message from Cloud Pub Sub: {id}", message.MessageId);
             var result = JsonConvert.DeserializeObject<CloudPubSubMessage>(text);
             _logger.LogInformation("Ingest job ID: {jodId}; postcode: {postcode}", result.JobId, result.PostCode);
+            var randomNumber = await GetRandomNumberViaApi();
+            _logger.LogInformation("Random number is: {randomNumber}", randomNumber);
             try
             {
-                var randomNumber = GetRandomNumberViaApi();
-                _logger.LogInformation("Random number is: {randomNumber}", randomNumber);
+                
                 _ingestJobService.UpdateIngestJobPriceById(result.JobId, new Random().Next(500_000, 1_000_000));
                 _logger.LogInformation("Update job complete: {jodId}", result.JobId);
-                return Task.FromResult(SubscriberClient.Reply.Ack);
+                return await Task.FromResult(SubscriberClient.Reply.Ack);
             }
             catch (Exception e)
             {
                 _logger.LogError("Update job failed: {0} with exception {1}", result.JobId, e.Message);
-                return Task.FromResult(SubscriberClient.Reply.Nack);
+                return await Task.FromResult(SubscriberClient.Reply.Nack);
             }
             
         });
