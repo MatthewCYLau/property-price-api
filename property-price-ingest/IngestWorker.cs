@@ -73,7 +73,7 @@ public sealed class IngestWorker : BackgroundService
     {
         var httpClient = _httpClientFactory.CreateClient(HttpClientConstants.RandomNumberApiHttpClientName);
         var httpResponseMessage = await httpClient.GetAsync(
-            "random?min=100&max=1000");
+            "api/v1.0/random?min=100&max=1000");
 
         if (!httpResponseMessage.IsSuccessStatusCode) return 0;
         await using var contentStream =

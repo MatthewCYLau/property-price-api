@@ -18,7 +18,7 @@ namespace property_price_api.Services
     {
 
         private readonly MongoDbContext _context;
-        private static readonly int DAILY_LIMIT = 5;
+        private static readonly int DAILY_LIMIT = 500;
         private readonly ILogger _logger;
 
         public IngestJobService(
