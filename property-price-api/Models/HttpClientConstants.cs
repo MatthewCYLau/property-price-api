@@ -1,8 +1,9 @@
 ﻿namespace property_price_api.Models
 {
-	public class HttpClientConstants
+	public static class HttpClientConstants
 	{
-		public const string jsonPlaceholderHttpClientName = "JsonPlaceholder";
+		public const string JsonPlaceholderHttpClientName = "JsonPlaceholder";
+		public const string RandomNumberApiHttpClientName = "RandomNumberApi";
 	}
 }
 

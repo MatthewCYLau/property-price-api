@@ -30,9 +30,16 @@ builder.Services.AddSubscriberClient(subscriptionName);
 builder.Services.AddSingleton<IIngestJobService, IngestJobService>();
 
 // Configure HTTP client
-builder.Services.AddHttpClient(HttpClientConstants.jsonPlaceholderHttpClientName, httpClient =>
+builder.Services.AddHttpClient(HttpClientConstants.JsonPlaceholderHttpClientName, httpClient =>
 {
     httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
+    httpClient.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+});
+
+builder.Services.AddHttpClient(HttpClientConstants.RandomNumberApiHttpClientName, httpClient =>
+{
+    httpClient.BaseAddress = new Uri("http://www.randomnumberapi.com/");
     httpClient.DefaultRequestHeaders.Add(
         HeaderNames.Accept, "application/json");
 });

@@ -55,7 +55,7 @@ namespace property_price_ingest.Services
 
         private async Task<List<Post>> GetJsonPlaceholderPosts()
         {
-            var httpClient = _httpClientFactory.CreateClient(HttpClientConstants.jsonPlaceholderHttpClientName);
+            var httpClient = _httpClientFactory.CreateClient(HttpClientConstants.JsonPlaceholderHttpClientName);
             var httpResponseMessage = await httpClient.GetAsync(
                 "posts?_start=0&_limit=2");
 

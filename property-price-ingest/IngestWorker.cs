@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using property_price_api.Models;
 using property_price_api.Services;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace property_price_ingest;
 
@@ -12,13 +13,15 @@ public sealed class IngestWorker : BackgroundService
     private readonly IHostApplicationLifetime _lifetime;
     private readonly SubscriberClient _subscriberClient;
     private readonly IIngestJobService _ingestJobService;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public IngestWorker(
         IServiceScopeFactory serviceScopeFactory,
         ILogger<IngestWorker> logger,
         IHostApplicationLifetime lifeTime,
         SubscriberClient subscriberClient,
-        IIngestJobService ingestJobService
+        IIngestJobService ingestJobService,
+        IHttpClientFactory httpClientFactory
         )
     {
         _serviceScopeFactory = serviceScopeFactory;
@@ -26,6 +29,7 @@ public sealed class IngestWorker : BackgroundService
         _lifetime = lifeTime;
         _subscriberClient = subscriberClient;
         _ingestJobService = ingestJobService;
+        _httpClientFactory = httpClientFactory;
     }
 
 
@@ -41,6 +45,8 @@ public sealed class IngestWorker : BackgroundService
             _logger.LogInformation("Ingest job ID: {jodId}; postcode: {postcode}", result.JobId, result.PostCode);
             try
             {
+                var randomNumber = GetRandomNumberViaApi();
+                _logger.LogInformation("Random number is: {randomNumber}", randomNumber);
                 _ingestJobService.UpdateIngestJobPriceById(result.JobId, new Random().Next(500_000, 1_000_000));
                 _logger.LogInformation("Update job complete: {jodId}", result.JobId);
                 return Task.FromResult(SubscriberClient.Reply.Ack);
@@ -60,6 +66,22 @@ public sealed class IngestWorker : BackgroundService
         _logger.LogInformation("Stop listening to messages from Cloud Pub/Sub...");
         await _subscriberClient.StopAsync(stoppingToken);
         await base.StopAsync(stoppingToken);
+    }
+    
+    private async Task<int> GetRandomNumberViaApi()
+    {
+        var httpClient = _httpClientFactory.CreateClient(HttpClientConstants.RandomNumberApiHttpClientName);
+        var httpResponseMessage = await httpClient.GetAsync(
+            "random?min=100&max=1000");
+
+        if (!httpResponseMessage.IsSuccessStatusCode) return 0;
+        await using var contentStream =
+            await httpResponseMessage.Content.ReadAsStreamAsync();
+
+        var res = (List<int>)await JsonSerializer.DeserializeAsync
+            <IEnumerable<int>>(contentStream);
+        return res[0];
+
     }
 }
 
