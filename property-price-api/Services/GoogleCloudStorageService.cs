@@ -26,7 +26,7 @@ namespace property_price_api.Services
         {
             using var memoryStream = new MemoryStream();
             await imageFile.CopyToAsync(memoryStream);
-            _logger.LogInformation("Uploading image {0} to Google Cloud Storage bucket {1}", imageFile.FileName, _bucketName);
+	    _logger.LogInformation("Uploading image {0} to Google Cloud Storage bucket {1}", Regex.Replace((imageFile.FileName).ToString(), "\n|\r", "-"), _bucketName);
             var timestamp = DateTime.Now.ToFileTime();
             string uniqueFileName = string.Concat(timestamp, "-", imageFile.FileName);
             await _storageClient.UploadObjectAsync(_bucketName, uniqueFileName, imageFile.ContentType, memoryStream);
