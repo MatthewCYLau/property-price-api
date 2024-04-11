@@ -17,4 +17,17 @@ public class UsersControllerTests
         var users = await usersController.Get();
         Assert.That(users.Count == 1);
     }
+    
+    [Test]
+    public async Task GetUserByIdShould()
+    {
+        const string userId = "1";
+        const string email = "hello@example.com";
+        var newUser = new UserDto(userId, email, "Renter");
+        var mockUsersService = new Mock<IUserService>();
+        mockUsersService.Setup(x => x.GetUserById("1")).Returns(Task.FromResult(newUser));
+        var usersController = new UsersController(mockUsersService.Object);
+        var user = await usersController.GetUserById(userId);
+        Assert.That(user.Value.Email == email);
+    }
 }
