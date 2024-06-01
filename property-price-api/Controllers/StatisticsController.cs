@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Services;
@@ -6,6 +7,7 @@ using property_price_api.Services;
 namespace property_price_api.Controllers
 {
 
+    [EnableRateLimiting("fixed")]
     [ApiController]
     [Route("api/[controller]")]
     public class StatisticsController : ControllerBase

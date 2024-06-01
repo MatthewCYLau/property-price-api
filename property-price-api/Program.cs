@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Threading.RateLimiting;
+using AutoMapper;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using property_price_api.Data;
 using property_price_api.Helpers;
@@ -55,6 +57,22 @@ builder.Services.AddCors(policyBuilder =>
             .AllowAnyHeader())
 );
 
+// Configure rate limiting
+builder.Services.Configure<RateLimitOptions>(
+    builder.Configuration.GetSection(RateLimitOptions.CustomRateLimit));
+
+var rateLimitOptions = new RateLimitOptions();
+builder.Configuration.GetSection(RateLimitOptions.CustomRateLimit).Bind(rateLimitOptions);
+var fixedPolicy = "fixed";
+builder.Services.AddRateLimiter(_ => _
+    .AddFixedWindowLimiter(policyName: fixedPolicy, options =>
+    {
+        options.PermitLimit = rateLimitOptions.PermitLimit;
+        options.Window = TimeSpan.FromSeconds(rateLimitOptions.Window);
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = rateLimitOptions.QueueLimit;
+    }));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,6 +82,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRateLimiter();
 app.UseCors();
 app.UseExceptionHandler("/error");
 
