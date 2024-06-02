@@ -23,7 +23,14 @@ public class TransactionsController: ControllerBase
     [HttpGet("transactions/{id}")]
     public async Task<IActionResult> Get(string id)
     {
-        return Ok(await _transactionService.GetAsync(id));
+        var transaction = await _transactionService.GetAsync(id);
+        
+        if (transaction is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(transaction);
     }
     
     [HttpPost("transactions")]

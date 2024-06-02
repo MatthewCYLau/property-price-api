@@ -29,14 +29,14 @@ public class TransactionService: ITransactionService
         await _container.DeleteItemAsync<Transaction>(id, new PartitionKey(id));
     }
 
-    public async Task<Transaction> GetAsync(string id)
+    public async Task<Transaction?> GetAsync(string id)
     {
         try
         {
             var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
             return response.Resource;
         }
-        catch (CosmosException) //For handling item not found and other exceptions
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return null;
         }
