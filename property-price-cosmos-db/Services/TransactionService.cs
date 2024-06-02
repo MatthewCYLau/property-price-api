@@ -56,8 +56,9 @@ public class TransactionService: ITransactionService
         return results;
     }
 
-    public async Task UpdateAsync(string id, Transaction item)
+    public async Task<Transaction> UpdateAsync(string id, Transaction item)
     {
-        await _container.UpsertItemAsync(item, new PartitionKey(id));
+        var response = await _container.UpsertItemAsync(item, new PartitionKey(id));
+        return response.Resource;
     }
 }

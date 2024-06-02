@@ -35,4 +35,18 @@ public class TransactionsController: ControllerBase
         return CreatedAtAction(nameof(Get), new { id = transaction.Id }, transaction);
 
     }
+    
+    [HttpDelete("transactions/{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        await _transactionService.DeleteAsync(id);
+        return NoContent();
+    }
+    
+    [HttpPut("transactions/{id}")]
+    public async Task<IActionResult> Edit([FromBody] Transaction item)
+    {
+        var transaction = await _transactionService.UpdateAsync(item.Id, item);
+        return Ok(transaction);
+    }
 }

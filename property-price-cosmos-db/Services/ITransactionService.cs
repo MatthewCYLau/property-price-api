@@ -7,6 +7,6 @@ public interface ITransactionService
     Task<IEnumerable<Transaction>> GetMultipleAsync(string query);
     Task<Transaction> GetAsync(string id);
     Task AddAsync(Transaction item);
-    Task UpdateAsync(string id, Transaction item);
+    Task<Transaction> UpdateAsync(string id, Transaction item);
     Task DeleteAsync(string id);
 }
