@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-ingest", "pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-purchase-service", "property-price-purchase-service\property-price-purchase-service.csproj", "{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-cosmos-db", "property-price-cosmos-db\property-price-cosmos-db.csproj", "{7B73FA9A-424E-42D0-989A-63B0FFB1F072}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6828F477-BEDB-4C7C-84EF-99BF10ACACAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B73FA9A-424E-42D0-989A-63B0FFB1F072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B73FA9A-424E-42D0-989A-63B0FFB1F072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B73FA9A-424E-42D0-989A-63B0FFB1F072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B73FA9A-424E-42D0-989A-63B0FFB1F072}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
