@@ -9,3 +9,11 @@ services:
       - POSTGRES_DB=property_price
       - POSTGRES_USER=db_user
       - POSTGRES_PASSWORD=password
+#  property-price-cosmos-db:
+#    build:
+#      context: .
+#      dockerfile: ./property-price-cosmos-db/Dockerfile
+#    image: property-price-cosmos-db
+#    container_name: property-price-cosmos-db
+#    ports:
+#      - "8080:8080"

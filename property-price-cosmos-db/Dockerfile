@@ -20,4 +20,5 @@ RUN dotnet publish "property-price-cosmos-db.csproj" -c $BUILD_CONFIGURATION -o 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "property-price-cosmos-db.dll"]
