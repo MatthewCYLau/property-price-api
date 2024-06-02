@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\property-price-api\property-price-api.csproj" />
+        <ProjectReference Include="..\property-price-cosmos-db\property-price-cosmos-db.csproj" />
     </ItemGroup>
 
 </Project>
