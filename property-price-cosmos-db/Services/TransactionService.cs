@@ -9,11 +9,15 @@ public class TransactionService: ITransactionService
     private readonly CosmosClient _client;
     private readonly CosmosDbOptions _options;
     private Container _container;
-
+    private readonly ILogger _logger;
     
-    public TransactionService(CosmosClient client, IOptions<CosmosDbOptions> options)
+    public TransactionService(
+        ILogger<TransactionService> logger,
+        CosmosClient client,
+        IOptions<CosmosDbOptions> options)
     {
         _client = client;
+        _logger = logger;
         _options = options.Value;
         _container = _client.GetContainer(_options.DatabaseId, _options.ContainerId);
     }
@@ -31,6 +35,7 @@ public class TransactionService: ITransactionService
 
     public async Task<Transaction?> GetAsync(string id)
     {
+        _logger.LogInformation("Getting transaction for ID {id}", id);
         try
         {
             var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
