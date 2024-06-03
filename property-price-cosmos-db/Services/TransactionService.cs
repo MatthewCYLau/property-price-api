@@ -47,9 +47,13 @@ public class TransactionService: ITransactionService
         }
     }
 
-    public async Task<IEnumerable<Transaction>> GetMultipleAsync(string queryString)
+    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool isComplete)
     {
-        var query = _container.GetItemQueryIterator<Transaction>(new QueryDefinition(queryString));
+        var parameterizedQuery = new QueryDefinition(
+                query: "SELECT * FROM transactions t WHERE t.isComplete = @isComplete"
+            )
+            .WithParameter("@isComplete", isComplete);
+        var query = _container.GetItemQueryIterator<Transaction>(queryDefinition: parameterizedQuery);
 
         var results = new List<Transaction>();
         while (query.HasMoreResults)

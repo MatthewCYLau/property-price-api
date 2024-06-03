@@ -16,9 +16,9 @@ public class TransactionsController: ControllerBase
     }
     
     [HttpGet("transactions")]
-    public async Task<IActionResult> List()
+    public async Task<IActionResult> List([FromQuery] bool isComplete = false)
     {
-        return Ok(await _transactionService.GetMultipleAsync("SELECT * FROM c"));
+        return Ok(await _transactionService.GetMultipleAsync(isComplete));
     }
     [HttpGet("transactions/{id}")]
     public async Task<IActionResult> Get(string id)
