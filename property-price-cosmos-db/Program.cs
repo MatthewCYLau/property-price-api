@@ -1,4 +1,5 @@
 using Microsoft.Azure.Cosmos;
+using Azure.Identity;
 using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
 using property_price_cosmos_db.Services;
@@ -6,7 +7,6 @@ using property_price_cosmos_db.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -20,6 +20,15 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
     return new CosmosClient(settings.ConnectionString);
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
+
+builder.Configuration.AddAzureKeyVault(
+    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+    new DefaultAzureCredential()
+    );
+
+var databaseConnectionString = builder.Configuration.GetConnectionString("MyDatabase");
+
+Console.WriteLine(databaseConnectionString);
 
 var app = builder.Build();
 

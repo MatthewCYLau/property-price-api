@@ -16,7 +16,7 @@ public class TransactionsController: ControllerBase
     }
     
     [HttpGet("transactions")]
-    public async Task<IActionResult> List([FromQuery] bool isComplete = false)
+    public async Task<IActionResult> List([FromQuery] bool? isComplete)
     {
         return Ok(await _transactionService.GetMultipleAsync(isComplete));
     }
