@@ -51,7 +51,7 @@ public class TransactionService: ITransactionService
     {
         QueryDefinition queryDefinition;
         
-        if (isComplete == null)
+        if (isComplete is null)
         {
             queryDefinition = new QueryDefinition(
                 query: "SELECT * FROM transactions"
