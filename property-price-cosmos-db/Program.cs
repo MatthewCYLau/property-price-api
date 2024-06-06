@@ -21,14 +21,14 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 
-builder.Configuration.AddAzureKeyVault(
-    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-    new DefaultAzureCredential()
-    );
-
-var databaseConnectionString = builder.Configuration.GetConnectionString("MyDatabase");
-
-Console.WriteLine(databaseConnectionString);
+// builder.Configuration.AddAzureKeyVault(
+//     new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+//     new DefaultAzureCredential()
+//     );
+//
+// var databaseConnectionString = builder.Configuration.GetConnectionString("MyDatabase");
+//
+// Console.WriteLine(databaseConnectionString);
 
 var app = builder.Build();
 
