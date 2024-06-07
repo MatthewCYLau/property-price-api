@@ -2,14 +2,17 @@ using Newtonsoft.Json;
 
 namespace property_price_cosmos_db.Models;
 
-public class Transaction
+public class Transaction(string? id, decimal amount, string description, bool completed)
 {
     [JsonProperty(PropertyName = "id")]
-    public string? Id { get; set; }
+    public string? Id { get; set; } = id;
+
     [JsonProperty(PropertyName = "amount")]
-    public decimal Amount { get; set; }
+    public decimal Amount { get; set; } = amount;
+
     [JsonProperty(PropertyName = "description")]
-    public string Description { get; set; }
+    public string Description { get; set; } = description;
+
     [JsonProperty(PropertyName = "isComplete")]
-    public bool Completed { get; set; }
+    public bool Completed { get; set; } = completed;
 }
