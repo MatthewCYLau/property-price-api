@@ -40,7 +40,14 @@ public class TransactionsController: ControllerBase
         transaction.Id = Guid.NewGuid().ToString();
         await _transactionService.AddAsync(transaction);
         return CreatedAtAction(nameof(Get), new { id = transaction.Id }, transaction);
+    }
+    
+    [HttpPost("transactions/{id}/comments")]
+    public async Task<IActionResult> UpdateTransactionComment(string id, [FromBody] Comment comment)
+    {
 
+        var transaction = await _transactionService.UpdateTransactionCommentsAsync(id, comment);
+        return Ok(transaction);
     }
     
     [HttpDelete("transactions/{id}")]

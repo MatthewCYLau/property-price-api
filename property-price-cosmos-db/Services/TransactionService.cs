@@ -28,6 +28,20 @@ public class TransactionService: ITransactionService
         await _container.CreateItemAsync(item, new PartitionKey(item.Id));
     }
 
+    public async Task<Transaction> UpdateTransactionCommentsAsync(string id, Comment comment)
+    {
+        List<PatchOperation> patchOperations = new List<PatchOperation>
+        {
+            PatchOperation.Replace("/comments",  new List<Comment>
+            {
+                new(Guid.NewGuid().ToString(), comment.Description)
+            })
+        };
+        
+        var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
+        return response.Resource;
+    }
+
     public async Task DeleteAsync(string id)
     {
         await _container.DeleteItemAsync<Transaction>(id, new PartitionKey(id));

@@ -15,4 +15,7 @@ public class Transaction(string? id, decimal amount, string description, bool co
 
     [JsonProperty(PropertyName = "isComplete")]
     public bool Completed { get; set; } = completed;
+
+    [JsonProperty(PropertyName = "comments")]
+    public List<Comment> Comments { get; set; } = new();
 }
