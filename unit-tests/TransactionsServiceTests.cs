@@ -32,7 +32,7 @@ public class TransactionsServiceTests
     public async Task GetTransactions()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetMultipleAsync(false);
+        var transactions = await transactionService.GetMultipleAsync(false, 100);
         Console.WriteLine("Retrieved {0} transactions from database.", transactions.Count());
         Assert.That(transactions.Count() > 0);
     }

@@ -13,9 +13,9 @@ public class TransactionsControllerTests
     {
         IEnumerable<Transaction> transactions = new Transaction[] { new Transaction("1", 100, "Test", false) };
         var mockTransactionService = new Mock<ITransactionService>();
-        mockTransactionService.Setup(x => x.GetMultipleAsync(false)).Returns(Task.FromResult(transactions));
+        mockTransactionService.Setup(x => x.GetMultipleAsync(false, 100)).Returns(Task.FromResult(transactions));
         var transactionsController = new TransactionsController(mockTransactionService.Object);
-        var transactionsResult = await transactionsController.List(false);
+        var transactionsResult = await transactionsController.List(false, 100);
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
 
         // Assert
