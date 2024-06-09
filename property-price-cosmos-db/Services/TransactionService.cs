@@ -61,7 +61,7 @@ public class TransactionService: ITransactionService
         }
     }
 
-    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete)
+    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount)
     {
         QueryDefinition queryDefinition;
         
@@ -88,6 +88,14 @@ public class TransactionService: ITransactionService
             results.AddRange(response.ToList());
         }
 
+        if (maxAmount is not null)
+        {
+            return
+                from i in results
+                where i.Amount < maxAmount
+                select i;
+        }
+        
         return results;
     }
 
