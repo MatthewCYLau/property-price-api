@@ -23,4 +23,20 @@ public class TransactionsControllerTests
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
         Assert.That(okResult.Value, Is.EqualTo(transactions));
     }
+    
+    [Test]
+    public async Task GetTransactionByIdShould()
+    {
+        Transaction transaction = new Transaction("1", 100, "Test", false);
+        var mockTransactionService = new Mock<ITransactionService>();
+        mockTransactionService.Setup(x => x.GetAsync("1")).Returns(Task.FromResult(transaction));
+        var transactionsController = new TransactionsController(mockTransactionService.Object);
+        var transactionsResult = await transactionsController.Get("1");
+        OkObjectResult? okResult = transactionsResult as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(okResult);
+        Assert.That(okResult.StatusCode, Is.EqualTo(200));
+        Assert.That(okResult.Value, Is.EqualTo(transaction));
+    }
 }
