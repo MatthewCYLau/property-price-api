@@ -11,13 +11,26 @@ namespace property_price_api.Controllers
     {
 
         private readonly IPropertyService _propertyService;
+        private readonly ILogger _logger;
 
-        public PropertiesController(IPropertyService propertyService) =>
+        public PropertiesController(ILogger<PropertiesController> logger, IPropertyService propertyService)
+        {
             _propertyService = propertyService;
+            _logger = logger;
+        }
 
         [HttpGet]
-        public async Task<List<PropertyDto>> Get() =>
-            await _propertyService.GetProperties();
+        public async Task<ActionResult<List<PropertyDto>>> Get(DateTime? startDate, DateTime? endDate)
+        {
+            _logger.LogInformation("Start date {date}", startDate.Value.Date);
+            if (endDate < startDate)
+            {
+                return BadRequest(new { message = "End date must be greater than start date" });
+            }  
+            var res = await _propertyService.GetProperties();
+            return Ok(res);
+        }
+           
 
         [HttpGet("{id:length(24)}/price-analysis")]
         public async Task<ActionResult<PriceAnalysisResponse>> GetPropertyPriceAnalysisById(string? id)
