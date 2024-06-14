@@ -27,7 +27,7 @@ namespace property_price_api.Controllers
             {
                 return BadRequest(new { message = "End date must be greater than start date" });
             }  
-            var res = await _propertyService.GetProperties();
+            var res = await _propertyService.GetProperties(startDate);
             return Ok(res);
         }
            

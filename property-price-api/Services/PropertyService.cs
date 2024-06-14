@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Helpers;
@@ -9,7 +10,7 @@ namespace property_price_api.Services
 
     public interface IPropertyService
     {
-        Task<List<PropertyDto>> GetProperties();
+        Task<List<PropertyDto>> GetProperties(DateTime? startDate);
         Task<PropertyDto?> GetPropertyById(string? id);
         Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
         Task<bool> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest);
@@ -38,14 +39,25 @@ namespace property_price_api.Services
             _httpContextAccessor = httpContextAccessor;            
         }
 
-        public async Task<List<PropertyDto>> GetProperties()
+        public async Task<List<PropertyDto>> GetProperties(DateTime? startDate)
         {
+            Expression<Func<Property,bool>> expression;
+            if (startDate != null)
+            {
+                expression = x => x.Created > startDate;
+            }
+            else
+            {
+                expression = _ => true;
+            }
+            
             var properties = await _context.Properties.Aggregate()
-            .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
-            .Unwind("User")
-            .As<Property>()
-            .SortByDescending(i => i.Created)
-            .ToListAsync();
+                .Match(expression)
+                .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
+                .Unwind("User")
+                .As<Property>()
+                .SortByDescending(i => i.Created)
+                .ToListAsync();
 
             var propertiesDto = _mapper.Map<List<PropertyDto>>(properties);
             return propertiesDto;
