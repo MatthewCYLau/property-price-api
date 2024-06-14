@@ -22,12 +22,11 @@ namespace property_price_api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PropertyDto>>> Get(DateTime? startDate, DateTime? endDate)
         {
-            _logger.LogInformation("Start date {date}", startDate.Value.Date);
             if (endDate < startDate)
             {
                 return BadRequest(new { message = "End date must be greater than start date" });
             }  
-            var res = await _propertyService.GetProperties(startDate);
+            var res = await _propertyService.GetProperties(startDate, endDate);
             return Ok(res);
         }
            

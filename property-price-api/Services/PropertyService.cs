@@ -10,7 +10,7 @@ namespace property_price_api.Services
 
     public interface IPropertyService
     {
-        Task<List<PropertyDto>> GetProperties(DateTime? startDate);
+        Task<List<PropertyDto>> GetProperties(DateTime? startDate, DateTime? endDate);
         Task<PropertyDto?> GetPropertyById(string? id);
         Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
         Task<bool> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest);
@@ -39,12 +39,12 @@ namespace property_price_api.Services
             _httpContextAccessor = httpContextAccessor;            
         }
 
-        public async Task<List<PropertyDto>> GetProperties(DateTime? startDate)
+        public async Task<List<PropertyDto>> GetProperties(DateTime? startDate, DateTime? endDate)
         {
             Expression<Func<Property,bool>> expression;
-            if (startDate != null)
+            if (startDate != null && endDate != null)
             {
-                expression = x => x.Created > startDate;
+                expression = x => x.Created >= startDate && x.Created <= endDate;
             }
             else
             {
