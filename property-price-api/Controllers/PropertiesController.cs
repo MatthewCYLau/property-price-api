@@ -22,6 +22,7 @@ namespace property_price_api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PropertyDto>>> Get(DateTime? startDate, DateTime? endDate)
         {
+            _logger.LogInformation("Get properties from {startDate} and {endDate}", startDate, endDate);
             if (endDate < startDate)
             {
                 return BadRequest(new { message = "End date must be greater than start date" });
