@@ -159,18 +159,21 @@ namespace property_price_api.Services
 
                 List<CreatePropertyRequest> requests = new List<CreatePropertyRequest>
                 {
-                   new CreatePropertyRequest {
+                   new()
+                   {
                        ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY",
                        Address = "Cardinal Close, Worcester Park",
                        AskingPrice = 555_000 },
-                    new CreatePropertyRequest {
+                    new()
+                    {
                        ListingUrl = "https://www.rightmove.co.uk/properties/137372225#/?channel=RES_BUY",
                        Address = "Inveresk Gardens, Worcester Park, KT4",
                        AskingPrice = 600_000 },
-                     new CreatePropertyRequest {
+                     new()
+                     {
                        ListingUrl = "https://www.rightmove.co.uk/properties/86360589#/?channel=RES_BUY",
                        Address = "Edenfield Gardens, Worcester Park, Surrey, KT4",
-                       AskingPrice = 855_000 },
+                       AskingPrice = 855_000 }
                 };
 
                 foreach (CreatePropertyRequest request in requests)

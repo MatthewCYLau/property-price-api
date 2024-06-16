@@ -11,7 +11,7 @@ public class TransactionsControllerTests
     [Test]
     public async Task GetTransactionsShould()
     {
-        IEnumerable<Transaction> transactions = new Transaction[] { new Transaction("1", 100, "Test", false) };
+        IEnumerable<Transaction> transactions = new[] { new Transaction("1", 100, "Test", false) };
         var mockTransactionService = new Mock<ITransactionService>();
         mockTransactionService.Setup(x => x.GetMultipleAsync(false, 100)).Returns(Task.FromResult(transactions));
         var transactionsController = new TransactionsController(mockTransactionService.Object);
