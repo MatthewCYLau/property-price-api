@@ -68,4 +68,33 @@ public class PropertiesControllerTests
         List<PropertyDto> resultPropertyDtos = (List<PropertyDto>)okResult.Value;
         Assert.That(resultPropertyDtos[0].AskingPrice, Is.EqualTo(555_000));
     }
+    
+    [Test]
+    public async Task GetPropertyByIdShould()
+    {
+        ILogger<PropertiesController> logger = _serviceProvider.GetRequiredService<ILogger<PropertiesController>>();
+        var mockPropertyService = new Mock<IPropertyService>();
+        
+        // given
+        var testPropertyDto = new PropertyDto
+        {
+            ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY",
+            Address = "Cardinal Close, Worcester Park",
+            AskingPrice = 555_000
+        };
+        
+        mockPropertyService.Setup(x => x.GetPropertyById("1")).Returns(Task.FromResult(testPropertyDto));
+        var propertiesController = new PropertiesController(logger, mockPropertyService.Object);
+        
+        // when
+        var propertyResult = await propertiesController.GetPropertyById("1");
+        OkObjectResult? okResult = propertyResult.Result as OkObjectResult;
+
+        // Assert
+        Assert.That(okResult.StatusCode, Is.EqualTo(200));
+        Assert.That(okResult.Value, Is.EqualTo(testPropertyDto));
+        
+        var resultPropertyDto = (PropertyDto)okResult.Value;
+        Assert.That(resultPropertyDto.AskingPrice, Is.EqualTo(555_000));
+    }
 }

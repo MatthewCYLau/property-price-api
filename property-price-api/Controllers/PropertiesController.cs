@@ -50,7 +50,7 @@ namespace property_price_api.Controllers
                 return NotFound();
             }
 
-            return property;
+            return Ok(property);
         }
 
         [Authorize]
