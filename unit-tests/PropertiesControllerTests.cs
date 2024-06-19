@@ -97,4 +97,21 @@ public class PropertiesControllerTests
         var resultPropertyDto = (PropertyDto)okResult.Value;
         Assert.That(resultPropertyDto.AskingPrice, Is.EqualTo(555_000));
     }
+    
+    [Test]
+    public async Task GetPropertyByInvalidIdShouldNotFound()
+    {
+        ILogger<PropertiesController> logger = _serviceProvider.GetRequiredService<ILogger<PropertiesController>>();
+        var mockPropertyService = new Mock<IPropertyService>();
+        
+        mockPropertyService.Setup(x => x.GetPropertyById("foo")).Returns(Task.FromResult((PropertyDto) null));
+        var propertiesController = new PropertiesController(logger, mockPropertyService.Object);
+        
+        // when
+        var propertyResult = await propertiesController.GetPropertyById("foo");
+        NotFoundResult? notFoundResult = propertyResult.Result as NotFoundResult;
+
+        // Assert
+        Assert.That(notFoundResult.StatusCode, Is.EqualTo(404));
+    }
 }
