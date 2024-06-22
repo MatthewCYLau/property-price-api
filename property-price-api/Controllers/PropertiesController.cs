@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Services;
+using StackExchange.Redis;
 
 namespace property_price_api.Controllers
 {
@@ -12,11 +14,17 @@ namespace property_price_api.Controllers
 
         private readonly IPropertyService _propertyService;
         private readonly ILogger _logger;
+        // private readonly IDatabase _redis;
 
-        public PropertiesController(ILogger<PropertiesController> logger, IPropertyService propertyService)
+        public PropertiesController(
+            ILogger<PropertiesController> logger,
+            IPropertyService propertyService
+            // IConnectionMultiplexer muxer
+            )
         {
             _propertyService = propertyService;
             _logger = logger;
+            // _redis = muxer.GetDatabase();
         }
 
         [HttpGet]
@@ -51,6 +59,20 @@ namespace property_price_api.Controllers
             }
 
             return Ok(property);
+            
+            // string json = await _redis.StringGetAsync(id);
+            // if (string.IsNullOrEmpty(json))
+            // {
+            //     var property = await _propertyService.GetPropertyById(id);
+            //     string jsonString = JsonSerializer.Serialize(property);
+            //     var setTask = _redis.StringSetAsync(id, jsonString);
+            //     var expireTask = _redis.KeyExpireAsync(id, TimeSpan.FromSeconds(3600));
+            //     await Task.WhenAll(setTask, expireTask);
+            //     return Ok(property);
+            // }
+            // var propertyFromRedis =
+            //     JsonSerializer.Deserialize<PropertyDto>(json);
+            // return Ok(propertyFromRedis);
         }
 
         [Authorize]

@@ -7,6 +7,7 @@ using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Profiles;
 using property_price_api.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,8 @@ builder.Services.AddRateLimiter(_ => _
         options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         options.QueueLimit = rateLimitOptions.QueueLimit;
     }));
+
+// builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 
 var app = builder.Build();
 
