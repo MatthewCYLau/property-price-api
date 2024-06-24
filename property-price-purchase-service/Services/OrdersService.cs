@@ -35,7 +35,7 @@ public class OrdersService : IOrdersService
     public void CreateOrder(OrderRequest request)
     {
         var order = _mapper.Map<Order>(request);
-        order.Product = _productsService.GetProductById(request.ProductId);
+        order.Product = _dbContext.Products.Find(request.ProductId);
         _dbContext.Orders.Add(order);
         _dbContext.SaveChanges();
     }

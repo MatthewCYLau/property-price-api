@@ -1,18 +1,18 @@
 version: "3.9"
 
 services:
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-#  db:
-#    image: postgres:15
+#  redis:
+#    image: redis:latest
 #    ports:
-#      - "5432:5432"
-#    environment:
-#      - POSTGRES_DB=property_price
-#      - POSTGRES_USER=db_user
-#      - POSTGRES_PASSWORD=password
+#      - "6379:6379"
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=property_price
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=password
 #  property-price-cosmos-db:
 #    build:
 #      context: .
