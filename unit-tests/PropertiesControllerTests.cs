@@ -1,3 +1,4 @@
+using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ public class PropertiesControllerTests
 {
     
     private ServiceProvider _serviceProvider;
+    private IFixture _fixture;
     
     [SetUp]
     public void Setup()
@@ -38,12 +40,14 @@ public class PropertiesControllerTests
     public async Task GetPropertiesShould()
     {
         ILogger<PropertiesController> logger = _serviceProvider.GetRequiredService<ILogger<PropertiesController>>();
+        _fixture = new Fixture();
         var mockPropertyService = new Mock<IPropertyService>();
         
         // given
         var startDate = new DateTime(2024, 01, 30);
         var endDate = new DateTime(2024, 05, 30);
-        List<PropertyDto> testPropertyDtos = new List<PropertyDto>
+        var testPropertyDtos1 = _fixture.CreateMany<PropertyDto>(5).ToList();
+        List<PropertyDto> testPropertyDtos2 = new List<PropertyDto>
         {
             new()
             {
@@ -52,6 +56,7 @@ public class PropertiesControllerTests
                 AskingPrice = 555_000
             }
         };
+        var testPropertyDtos = testPropertyDtos2.Concat(testPropertyDtos1).ToList();
         
         mockPropertyService.Setup(x => x.GetProperties(startDate, endDate)).Returns(Task.FromResult(testPropertyDtos));
         var propertiesController = new PropertiesController(logger, mockPropertyService.Object);
@@ -66,6 +71,7 @@ public class PropertiesControllerTests
         Assert.That(okResult.Value, Is.EqualTo(testPropertyDtos));
         
         List<PropertyDto> resultPropertyDtos = (List<PropertyDto>)okResult.Value;
+        Assert.That(resultPropertyDtos.Count, Is.EqualTo(6));
         Assert.That(resultPropertyDtos[0].AskingPrice, Is.EqualTo(555_000));
     }
     
