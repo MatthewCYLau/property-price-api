@@ -32,6 +32,11 @@ public class ProductController: ControllerBase
     [HttpPost]
     public IActionResult CreateProduct(ProductRequest request)
     {
+        if (!ProductsConstant.ProductsCatalog.ContainsKey(request.Name))
+        {
+            return BadRequest($"Product name {request.Name} not valid!");
+        }
+        
         _productsService.CreateProduct(request);
         return Ok(new { message = "Product created" });
     }
