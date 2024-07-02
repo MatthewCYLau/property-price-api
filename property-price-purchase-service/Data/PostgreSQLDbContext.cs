@@ -1,21 +1,21 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using property_price_purchase_service.Models;
 
 namespace property_price_purchase_service.Data;
 
 public class PostgreSQLDbContext: DbContext
 {
-    private readonly IConfiguration Configuration;
+    private readonly PostgreSqlDbOptions _options;
 
-    public PostgreSQLDbContext(IConfiguration configuration)
+    public PostgreSQLDbContext(IOptions<PostgreSqlDbOptions> options)
     {
-        Configuration = configuration;
+        _options = options.Value;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        const string sectionName = "PostgreSQLDatabase";
-        options.UseNpgsql(Configuration.GetConnectionString(sectionName));
+        options.UseNpgsql(_options.ConnectionString);
     }
     
     public DbSet<Order> Orders { get; set; }

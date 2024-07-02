@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
 using property_price_purchase_service.Data;
+using property_price_purchase_service.Models;
 using property_price_purchase_service.Profiles;
 using property_price_purchase_service.Services;
 
@@ -11,6 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.Configure<PostgreSqlDbOptions>(
+    builder.Configuration.GetSection(PostgreSqlDbOptions.PostgreSqlDbSettingsName));
 
 builder.Services.AddDbContext<PostgreSQLDbContext>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
