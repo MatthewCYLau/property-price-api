@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Globalization;
+using CsvHelper;
+using Microsoft.AspNetCore.Mvc;
 using property_price_api.Helpers;
 using property_price_api.Models;
 using property_price_api.Services;
@@ -94,6 +96,23 @@ namespace property_price_api.Controllers
 
             return NoContent();
 
+        }
+        
+        [Authorize]
+        [Produces("text/csv")]
+        [HttpPost("export-csv")]
+        public async Task<FileResult> ExportCsv()
+        {
+            using var memoryStream = new MemoryStream();
+            var data = await _userService.GetUsers();
+
+            await using (var streamWriter = new StreamWriter(memoryStream))
+            await using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+            {
+                await csvWriter.WriteRecordsAsync(data);
+            }
+
+            return File(memoryStream.ToArray(), "text/csv", $"Export-{DateTime.Now:s}.csv");
         }
     }
 }
