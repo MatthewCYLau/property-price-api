@@ -97,7 +97,7 @@ namespace property_price_api.Controllers
             return NoContent();
 
         }
-        
+
         [Authorize]
         [Produces("text/csv")]
         [HttpPost("export-csv")]
@@ -112,7 +112,7 @@ namespace property_price_api.Controllers
                 await csvWriter.WriteRecordsAsync(data);
             }
 
-            return File(memoryStream.ToArray(), "text/csv", $"users-export-{DateTime.Now:yyyy-MM-dd HH.mm.ss}.csv");
+            return File(memoryStream.ToArray(), "text/csv", $"users-export-{DateTime.Now:yyyy-MM-dd}.csv");
         }
     }
 }
