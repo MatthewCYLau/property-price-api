@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using System.Globalization;
+using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using property_price_api.Helpers;
 using property_price_api.Models;
@@ -9,7 +11,7 @@ namespace property_price_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PropertiesController: ControllerBase
+    public class PropertiesController : ControllerBase
     {
 
         private readonly IPropertyService _propertyService;
@@ -34,11 +36,11 @@ namespace property_price_api.Controllers
             if (endDate < startDate)
             {
                 return BadRequest(new { message = "End date must be greater than start date" });
-            }  
+            }
             var res = await _propertyService.GetProperties(startDate, endDate);
             return Ok(res);
         }
-           
+
 
         [HttpGet("{id:length(24)}/price-analysis")]
         public async Task<ActionResult<PriceAnalysisResponse>> GetPropertyPriceAnalysisById(string? id)
@@ -59,7 +61,7 @@ namespace property_price_api.Controllers
             }
 
             return Ok(property);
-            
+
             // string json = await _redis.StringGetAsync(id);
             // if (string.IsNullOrEmpty(json))
             // {
@@ -115,6 +117,27 @@ namespace property_price_api.Controllers
             await _propertyService.DeletePropertyById(id);
 
             return NoContent();
+        }
+
+        [Authorize]
+        [Produces("text/csv")]
+        [HttpPost("export-csv")]
+        public async Task<FileResult> ExportCsv(DateTime? startDate, DateTime? endDate)
+        {
+            using var memoryStream = new MemoryStream();
+            _logger.LogInformation("Get properties from {startDate} and {endDate}", startDate, endDate);
+            if (endDate < startDate)
+            {
+                throw new CustomException("End date must be greater than start date");
+            }
+            var propertyDtos = await _propertyService.GetProperties(startDate, endDate);
+            await using (var streamWriter = new StreamWriter(memoryStream))
+            await using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+            {
+                await csvWriter.WriteRecordsAsync(propertyDtos);
+            }
+
+            return File(memoryStream.ToArray(), "text/csv", $"properties-export-{DateTime.Now:yyyy-MM-dd}.csv");
         }
     }
 }
