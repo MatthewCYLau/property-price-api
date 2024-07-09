@@ -51,6 +51,22 @@ namespace property_price_api.Services
         public async Task<IngestJob> GetIngestJobById(string? id)
         {
             var ingestJob = await _context.IngestJobs.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+            switch (ingestJob.IngestJobStatus)
+            {
+                case IngestJobStatus.InProgress:
+                    {
+                        _logger.LogInformation("Ingest job in progress {id} {status}", ingestJob.Id, ingestJob.IngestJobStatus);
+                        break;
+                    }
+                case IngestJobStatus.Complete:
+                    {
+                        _logger.LogInformation("Ingest job complete {id} {status}", ingestJob.Id, ingestJob.IngestJobStatus);
+                        break;
+                    }
+                default: break;
+            }
+
             return ingestJob;
         }
 
@@ -59,7 +75,8 @@ namespace property_price_api.Services
             var filter = Builders<IngestJob>.Filter.Where(x => x.Id == id);
             var update = Builders<IngestJob>.Update
                 .Set(x => x.TransactionPrice, transactionPrice)
-                .Set(x => x.Complete, true);
+                .Set(x => x.Complete, true)
+                .Set(x => x.IngestJobStatus, IngestJobStatus.Complete);
 
             var options = new FindOneAndUpdateOptions<IngestJob>();
             await _context.IngestJobs.FindOneAndUpdateAsync(filter, update, options);
@@ -84,7 +101,7 @@ namespace property_price_api.Services
                 expression = x => x.Complete == complete;
             }
             else
-            {   
+            {
                 expression = x => x.Postcode == postcode && x.Complete == complete;
             }
 
