@@ -18,31 +18,39 @@ public class OrdersController : ControllerBase
     [HttpGet]
     public IActionResult GetOrders()
     {
-        var orders =_ordersService.GetOrders();
+        var orders = _ordersService.GetOrders();
         return Ok(orders);
     }
-    
+
     [HttpPost]
     public IActionResult CreateOrder(OrderRequest request)
     {
-        _ordersService.CreateOrder(request);
-        return Ok(new { message = "Order created" });
+        var result = _ordersService.CreateOrder(request);
+        switch (result.Type)
+        {
+            case ProcessOrderResultType.Success:
+                return Ok(new { message = "Order created" });
+            case ProcessOrderResultType.NotProcessable:
+                return BadRequest(new { message = result.Message });
+            default:
+                return Ok();
+        };
     }
-    
+
     [HttpGet("{id}")]
     public ActionResult<Order> GetOrderById(int id)
     {
-        var order =_ordersService.GetOrderById(id);
+        var order = _ordersService.GetOrderById(id);
         return Ok(order);
     }
-    
+
     [HttpPut("{id}")]
     public ActionResult<Order> UpdateOrderById(int id, OrderRequest request)
     {
-        var order =_ordersService.UpdateOrderById(id, request);
+        var order = _ordersService.UpdateOrderById(id, request);
         return Ok(order);
     }
-    
+
     [HttpDelete("{id}")]
     public IActionResult DeleteOrderById(int id)
     {

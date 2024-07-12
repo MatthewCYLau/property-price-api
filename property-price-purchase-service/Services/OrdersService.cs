@@ -8,7 +8,7 @@ namespace property_price_purchase_service.Services;
 public interface IOrdersService
 {
     IEnumerable<Order> GetOrders();
-    void CreateOrder(OrderRequest request);
+    ProcessOrderResult CreateOrder(OrderRequest request);
     void DeleteOrderById(int id);
     Order UpdateOrderById(int id, OrderRequest request);
     Order GetOrderById(int id);
@@ -19,47 +19,54 @@ public class OrdersService : IOrdersService
     private readonly PostgreSQLDbContext _dbContext;
     private readonly IMapper _mapper;
     private readonly IProductsService _productsService;
-    
+
     public OrdersService(PostgreSQLDbContext dbContext, IMapper mapper, IProductsService productsService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
         _productsService = productsService;
     }
-    
+
     public IEnumerable<Order> GetOrders()
     {
         return _dbContext.Orders.Include(x => x.Product);
     }
 
-    public void CreateOrder(OrderRequest request)
+    public ProcessOrderResult CreateOrder(OrderRequest request)
     {
+
+        if (request.Reference.Length > 10)
+        {
+            return ProcessOrderResult.NotProcessable();
+        }
+
         var order = _mapper.Map<Order>(request);
         order.Product = _dbContext.Products.Find(request.ProductId);
         _dbContext.Orders.Add(order);
         _dbContext.SaveChanges();
+        return ProcessOrderResult.Success();
     }
-    
+
     public void DeleteOrderById(int id)
     {
         var order = GetOrderById(id);
-        
+
         if ((DateTime.Now - order.CreatedDate).TotalDays < 1)
         {
             throw new BadHttpRequestException("Cannot delete order created within one day");
         }
-        
+
         _dbContext.Orders.Remove(order);
         _dbContext.SaveChanges();
     }
-    
+
     public Order GetOrderById(int id)
     {
         var user = _dbContext.Orders.Find(id);
         if (user == null) throw new KeyNotFoundException("Order not found");
         return user;
     }
-    
+
     public Order UpdateOrderById(int id, OrderRequest request)
     {
         var order = _dbContext.Orders.Find(id);
@@ -68,4 +75,4 @@ public class OrdersService : IOrdersService
         _dbContext.SaveChanges();
         return order;
     }
-} 
+}
