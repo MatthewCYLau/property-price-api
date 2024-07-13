@@ -18,13 +18,11 @@ public class OrdersService : IOrdersService
 {
     private readonly PostgreSQLDbContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly IProductsService _productsService;
 
-    public OrdersService(PostgreSQLDbContext dbContext, IMapper mapper, IProductsService productsService)
+    public OrdersService(PostgreSQLDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _productsService = productsService;
     }
 
     public IEnumerable<Order> GetOrders()
