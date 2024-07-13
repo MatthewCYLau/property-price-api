@@ -6,9 +6,12 @@ public class ProductRequest
 {
     [Required]
     public string Name { get; set; }
+    [Required]
+    public double Price { get; set; }
 
-    public ProductRequest(string name)
+    public ProductRequest(string name, double price)
     {
         Name = name;
+        Price = price;
     }
 }
