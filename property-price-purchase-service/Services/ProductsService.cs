@@ -12,7 +12,7 @@ public interface IProductsService
     IEnumerable<Product> GetProducts();
 
     void CreateProduct(ProductRequest request);
-    Product GetProductById(int id);
+    Product? GetProductById(int id);
     void DeleteProductById(int id);
     Product UpdateProductById(int id, ProductRequest request);
 }
@@ -45,7 +45,7 @@ public class ProductsService : IProductsService
         _dbContext.SaveChanges();
     }
 
-    public Product GetProductById(int id)
+    public Product? GetProductById(int id)
     {
         const string queryString = "SELECT * FROM \"Products\" WHERE \"ProductId\" = @productId;";
         // const string sectionName = "PostgreSQLDatabase";
@@ -54,22 +54,29 @@ public class ProductsService : IProductsService
         var command = new NpgsqlCommand(queryString, connection);
         command.Parameters.AddWithValue("@productId", id);
 
-        var product = new Product();
         {
             connection.Open();
             var reader = command.ExecuteReader();
-            while (reader.Read())
+            if (reader.HasRows)
             {
-                product.ProductId = (int)reader["ProductId"];
-                product.Name = reader["Name"].ToString();
-                product.Price = double.Parse(reader["Price"].ToString());
-                product.CreatedDate = (DateTime)reader["CreatedDate"];
-                product.UpdatedDate = (DateTime)reader["UpdatedDate"];
+                var product = new Product();
+                while (reader.Read())
+                {
+                    product.ProductId = (int)reader["ProductId"];
+                    product.Name = reader["Name"].ToString();
+                    product.Price = double.Parse(reader["Price"].ToString());
+                    product.CreatedDate = (DateTime)reader["CreatedDate"];
+                    product.UpdatedDate = (DateTime)reader["UpdatedDate"];
 
+                }
+                reader.Close();
+                return product;
             }
-
-            reader.Close();
-            return product;
+            else
+            {
+                reader.Close();
+                return null;
+            }
         }
     }
 
