@@ -27,7 +27,15 @@ public class OrdersService : IOrdersService
 
     public IEnumerable<Order> GetOrders()
     {
-        return _dbContext.Orders.Include(x => x.Product);
+        var orders = _dbContext.Orders.Include(x => x.Product);
+        var largeOrder = from i in orders.ToList()
+                         where i.Quantity > 5
+                         select i;
+        foreach (Order i in largeOrder)
+        {
+            Console.Write($"Large order quantity {i.Reference} {i.Quantity}");
+        }
+        return orders;
     }
 
     public ProcessOrderResult CreateOrder(OrderRequest request)
