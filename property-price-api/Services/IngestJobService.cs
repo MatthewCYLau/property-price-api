@@ -7,7 +7,7 @@ namespace property_price_api.Services
 {
     public interface IIngestJobService
     {
-        Task<List<IngestJob>> GetIngestJobs(bool complete = false, string postcode = "");
+        Task<List<IngestJob>> GetIngestJobs(bool? complete, string? postcode);
         Task<string> CreateIngestJob(string postcode);
         Task<bool> UpdateIngestJobPriceById(string id, int transactionPrice);
         Task<IngestJob> GetIngestJobById(string? id);
@@ -92,17 +92,26 @@ namespace property_price_api.Services
             return count;
         }
 
-        public async Task<List<IngestJob>> GetIngestJobs(bool complete = false, string postcode = "")
+        public async Task<List<IngestJob>> GetIngestJobs(bool? complete, string? postcode)
         {
 
             Expression<Func<IngestJob, bool>> expression;
-            if (string.IsNullOrEmpty(postcode))
+            if (complete.HasValue && !string.IsNullOrEmpty(postcode))
+            {
+                expression = x => x.Postcode == postcode && x.Complete == complete;
+            }
+            else if (complete.HasValue)
             {
                 expression = x => x.Complete == complete;
             }
+            else if (!string.IsNullOrEmpty(postcode))
+            {
+                expression = x => x.Postcode == postcode;
+            }
+
             else
             {
-                expression = x => x.Postcode == postcode && x.Complete == complete;
+                expression = x => true;
             }
 
             return await _context.IngestJobs.Find(expression).ToListAsync();
