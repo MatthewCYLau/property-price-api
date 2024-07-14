@@ -51,22 +51,23 @@ namespace property_price_api.Services
         public async Task<IngestJob> GetIngestJobById(string? id)
         {
             var ingestJob = await _context.IngestJobs.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-            switch (ingestJob.IngestJobStatus)
+            if (ingestJob is not null)
             {
-                case IngestJobStatus.InProgress:
-                    {
-                        _logger.LogInformation("Ingest job in progress {id} {status}", ingestJob.Id, ingestJob.IngestJobStatus);
-                        break;
-                    }
-                case IngestJobStatus.Complete:
-                    {
-                        _logger.LogInformation("Ingest job complete {id} {status}", ingestJob.Id, ingestJob.IngestJobStatus);
-                        break;
-                    }
-                default: break;
+                switch (ingestJob.IngestJobStatus)
+                {
+                    case IngestJobStatus.InProgress:
+                        {
+                            _logger.LogInformation("Ingest job in progress {id} {status}", ingestJob.Id, ingestJob.IngestJobStatus);
+                            break;
+                        }
+                    case IngestJobStatus.Complete:
+                        {
+                            _logger.LogInformation("Ingest job complete {id} {status}", ingestJob.Id, ingestJob.IngestJobStatus);
+                            break;
+                        }
+                    default: break;
+                }
             }
-
             return ingestJob;
         }
 
