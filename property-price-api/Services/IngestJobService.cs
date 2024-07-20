@@ -115,7 +115,7 @@ namespace property_price_api.Services
                 expression = x => true;
             }
 
-            return await _context.IngestJobs.Find(expression).ToListAsync();
+            return await _context.IngestJobs.Find(expression).SortByDescending(n => n.Created).ToListAsync();
         }
 
         public async Task DeleteIngestJobById(string id) =>
