@@ -40,7 +40,7 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpGet("jobs")]
-        public async Task<ActionResult<List<IngestJob>>> GetIngestJobs([FromQuery] bool? complete, string? postcode)
+        public async Task<ActionResult<IngestJobsResponse>> GetIngestJobs([FromQuery] bool? complete, string? postcode)
         {
             return await _ingestJobService.GetIngestJobs(complete, postcode);
         }
@@ -64,12 +64,12 @@ namespace property_price_api.Controllers
         [Route("ingested-price")]
         public async Task<ActionResult<IngestedPriceResponse>> GetIngestedTransactionPrice([FromQuery] string postcode)
         {
-            var jobs = await _ingestJobService.GetIngestJobs(true, postcode);
-            if (!jobs.Any())
+            var jobsResponse = await _ingestJobService.GetIngestJobs(true, postcode);
+            if (!jobsResponse.IngestJobs.Any())
             {
                 return NotFound();
             }
-            var meanIngestedPrice = jobs.Select(x => x.TransactionPrice).Average();
+            var meanIngestedPrice = jobsResponse.IngestJobs.Select(x => x.TransactionPrice).Average();
             var res = new IngestedPriceResponse(postcode, (int)meanIngestedPrice);
             return Ok(res);
 

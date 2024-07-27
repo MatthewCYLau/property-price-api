@@ -7,7 +7,7 @@ namespace property_price_api.Services
 {
     public interface IIngestJobService
     {
-        Task<List<IngestJob>> GetIngestJobs(bool? complete, string? postcode);
+        Task<IngestJobsResponse> GetIngestJobs(bool? complete, string? postcode);
         Task<string> CreateIngestJob(string postcode);
         Task<bool> UpdateIngestJobPriceById(string id, int transactionPrice);
         Task<IngestJob> GetIngestJobById(string? id);
@@ -93,7 +93,7 @@ namespace property_price_api.Services
             return count;
         }
 
-        public async Task<List<IngestJob>> GetIngestJobs(bool? complete, string? postcode)
+        public async Task<IngestJobsResponse> GetIngestJobs(bool? complete, string? postcode)
         {
 
             Expression<Func<IngestJob, bool>> expression;
@@ -115,7 +115,9 @@ namespace property_price_api.Services
                 expression = x => true;
             }
 
-            return await _context.IngestJobs.Find(expression).SortByDescending(n => n.Created).ToListAsync();
+            var ingestJobs = await _context.IngestJobs.Find(expression).SortByDescending(n => n.Created).ToListAsync();
+            return new IngestJobsResponse(new PaginationMetadata(0, 0, 0), ingestJobs);
+
         }
 
         public async Task DeleteIngestJobById(string id) =>
