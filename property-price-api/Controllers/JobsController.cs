@@ -40,9 +40,9 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpGet("jobs")]
-        public async Task<ActionResult<IngestJobsResponse>> GetIngestJobs([FromQuery] bool? complete, string? postcode)
+        public async Task<ActionResult<IngestJobsResponse>> GetIngestJobs([FromQuery] bool? complete, string? postcode, int page = 1, int pageSize = 5)
         {
-            return await _ingestJobService.GetIngestJobs(complete, postcode);
+            return await _ingestJobService.GetIngestJobs(complete, postcode, page, pageSize);
         }
 
 
@@ -62,9 +62,9 @@ namespace property_price_api.Controllers
         [Authorize]
         [HttpGet]
         [Route("ingested-price")]
-        public async Task<ActionResult<IngestedPriceResponse>> GetIngestedTransactionPrice([FromQuery] string postcode)
+        public async Task<ActionResult<IngestedPriceResponse>> GetIngestedTransactionPrice([FromQuery] string postcode, int page = 1, int pageSize = 5)
         {
-            var jobsResponse = await _ingestJobService.GetIngestJobs(true, postcode);
+            var jobsResponse = await _ingestJobService.GetIngestJobs(true, postcode, page, pageSize);
             if (!jobsResponse.IngestJobs.Any())
             {
                 return NotFound();

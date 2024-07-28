@@ -7,7 +7,7 @@ namespace property_price_api.Services
 {
     public interface IIngestJobService
     {
-        Task<IngestJobsResponse> GetIngestJobs(bool? complete, string? postcode);
+        Task<IngestJobsResponse> GetIngestJobs(bool? complete, string? postcode, int page, int pageSize);
         Task<string> CreateIngestJob(string postcode);
         Task<bool> UpdateIngestJobPriceById(string id, int transactionPrice);
         Task<IngestJob> GetIngestJobById(string? id);
@@ -93,7 +93,7 @@ namespace property_price_api.Services
             return count;
         }
 
-        public async Task<IngestJobsResponse> GetIngestJobs(bool? complete, string? postcode)
+        public async Task<IngestJobsResponse> GetIngestJobs(bool? complete, string? postcode, int page, int pageSize)
         {
 
             Expression<Func<IngestJob, bool>> expression;
@@ -115,9 +115,16 @@ namespace property_price_api.Services
                 expression = x => true;
             }
 
-            var ingestJobs = await _context.IngestJobs.Find(expression).SortByDescending(n => n.Created).ToListAsync();
-            return new IngestJobsResponse(new PaginationMetadata(0, 0, 0), ingestJobs);
+            var totalRecordsCount = await _context.IngestJobs.Find(expression).CountDocumentsAsync();
 
+            var ingestJobs = await _context.IngestJobs
+            .Find(expression)
+            .SortByDescending(n => n.Created)
+            .Skip((page - 1) * pageSize)
+            .Limit(pageSize)
+            .ToListAsync();
+
+            return new IngestJobsResponse(new PaginationMetadata((int)totalRecordsCount, page, (int)Math.Ceiling(totalRecordsCount / (double)pageSize)), ingestJobs);
         }
 
         public async Task DeleteIngestJobById(string id) =>
