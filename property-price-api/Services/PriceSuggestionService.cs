@@ -7,7 +7,7 @@ namespace property_price_api.Services
 {
     public interface IPriceSuggestionService
     {
-        Task<PriceSuggestionResponse> GetPriceSuggestions(string? propertyId, int page, int pageSize);
+        Task<PriceSuggestionResponse> GetPriceSuggestions(string propertyId, int page, int pageSize);
         Task<PriceSuggestion?> GetPriceSuggestionById(string id);
         Task CreatePriceSuggestion(PriceSuggestion priceSuggestion);
         Task DeletePriceSuggestionById(string id);
@@ -78,10 +78,10 @@ namespace property_price_api.Services
         public async Task DeletePriceSuggestionById(string id) =>
           await _context.PriceSuggestions.DeleteOneAsync(x => x.Id == id);
 
-        public async Task<PriceSuggestionResponse> GetPriceSuggestions(string? propertyId, int page, int pageSize)
+        public async Task<PriceSuggestionResponse> GetPriceSuggestions(string propertyId, int page, int pageSize)
         {
             Expression<Func<PriceSuggestion, bool>> expression;
-            if (propertyId != null)
+            if (!string.IsNullOrEmpty(propertyId))
             {
                 ValidatePropertyId(propertyId);
                 expression = x => x.PropertyId == propertyId;
