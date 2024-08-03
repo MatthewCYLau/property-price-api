@@ -8,7 +8,7 @@ namespace property_price_api.Controllers
     [ApiController]
     [Route("api/price-suggestions")]
     public class PriceSuggestionsController : ControllerBase
-	{
+    {
         private readonly IPriceSuggestionService _priceSuggestionService;
 
         public PriceSuggestionsController(IPriceSuggestionService priceSuggestionService)
@@ -26,7 +26,13 @@ namespace property_price_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response>> CreatePriceSuggestion(PriceSuggestion priceSuggestion)
         {
-            await _priceSuggestionService.CreatePriceSuggestion(priceSuggestion);
+            var result = await _priceSuggestionService.CreatePriceSuggestion(priceSuggestion);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result.Error);
+            }
+
             return CreatedAtAction(nameof(GetPriceSuggestions), new { id = priceSuggestion.Id }, priceSuggestion);
         }
 

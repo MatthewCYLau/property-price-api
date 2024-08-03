@@ -9,7 +9,7 @@ namespace property_price_api.Services
     {
         Task<PriceSuggestionResponse> GetPriceSuggestions(string propertyId, int page, int pageSize);
         Task<PriceSuggestion?> GetPriceSuggestionById(string id);
-        Task CreatePriceSuggestion(PriceSuggestion priceSuggestion);
+        Task<Result> CreatePriceSuggestion(PriceSuggestion priceSuggestion);
         Task DeletePriceSuggestionById(string id);
         Task<PriceSuggestionsStatisticsResponse> GetPriceSuggestionsStatistics();
     }
@@ -35,7 +35,7 @@ namespace property_price_api.Services
             _notificationService = notificationService;
         }
 
-        public async Task CreatePriceSuggestion(PriceSuggestion priceSuggestion)
+        public async Task<Result> CreatePriceSuggestion(PriceSuggestion priceSuggestion)
         {
 
             var httpContext = _httpContextAccessor.HttpContext;
@@ -44,12 +44,12 @@ namespace property_price_api.Services
             var property = _propertyService.GetPropertyById(priceSuggestion.PropertyId).Result;
             if (property is null)
             {
-                throw new CustomException("Invalid property ID");
+                return Result.Failure(PriceSuggestionErrors.InvalidPropertyId(priceSuggestion.PropertyId));
             }
 
             if (GetPriceSuggestionByPropertyIdByUserId(priceSuggestion.PropertyId, userId).Result != null)
             {
-                throw new CustomException("User has already created price suggestion for property");
+                return Result.Failure(PriceSuggestionErrors.UserAlreadyCreatedPriceSuggestion);
             }
 
             priceSuggestion.Created = DateTime.Now;
@@ -57,9 +57,12 @@ namespace property_price_api.Services
 
             await _context.PriceSuggestions.InsertOneAsync(priceSuggestion);
 
-            var notification = new Notification(false, priceSuggestion.Id, priceSuggestion.PropertyId, userId, property.UserId, NotificationTypes.AboveAsking);
-            notification.Created = DateTime.Now;
+            var notification = new Notification(false, priceSuggestion.Id, priceSuggestion.PropertyId, userId, property.UserId, NotificationTypes.AboveAsking)
+            {
+                Created = DateTime.Now
+            };
             await _notificationService.CreateNotification(notification);
+            return Result.Success();
         }
 
         public async Task<PriceSuggestion> GetPriceSuggestionById(string id)
