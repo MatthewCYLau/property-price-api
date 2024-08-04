@@ -47,7 +47,12 @@ namespace property_price_api.Controllers
                 return NotFound();
             }
 
-            await _priceSuggestionService.DeletePriceSuggestionById(id);
+            var result = await _priceSuggestionService.DeletePriceSuggestionById(id);
+
+            if (result.IsFailure)
+            {
+                return BadRequest();
+            }
 
             return NoContent();
 

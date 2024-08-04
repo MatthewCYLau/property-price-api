@@ -10,7 +10,7 @@ namespace property_price_api.Services
         Task<PriceSuggestionResponse> GetPriceSuggestions(string propertyId, int page, int pageSize);
         Task<PriceSuggestion?> GetPriceSuggestionById(string id);
         Task<Result> CreatePriceSuggestion(PriceSuggestion priceSuggestion);
-        Task DeletePriceSuggestionById(string id);
+        Task<Result> DeletePriceSuggestionById(string id);
         Task<PriceSuggestionsStatisticsResponse> GetPriceSuggestionsStatistics();
     }
 
@@ -78,8 +78,11 @@ namespace property_price_api.Services
             return suggestion;
         }
 
-        public async Task DeletePriceSuggestionById(string id) =>
-          await _context.PriceSuggestions.DeleteOneAsync(x => x.Id == id);
+        public async Task<Result> DeletePriceSuggestionById(string id)
+        {
+            await _context.PriceSuggestions.DeleteOneAsync(x => x.Id == id);
+            return Result.Success();
+        }
 
         public async Task<PriceSuggestionResponse> GetPriceSuggestions(string propertyId, int page, int pageSize)
         {
