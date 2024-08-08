@@ -75,7 +75,7 @@ public sealed class IngestWorker : BackgroundService
         var httpResponseMessage = await httpClient.GetAsync(
             "api/v1.0/random?min=100&max=1000");
 
-        if (!httpResponseMessage.IsSuccessStatusCode) return 0;
+        if (!httpResponseMessage.IsSuccessStatusCode) return (postcode, 0);
         await using var contentStream =
             await httpResponseMessage.Content.ReadAsStreamAsync();
 
