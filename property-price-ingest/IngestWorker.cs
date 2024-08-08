@@ -43,11 +43,11 @@ public sealed class IngestWorker : BackgroundService
             _logger.LogInformation("Received message from Cloud Pub Sub: {id}", message.MessageId);
             var result = JsonConvert.DeserializeObject<CloudPubSubMessage>(text);
             _logger.LogInformation("Ingest job ID: {jodId}; postcode: {postcode}", result.JobId, result.PostCode);
-            var randomNumber = await GetRandomNumberViaApi();
+            var (_, randomNumber) = await GetRandomNumberViaApi(result.PostCode);
             _logger.LogInformation("Random number is: {randomNumber}", randomNumber);
             try
             {
-                
+
                 await _ingestJobService.UpdateIngestJobPriceById(result.JobId, new Random().Next(500_000, 1_000_000));
                 _logger.LogInformation("Update job complete: {jodId}", result.JobId);
                 return await Task.FromResult(SubscriberClient.Reply.Ack);
@@ -57,7 +57,7 @@ public sealed class IngestWorker : BackgroundService
                 _logger.LogError("Update job failed: {0} with exception {1}", result.JobId, e.Message);
                 return await Task.FromResult(SubscriberClient.Reply.Nack);
             }
-            
+
         });
     }
 
@@ -68,8 +68,8 @@ public sealed class IngestWorker : BackgroundService
         await _subscriberClient.StopAsync(stoppingToken);
         await base.StopAsync(stoppingToken);
     }
-    
-    private async Task<int> GetRandomNumberViaApi()
+
+    private async Task<(string, int)> GetRandomNumberViaApi(string postcode)
     {
         var httpClient = _httpClientFactory.CreateClient(HttpClientConstants.RandomNumberApiHttpClientName);
         var httpResponseMessage = await httpClient.GetAsync(
@@ -81,8 +81,7 @@ public sealed class IngestWorker : BackgroundService
 
         var res = (List<int>)await JsonSerializer.DeserializeAsync
             <IEnumerable<int>>(contentStream);
-        return res[0];
-
+        return (postcode, res[0]);
     }
 }
 
