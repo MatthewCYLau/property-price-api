@@ -19,9 +19,9 @@ namespace property_price_api.Services
         Task CreateSeedProperties();
     }
 
-    public class PropertyService: IPropertyService
-	{
-
+    public class PropertyService : IPropertyService
+    {
+        private const int PRICE_LIMIT = 1_000_000;
         private readonly ILogger _logger;
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
@@ -36,12 +36,12 @@ namespace property_price_api.Services
             _logger = logger;
             _context = context;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;            
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<PropertyDto>> GetProperties(DateTime? startDate, DateTime? endDate)
         {
-            Expression<Func<Property,bool>> expression;
+            Expression<Func<Property, bool>> expression;
             if (startDate != null && endDate != null)
             {
                 expression = x => x.Created >= startDate && x.Created <= endDate;
@@ -50,7 +50,7 @@ namespace property_price_api.Services
             {
                 expression = _ => true;
             }
-            
+
             var properties = await _context.Properties.Aggregate()
                 .Match(expression)
                 .Lookup(CollectionNames.UsersCollection, "UserId", "_id", @as: "User")
@@ -62,7 +62,7 @@ namespace property_price_api.Services
             var propertiesDto = _mapper.Map<List<PropertyDto>>(properties);
             return propertiesDto;
         }
-       
+
         public async Task<PropertyDto?> GetPropertyById(string? id)
         {
             var property = await _context.Properties.Aggregate()
@@ -74,7 +74,7 @@ namespace property_price_api.Services
 
             var propertyDto = _mapper.Map<PropertyDto>(property);
             return propertyDto;
-        }    
+        }
 
         public async Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
@@ -85,7 +85,7 @@ namespace property_price_api.Services
             var userDto = (Task<UserDto>)httpContext.Items["User"];
             property.UserId = userDto.Result.Id;
 
-            if (createPropertyRequest.AskingPrice > 1000000)
+            if (createPropertyRequest.AskingPrice > PRICE_LIMIT)
             {
                 throw new CustomException("Property is too expensive!");
             }
@@ -95,11 +95,11 @@ namespace property_price_api.Services
 
             return createPropertyResponse;
         }
-            
+
 
         public async Task<bool> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest)
         {
- 
+
             var filter = Builders<Property>.Filter.Where(x => x.Id == id);
             var update = Builders<Property>.Update
                 .Set(x => x.ListingUrl, updatePropertyRequest.ListingUrl)
@@ -117,7 +117,7 @@ namespace property_price_api.Services
         {
             await _context.Properties.DeleteOneAsync(x => x.Id == id);
             await _context.PriceSuggestions.DeleteManyAsync(x => x.PropertyId == id);
-        }          
+        }
 
         public async Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? propertyId)
         {
@@ -128,7 +128,7 @@ namespace property_price_api.Services
                 return new PriceAnalysisResponse(-1, 0);
             }
             var percentages = priceSuggestions.Select(c => c.DifferenceInPercentage).ToList();
-            var askingPrice = GetPropertyById(propertyId).Result!.AskingPrice;           
+            var askingPrice = GetPropertyById(propertyId).Result!.AskingPrice;
             var meanSuggestedPrice = Calculations.MeanSuggestedPrice(percentages, askingPrice);
             var percentageDifferenceFromAskingPrice = meanSuggestedPrice * 100 / askingPrice - 100;
             return new PriceAnalysisResponse(meanSuggestedPrice, percentageDifferenceFromAskingPrice);
@@ -149,16 +149,18 @@ namespace property_price_api.Services
             if (plaerholderUser is null)
             {
                 _logger.LogInformation("Creating placeholder user {0}", placeholderEmail);
-                var newUser = new User();
-                newUser.Email = placeholderEmail;
-                newUser.Password = UserConstants.PlaceholderUserPassword;
-                newUser.UserType = UserTypes.Renter;
-                newUser.Created = DateTime.Now;
+                var newUser = new User
+                {
+                    Email = placeholderEmail,
+                    Password = UserConstants.PlaceholderUserPassword,
+                    UserType = UserTypes.Renter,
+                    Created = DateTime.Now
+                };
                 await _context.Users.InsertOneAsync(newUser);
                 _logger.LogInformation("Created placeholder user: {0}", newUser.Id);
 
-                List<CreatePropertyRequest> requests = new List<CreatePropertyRequest>
-                {
+                List<CreatePropertyRequest> requests =
+                [
                    new()
                    {
                        ListingUrl = "https://www.rightmove.co.uk/properties/141178922#/?channel=RES_BUY",
@@ -174,17 +176,19 @@ namespace property_price_api.Services
                        ListingUrl = "https://www.rightmove.co.uk/properties/86360589#/?channel=RES_BUY",
                        Address = "Edenfield Gardens, Worcester Park, Surrey, KT4",
                        AskingPrice = 855_000 }
-                };
+                ];
 
                 foreach (CreatePropertyRequest request in requests)
                 {
-                    var newProperty = new Property();
-                    newProperty.Created = DateTime.Now;
-                    newProperty.AskingPrice = request.AskingPrice;
-                    newProperty.Address = request.Address;
-                    newProperty.ListingUrl = request.ListingUrl;
-                    newProperty.AvatarUrl = new Random().Next(1, 4).ToString();
-                    newProperty.UserId = newUser.Id;
+                    var newProperty = new Property
+                    {
+                        Created = DateTime.Now,
+                        AskingPrice = request.AskingPrice,
+                        Address = request.Address,
+                        ListingUrl = request.ListingUrl,
+                        AvatarUrl = new Random().Next(1, 4).ToString(),
+                        UserId = newUser.Id
+                    };
 
                     await _context.Properties.InsertOneAsync(newProperty);
                     _logger.LogInformation("Created placeholder property: {0}", newProperty.Id);
