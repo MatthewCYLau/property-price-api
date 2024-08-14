@@ -4,9 +4,15 @@ using property_price_purchase_service.Data;
 using property_price_purchase_service.Models;
 using property_price_purchase_service.Profiles;
 using property_price_purchase_service.Services;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -35,7 +35,7 @@ public class ProductsService : IProductsService
 
     public IEnumerable<Product> GetProducts()
     {
-        return _dbContext.Products.Include(x => x.Orders).DistinctBy(p => p.ProductId);
+        return _dbContext.Products.Include(x => x.Orders);
     }
 
     public void CreateProduct(ProductRequest request)

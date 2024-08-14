@@ -9,10 +9,13 @@ namespace property_price_purchase_service.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly IProductsService _productsService;
+    private readonly ILogger _log;
 
-    public ProductController(IProductsService productsService)
+
+    public ProductController(IProductsService productsService, ILogger<ProductController> log)
     {
         _productsService = productsService;
+        _log = log;
     }
 
     [HttpGet]
@@ -25,6 +28,7 @@ public class ProductController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<Order> GetProductById(int id)
     {
+        _log.LogInformation("Get product by ID {id}", id);
         var product = _productsService.GetProductById(id);
         if (product != null)
         {
