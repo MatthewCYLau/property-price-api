@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
+using CsvHelper;
+using System.Globalization;
 using MongoDB.Driver;
 using property_price_api.Data;
 using property_price_api.Helpers;
@@ -17,6 +19,7 @@ namespace property_price_api.Services
         Task DeletePropertyById(string? id);
         Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? id);
         Task CreateSeedProperties();
+        public IEnumerable<T> ReadCSV<T>(Stream file);
     }
 
     public class PropertyService : IPropertyService
@@ -200,6 +203,15 @@ namespace property_price_api.Services
                 _logger.LogInformation("Placeholder data already exist.");
             }
 
+        }
+
+        public IEnumerable<T> ReadCSV<T>(Stream file)
+        {
+            var reader = new StreamReader(file);
+            var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+            var records = csv.GetRecords<T>();
+            return records;
         }
     }
 }

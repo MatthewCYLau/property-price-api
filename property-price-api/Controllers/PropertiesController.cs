@@ -139,6 +139,14 @@ namespace property_price_api.Controllers
 
             return File(memoryStream.ToArray(), "text/csv", $"properties-export-{DateTime.Now:yyyy-MM-dd}.csv");
         }
+
+        [Authorize]
+        [HttpPost("import-csv")]
+        public IActionResult ImportPropertiesFromCsv([FromForm] IFormFileCollection file)
+        {
+            var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(file[0].OpenReadStream());
+            return Ok(createPropertyRequests);
+        }
     }
 }
 
