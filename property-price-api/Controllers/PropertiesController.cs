@@ -145,7 +145,11 @@ namespace property_price_api.Controllers
         public IActionResult ImportPropertiesFromCsv([FromForm] IFormFileCollection file)
         {
             var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(file[0].OpenReadStream());
-            return Ok(createPropertyRequests);
+            foreach (var request in createPropertyRequests)
+            {
+                _propertyService.CreateProperty(request);
+            }
+            return Ok();
         }
     }
 }
