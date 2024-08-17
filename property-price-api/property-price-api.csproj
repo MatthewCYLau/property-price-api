@@ -34,5 +34,6 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Profiles\" />
+    <Folder Include="temp/" />
   </ItemGroup>
 </Project>

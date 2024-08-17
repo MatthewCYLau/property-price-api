@@ -408,3 +408,6 @@ ASALocalRun/
 **/out
 
 **/*appsettings.Development.json
+
+# temp directory to download Cloud Storage objects
+property-price-api/temp

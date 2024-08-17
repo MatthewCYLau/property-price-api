@@ -157,6 +157,9 @@ namespace property_price_api.Controllers
         public IActionResult ImportPropertiesFromCloudStorage(ImportPropertiesFromCloudStorageRequest request)
         {
             _logger.LogInformation("Import properties from Cloud Storage object {url}", request.ObjectUrl);
+
+            var (bucketName, objectName) = CloudStorageHelper.GetBucketAndObjectNamesFromObjectUrl(request.ObjectUrl);
+            CloudStorageHelper.DownloadFile(bucketName, objectName, "temp/data.csv");
             return Ok();
         }
     }
