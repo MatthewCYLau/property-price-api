@@ -13,7 +13,7 @@ namespace property_price_api.Controllers
     [Route("api/[controller]")]
     public class PropertiesController : ControllerBase
     {
-
+        private const string tempCsvPath = "temp/data.csv";
         private readonly IPropertyService _propertyService;
         private readonly ILogger _logger;
         // private readonly IDatabase _redis;
@@ -159,7 +159,14 @@ namespace property_price_api.Controllers
             _logger.LogInformation("Import properties from Cloud Storage object {url}", request.ObjectUrl);
 
             var (bucketName, objectName) = CloudStorageHelper.GetBucketAndObjectNamesFromObjectUrl(request.ObjectUrl);
-            CloudStorageHelper.DownloadFile(bucketName, objectName, "temp/data.csv");
+            CloudStorageHelper.DownloadFile(bucketName, objectName, tempCsvPath);
+
+            var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(System.IO.File.OpenRead(tempCsvPath));
+
+            foreach (var i in createPropertyRequests)
+            {
+                _logger.LogInformation(i.Address);
+            }
             return Ok();
         }
     }
