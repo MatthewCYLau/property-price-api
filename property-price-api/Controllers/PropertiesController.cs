@@ -141,7 +141,7 @@ namespace property_price_api.Controllers
         }
 
         [Authorize]
-        [HttpPost("import-csv")]
+        [HttpPost("import-from-csv")]
         public IActionResult ImportPropertiesFromCsv([FromForm] IFormFileCollection file)
         {
             var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(file[0].OpenReadStream());
@@ -149,6 +149,14 @@ namespace property_price_api.Controllers
             {
                 _propertyService.CreateProperty(request);
             }
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("import-from-cloud-storage")]
+        public IActionResult ImportPropertiesFromCloudStorage(ImportPropertiesFromCloudStorageRequest request)
+        {
+            _logger.LogInformation("Import properties from Cloud Storage object {url}", request.ObjectUrl);
             return Ok();
         }
     }
