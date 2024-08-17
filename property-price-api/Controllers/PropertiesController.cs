@@ -163,9 +163,10 @@ namespace property_price_api.Controllers
 
             var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(System.IO.File.OpenRead(tempCsvPath));
 
-            foreach (var i in createPropertyRequests)
+            foreach (var req in createPropertyRequests)
             {
-                _logger.LogInformation(i.Address);
+                _logger.LogInformation("Creating property for address {address}", req.Address);
+                _propertyService.CreateProperty(req);
             }
             return Ok();
         }
