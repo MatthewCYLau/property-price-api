@@ -411,3 +411,4 @@ ASALocalRun/
 
 # temp directory to download Cloud Storage objects
 property-price-api/temp
+**dev.env
