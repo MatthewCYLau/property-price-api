@@ -13,6 +13,9 @@ namespace property_price_api.Controllers
     [Route("api/[controller]")]
     public class PropertiesController : ControllerBase
     {
+        private static readonly string fileName = "example.csv";
+        private static readonly string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+
         private readonly IPropertyService _propertyService;
         private readonly ILogger _logger;
         // private readonly IDatabase _redis;
@@ -158,9 +161,8 @@ namespace property_price_api.Controllers
             _logger.LogInformation("Import properties from Cloud Storage object {url}", request.ObjectUrl);
 
             var (bucketName, objectName) = CloudStorageHelper.GetBucketAndObjectNamesFromObjectUrl(request.ObjectUrl);
-            var stream = CloudStorageHelper.DownloadFile(bucketName, objectName);
-
-            var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(stream);
+            CloudStorageHelper.DownloadFile(bucketName, objectName, filePath);
+            var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(System.IO.File.OpenRead(filePath));
 
             foreach (var req in createPropertyRequests)
             {

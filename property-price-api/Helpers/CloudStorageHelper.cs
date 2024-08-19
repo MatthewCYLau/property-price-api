@@ -4,14 +4,14 @@ namespace property_price_api.Helpers;
 
 public static class CloudStorageHelper
 {
-    public static Stream DownloadFile(
+    public static void DownloadFile(
         string bucketName,
-        string objectName)
+        string objectName,
+        string outputPath)
     {
         var storage = StorageClient.Create();
-        Stream stream = new MemoryStream();
-        storage.DownloadObject(bucketName, objectName, stream);
-        return stream;
+        using var outputFile = File.OpenWrite(outputPath);
+        storage.DownloadObject(bucketName, objectName, outputFile);
     }
 
     public static (string, string) GetBucketAndObjectNamesFromObjectUrl(string objectUrl)
