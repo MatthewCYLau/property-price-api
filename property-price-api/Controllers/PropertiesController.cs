@@ -162,13 +162,17 @@ namespace property_price_api.Controllers
 
             var (bucketName, objectName) = CloudStorageHelper.GetBucketAndObjectNamesFromObjectUrl(request.ObjectUrl);
             CloudStorageHelper.DownloadFile(bucketName, objectName, filePath);
-            var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(System.IO.File.OpenRead(filePath));
 
-            foreach (var req in createPropertyRequests)
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.ReadWrite))
             {
-                _logger.LogInformation("Creating property for address {address}", req.Address);
-                _propertyService.CreateProperty(req);
+                var createPropertyRequests = _propertyService.ReadCSV<CreatePropertyRequest>(stream);
+                foreach (var req in createPropertyRequests)
+                {
+                    _logger.LogInformation("Creating property for address {address}", req.Address);
+                    _propertyService.CreateProperty(req);
+                }
             }
+
             return Ok();
         }
     }
