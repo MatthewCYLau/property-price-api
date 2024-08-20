@@ -81,6 +81,7 @@ namespace property_price_api.Services
 
         public async Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
+            _ = GetPropertiesCreatedTodayCount();
             var property = _mapper.Map<Property>(createPropertyRequest);
             property.Created = DateTime.Now;
             property.AvatarUrl = new Random().Next(1, 4).ToString();
@@ -212,6 +213,14 @@ namespace property_price_api.Services
 
             var records = csv.GetRecords<T>();
             return records;
+        }
+
+        private async Task<long> GetPropertiesCreatedTodayCount()
+        {
+            Expression<Func<Property, bool>> expression = x => x.Created > DateTime.Today;
+            var count = await _context.Properties.CountDocumentsAsync(Builders<Property>.Filter.Where(expression));
+            _logger.LogInformation("Properties created today count: {0}", count);
+            return count;
         }
     }
 }
