@@ -25,6 +25,7 @@ namespace property_price_api.Services
     public class PropertyService : IPropertyService
     {
         private const int PRICE_LIMIT = 1_000_000;
+        private static readonly int CREATE_PROPERTY_DAILY_LIMIT = 10;
         private readonly ILogger _logger;
         private readonly MongoDbContext _context;
         private readonly IMapper _mapper;
