@@ -84,8 +84,8 @@ namespace property_price_api.Controllers
         public async Task<ActionResult<CreatePropertyResponse>> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
             var _res = await _propertyService.CreateProperty(createPropertyRequest);
-
-            return CreatedAtAction(nameof(Get), new { id = _res.Id }, _res);
+            var value = _res.Value;
+            return CreatedAtAction(nameof(Get), new { id = value.Id }, value);
         }
 
         [HttpPut("{id:length(24)}")]

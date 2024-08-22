@@ -14,7 +14,7 @@ namespace property_price_api.Services
     {
         Task<List<PropertyDto>> GetProperties(DateTime? startDate, DateTime? endDate);
         Task<PropertyDto?> GetPropertyById(string? id);
-        Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyDto);
+        Task<Result<CreatePropertyResponse>> CreateProperty(CreatePropertyRequest createPropertyDto);
         Task<bool> UpdatePropertyById(string? id, UpdatePropertyRequest updatePropertyRequest);
         Task DeletePropertyById(string? id);
         Task<PriceAnalysisResponse> GeneratePriceAnalysisByPropertyId(string? id);
@@ -80,7 +80,7 @@ namespace property_price_api.Services
             return propertyDto;
         }
 
-        public async Task<CreatePropertyResponse> CreateProperty(CreatePropertyRequest createPropertyRequest)
+        public async Task<Result<CreatePropertyResponse>> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
             _ = GetPropertiesCreatedTodayCount();
             var property = _mapper.Map<Property>(createPropertyRequest);
@@ -98,7 +98,7 @@ namespace property_price_api.Services
             await _context.Properties.InsertOneAsync(property);
             var createPropertyResponse = _mapper.Map<CreatePropertyResponse>(property);
 
-            return createPropertyResponse;
+            return Result<CreatePropertyResponse>.Success(createPropertyResponse);
         }
 
 
