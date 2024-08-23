@@ -84,7 +84,13 @@ namespace property_price_api.Controllers
         public async Task<ActionResult<CreatePropertyResponse>> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
             var _res = await _propertyService.CreateProperty(createPropertyRequest);
+
+            if (_res.IsFailure)
+            {
+                return BadRequest(new { message = _res.Error });
+            }
             var value = _res.Value;
+
             return CreatedAtAction(nameof(Get), new { id = value.Id }, value);
         }
 

@@ -82,7 +82,12 @@ namespace property_price_api.Services
 
         public async Task<Result<CreatePropertyResponse>> CreateProperty(CreatePropertyRequest createPropertyRequest)
         {
-            _ = GetPropertiesCreatedTodayCount();
+            var count = await GetPropertiesCreatedTodayCount();
+
+            if (count > CREATE_PROPERTY_DAILY_LIMIT)
+            {
+                return Result<CreatePropertyResponse>.Failure(CreatePropertyErrors.DailyLimitReached(CREATE_PROPERTY_DAILY_LIMIT));
+            }
             var property = _mapper.Map<Property>(createPropertyRequest);
             property.Created = DateTime.Now;
             property.AvatarUrl = new Random().Next(1, 4).ToString();
