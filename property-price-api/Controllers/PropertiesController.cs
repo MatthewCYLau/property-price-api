@@ -162,7 +162,7 @@ namespace property_price_api.Controllers
 
         [Authorize]
         [HttpPost("import-from-cloud-storage")]
-        public IActionResult ImportPropertiesFromCloudStorage(ImportPropertiesFromCloudStorageRequest request)
+        public async Task<IActionResult> ImportPropertiesFromCloudStorage(ImportPropertiesFromCloudStorageRequest request)
         {
             _logger.LogInformation("Import properties from Cloud Storage object {url}", request.ObjectUrl);
 
@@ -175,7 +175,11 @@ namespace property_price_api.Controllers
                 foreach (var req in createPropertyRequests)
                 {
                     _logger.LogInformation("Creating property for address {address}", req.Address);
-                    _propertyService.CreateProperty(req);
+                    var res = await _propertyService.CreateProperty(req);
+                    if (res.IsFailure)
+                    {
+                        return BadRequest(new { message = res.Error });
+                    }
                 }
             }
 
