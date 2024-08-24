@@ -2,8 +2,12 @@
 
 namespace property_price_api.Models
 {
-	public class CreatePropertyRequest
-	{
+    public class CreatePropertyRequest
+    {
+        public CreatePropertyRequest()
+        {
+        }
+
         [BsonElement("url")]
         public string ListingUrl { get; set; } = null!;
 

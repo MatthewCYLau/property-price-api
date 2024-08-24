@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using property_price_api;
 using property_price_api.Controllers;
 using property_price_api.Models;
 using property_price_api.Services;
@@ -122,5 +123,28 @@ public class PropertiesControllerTests
 
         // Assert
         Assert.That(notFoundResult.StatusCode, Is.EqualTo(404));
+    }
+
+    [Test]
+    public async Task CreatePropertyShould()
+    {
+        ILogger<PropertiesController> logger = _serviceProvider.GetRequiredService<ILogger<PropertiesController>>();
+        var mockPropertyService = new Mock<IPropertyService>();
+
+        // given
+        var request = new CreatePropertyRequest { Address = "London", AskingPrice = 100_100, ListingUrl = "www.example.com" };
+        var response = new CreatePropertyResponse { Address = "London", AskingPrice = 100_100, ListingUrl = "www.example.com" };
+
+        mockPropertyService.Setup(x => x.CreateProperty(request)).Returns(Task.FromResult(Result<CreatePropertyResponse>.Success(response)));
+        var propertiesController = new PropertiesController(logger, mockPropertyService.Object);
+
+        // when
+        var result = await propertiesController.CreateProperty(request);
+        CreatedAtActionResult? createdAtActionResult = result.Result as CreatedAtActionResult;
+
+        // Assert
+        Assert.That(createdAtActionResult.StatusCode, Is.EqualTo(201));
+        var createPropertyResponse = (CreatePropertyResponse)createdAtActionResult.Value;
+        Assert.That(createPropertyResponse.AskingPrice, Is.EqualTo(100_100));
     }
 }
