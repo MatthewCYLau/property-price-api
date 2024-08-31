@@ -4,13 +4,13 @@ using property_price_cosmos_db.Models;
 
 namespace property_price_cosmos_db.Services;
 
-public class TransactionService: ITransactionService
+public class TransactionService : ITransactionService
 {
     private readonly CosmosClient _client;
     private readonly CosmosDbOptions _options;
     private Container _container;
     private readonly ILogger _logger;
-    
+
     public TransactionService(
         ILogger<TransactionService> logger,
         CosmosClient client,
@@ -21,11 +21,11 @@ public class TransactionService: ITransactionService
         _options = options.Value;
         _container = _client.GetContainer(_options.DatabaseId, _options.ContainerId);
     }
-    
+
     public async Task AddAsync(Transaction item)
-    
+
     {
-        await _container.CreateItemAsync(item, new PartitionKey(item.Id));
+        await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
     }
 
     public async Task<Transaction> UpdateTransactionCommentsAsync(string id, Comment comment)
@@ -37,7 +37,7 @@ public class TransactionService: ITransactionService
                 new(Guid.NewGuid().ToString(), comment.Description)
             })
         };
-        
+
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
     }
@@ -64,7 +64,7 @@ public class TransactionService: ITransactionService
     public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount)
     {
         QueryDefinition queryDefinition;
-        
+
         if (isComplete is null)
         {
             queryDefinition = new QueryDefinition(
@@ -78,7 +78,7 @@ public class TransactionService: ITransactionService
             )
             .WithParameter("@isComplete", isComplete);
         }
-        
+
         var query = _container.GetItemQueryIterator<Transaction>(queryDefinition: queryDefinition);
 
         var results = new List<Transaction>();
@@ -95,7 +95,7 @@ public class TransactionService: ITransactionService
                 where i.Amount < maxAmount
                 select i;
         }
-        
+
         return results;
     }
 
