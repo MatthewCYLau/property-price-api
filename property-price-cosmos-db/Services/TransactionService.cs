@@ -34,7 +34,7 @@ public class TransactionService : ITransactionService
         {
             PatchOperation.Replace("/comments",  new List<Comment>
             {
-                new(Guid.NewGuid().ToString(), comment.Description)
+                new(Guid.NewGuid(), comment.Description)
             })
         };
 
