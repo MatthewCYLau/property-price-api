@@ -30,13 +30,10 @@ public class TransactionService : ITransactionService
 
     public async Task<Transaction> UpdateTransactionCommentsAsync(string id, Comment comment)
     {
-        List<PatchOperation> patchOperations = new List<PatchOperation>
-        {
-            PatchOperation.Replace("/comments",  new List<Comment>
-            {
-                new(Guid.NewGuid(), comment.Description)
-            })
-        };
+        List<PatchOperation> patchOperations =
+        [
+            PatchOperation.Add("/comments/-", new Comment(Guid.NewGuid(), comment.Description))
+        ];
 
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
