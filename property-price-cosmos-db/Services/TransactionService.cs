@@ -96,9 +96,17 @@ public class TransactionService : ITransactionService
         return results;
     }
 
-    public async Task<Transaction> UpdateAsync(string id, Transaction item)
+    public async Task<Transaction> UpdateAsync(string id, UpdateTransactionRequest request)
     {
-        var response = await _container.UpsertItemAsync(item, new PartitionKey(id));
+
+        List<PatchOperation> patchOperations =
+[
+PatchOperation.Set("/amount", request.Amount),
+       PatchOperation.Set("/description", request.Description),
+       PatchOperation.Set("/isComplete", request.Completed)
+];
+
+        var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
     }
 }

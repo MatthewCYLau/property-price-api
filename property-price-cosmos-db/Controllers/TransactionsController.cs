@@ -58,9 +58,9 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpPut("transactions/{id}")]
-    public async Task<IActionResult> Edit([FromBody] Transaction item)
+    public async Task<IActionResult> Edit(string id, [FromBody] UpdateTransactionRequest request)
     {
-        var transaction = await _transactionService.UpdateAsync(item.Id.ToString(), item);
+        var transaction = await _transactionService.UpdateAsync(id, request);
         return Ok(transaction);
     }
 }

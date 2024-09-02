@@ -7,7 +7,7 @@ public interface ITransactionService
     Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount);
     Task<Transaction?> GetAsync(string id);
     Task AddAsync(Transaction item);
-    Task<Transaction> UpdateAsync(string id, Transaction item);
+    Task<Transaction> UpdateAsync(string id, UpdateTransactionRequest request);
     Task<Transaction> UpdateTransactionCommentsAsync(string id, Comment comment);
     Task DeleteAsync(string id);
 }
