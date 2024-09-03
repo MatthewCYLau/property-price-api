@@ -8,6 +8,7 @@ public interface ITransactionService
     Task<Transaction?> GetAsync(string id);
     Task AddAsync(Transaction item);
     Task<Transaction> UpdateAsync(string id, UpdateTransactionRequest request);
-    Task<Transaction> UpdateTransactionCommentsAsync(string id, Comment comment);
+    Task<Transaction> UpdateTransactionAppendCommentsAsync(string id, Comment comment);
+    Task<Transaction> UpdateCommentAsync(string transactionId, string commentId, UpdateCommentRequest request);
     Task DeleteAsync(string id);
 }

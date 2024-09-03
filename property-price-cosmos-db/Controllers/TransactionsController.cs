@@ -46,7 +46,7 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> UpdateTransactionComment(string id, [FromBody] Comment comment)
     {
 
-        var transaction = await _transactionService.UpdateTransactionCommentsAsync(id, comment);
+        var transaction = await _transactionService.UpdateTransactionAppendCommentsAsync(id, comment);
         return Ok(transaction);
     }
 
@@ -61,6 +61,13 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> Edit(string id, [FromBody] UpdateTransactionRequest request)
     {
         var transaction = await _transactionService.UpdateAsync(id, request);
+        return Ok(transaction);
+    }
+
+    [HttpPut("transactions/{transactionId}/comments/{commentId}")]
+    public async Task<IActionResult> EditComment(string transactionId, string commentId, [FromBody] UpdateCommentRequest request)
+    {
+        var transaction = await _transactionService.UpdateCommentAsync(transactionId, commentId, request);
         return Ok(transaction);
     }
 }

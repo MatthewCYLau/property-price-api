@@ -28,7 +28,7 @@ public class TransactionService : ITransactionService
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
     }
 
-    public async Task<Transaction> UpdateTransactionCommentsAsync(string id, Comment comment)
+    public async Task<Transaction> UpdateTransactionAppendCommentsAsync(string id, Comment comment)
     {
         List<PatchOperation> patchOperations =
         [
@@ -108,5 +108,16 @@ PatchOperation.Set("/amount", request.Amount),
 
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
+    }
+
+    public async Task<Transaction> UpdateCommentAsync(string transactionId, string commentId, UpdateCommentRequest request)
+    {
+        var index = 0;
+        var response = await _container.PatchItemAsync<Transaction>(
+transactionId,
+new PartitionKey(transactionId),
+patchOperations: [PatchOperation.Add($"/comments{index}/Description", request.Description)]);
+        return response.Resource;
+
     }
 }
