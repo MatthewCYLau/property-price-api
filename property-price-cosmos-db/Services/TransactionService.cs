@@ -112,7 +112,8 @@ PatchOperation.Set("/amount", request.Amount),
 
     public async Task<Transaction> UpdateCommentAsync(string transactionId, string commentId, UpdateCommentRequest request)
     {
-        var index = 0;
+        var transaction = await GetAsync(transactionId);
+        var index = transaction.Comments.FindIndex(n => n.Id == new Guid(commentId));
         var response = await _container.PatchItemAsync<Transaction>(
 transactionId,
 new PartitionKey(transactionId),
