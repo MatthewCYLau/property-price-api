@@ -5,11 +5,10 @@
     <RootNamespace>property_price_common</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>Property.Price.Common</PackageId>
+    <PackageId>matlau-property-price-common</PackageId>
     <Version>1.0.0</Version>
     <Authors>Jon Doe</Authors>
     <Company>Jon Doe Ltd.</Company>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
