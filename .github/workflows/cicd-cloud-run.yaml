@@ -13,6 +13,7 @@ env:
   CLOUD_RUN_SERVICE: property-price-api
   INGEST_CLOUD_RUN_SERVICE: property-price-ingest
   COSMOS_DB_CLOUD_RUN_SERVICE: property-price-cosmos-db
+  NUGET_DIRECTORY: ${{ github.workspace}}/nuget
 
 jobs:
   build-pack:
@@ -31,7 +32,12 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Pack the NuGet package
-        run: dotnet pack -c Release
+        run: dotnet pack -c Release --output ${{ env.NuGetDirectory }}
+      - name: Publish NuGet package
+        run: |
+          foreach($file in (Get-ChildItem "${{ env.NUGET_DIRECTORY }}" -Recurse -Include *.nupkg)) {
+              dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
   build-test:
     runs-on: ubuntu-latest
     strategy:
