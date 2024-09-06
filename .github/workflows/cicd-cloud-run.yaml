@@ -35,7 +35,7 @@ jobs:
         run: dotnet pack -c Release --output ${{ env.NUGET_DIRECTORY }}
       - name: Publish NuGet package
         run: |
-          for file in $(find ${{ env.NUGET_DIRECTORY }} -type f -name "*.nupkg" -recurse); do
+          for file in $(find ${{ env.NUGET_DIRECTORY }} -type f -name "*.nupkg"); do
               dotnet nuget push "$file" --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
           done
   build-test:
