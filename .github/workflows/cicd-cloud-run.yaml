@@ -32,7 +32,7 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Pack the NuGet package
-        run: dotnet pack -c Release --output ${{ env.NuGetDirectory }}
+        run: dotnet pack -c Release --output ${{ env.NUGET_DIRECTORY }}
       - name: Publish NuGet package
         run: |
           foreach($file in (Get-ChildItem "${{ env.NUGET_DIRECTORY }}" -Recurse -Include *.nupkg)) {
