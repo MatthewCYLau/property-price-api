@@ -11,4 +11,6 @@ public interface ITransactionService
     Task<Transaction> UpdateTransactionAppendCommentsAsync(string id, Comment comment);
     Task<Transaction> UpdateCommentAsync(string transactionId, string commentId, UpdateCommentRequest request);
     Task DeleteAsync(string id);
+    Task<Transaction> DeleteCommentAsync(string transactionId, string commentId);
+
 }

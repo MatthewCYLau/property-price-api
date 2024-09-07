@@ -121,4 +121,16 @@ patchOperations: [PatchOperation.Add($"/comments/{index}/Description", request.D
         return response.Resource;
 
     }
+
+    public async Task<Transaction> DeleteCommentAsync(string transactionId, string commentId)
+    {
+        var transaction = await GetAsync(transactionId);
+        var updatedComments = transaction.Comments.Where(n => n.Id != new Guid(commentId));
+        var response = await _container.PatchItemAsync<Transaction>(
+transactionId,
+new PartitionKey(transactionId),
+patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
+        return response.Resource;
+
+    }
 }

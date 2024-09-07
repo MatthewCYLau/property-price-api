@@ -70,4 +70,11 @@ public class TransactionsController : ControllerBase
         var transaction = await _transactionService.UpdateCommentAsync(transactionId, commentId, request);
         return Ok(transaction);
     }
+
+    [HttpDelete("transactions/{transactionId}/comments/{commentId}")]
+    public async Task<IActionResult> DeleteComment(string transactionId, string commentId)
+    {
+        var transaction = await _transactionService.DeleteCommentAsync(transactionId, commentId);
+        return Ok(transaction);
+    }
 }
