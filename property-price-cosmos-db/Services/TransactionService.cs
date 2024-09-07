@@ -117,7 +117,7 @@ PatchOperation.Set("/amount", request.Amount),
         var response = await _container.PatchItemAsync<Transaction>(
 transactionId,
 new PartitionKey(transactionId),
-patchOperations: [PatchOperation.Add($"/comments{index}/Description", request.Description)]);
+patchOperations: [PatchOperation.Add($"/comments/{index}/Description", request.Description)]);
         return response.Resource;
 
     }
