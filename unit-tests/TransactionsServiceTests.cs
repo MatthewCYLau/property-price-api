@@ -12,7 +12,7 @@ namespace unit_tests;
 public class TransactionsServiceTests
 {
     private ServiceProvider _serviceProvider;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -21,13 +21,13 @@ public class TransactionsServiceTests
         services.Configure<CosmosDbOptions>(options =>
         {
             options.DatabaseId = "TransactionsDb";
-            options.ContainerId = "TransasctionsContainer";
+            options.TransactionsContainerId = "TransasctionsContainer";
         });
         services.AddSingleton<CosmosClient>(_ => new CosmosClient(""));
         services.AddSingleton<ITransactionService, TransactionService>();
         _serviceProvider = services.BuildServiceProvider();
     }
-    
+
     [Test]
     public async Task GetTransactions()
     {
