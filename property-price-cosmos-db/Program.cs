@@ -17,7 +17,7 @@ builder.Services.Configure<CosmosDbOptions>(
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
-    return new CosmosClient(settings.ConnectionString);
+    return new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_DB_CONNECTION_STRING") ?? settings.ConnectionString);
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
