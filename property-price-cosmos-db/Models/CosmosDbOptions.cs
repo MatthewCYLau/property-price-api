@@ -4,6 +4,7 @@ public class CosmosDbOptions
 {
     public const string CosmosDbSettingsName = "CosmosDbSettings";
     public string ConnectionString { get; set; } = null!;
-    public string ContainerId { get; set; } = null!;
+    public string TransactionsContainerId { get; set; } = null!;
+    public string UsersContainerId { get; set; } = null!;
     public string DatabaseId { get; set; } = null!;
 }

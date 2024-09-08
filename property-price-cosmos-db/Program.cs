@@ -20,6 +20,8 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
     return new CosmosClient(settings.ConnectionString);
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<IUserService, UserService>();
+
 
 // builder.Configuration.AddAzureKeyVault(
 //     new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),

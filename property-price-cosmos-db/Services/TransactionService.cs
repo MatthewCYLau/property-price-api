@@ -19,7 +19,7 @@ public class TransactionService : ITransactionService
         _client = client;
         _logger = logger;
         _options = options.Value;
-        _container = _client.GetContainer(_options.DatabaseId, _options.ContainerId);
+        _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
     }
 
     public async Task AddAsync(Transaction item)
