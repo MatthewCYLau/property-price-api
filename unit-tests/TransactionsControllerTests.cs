@@ -11,7 +11,7 @@ public class TransactionsControllerTests
     [Test]
     public async Task GetTransactionsShould()
     {
-        IEnumerable<Transaction> transactions = [new Transaction(new Guid(), 100, "Test", false)];
+        IEnumerable<Transaction> transactions = [new Transaction(new Guid(), new Guid(), 100, "Test", false)];
         var mockTransactionService = new Mock<ITransactionService>();
         mockTransactionService.Setup(x => x.GetMultipleAsync(false, 100)).Returns(Task.FromResult(transactions));
         var transactionsController = new TransactionsController(mockTransactionService.Object);
@@ -27,7 +27,7 @@ public class TransactionsControllerTests
     [Test]
     public async Task GetTransactionByIdShould()
     {
-        Transaction transaction = new Transaction(new Guid(), 100, "Test", false);
+        Transaction transaction = new Transaction(new Guid(), new Guid(), 100, "Test", false);
         var mockTransactionService = new Mock<ITransactionService>();
         mockTransactionService.Setup(x => x.GetAsync("1")).Returns(Task.FromResult(transaction));
         var transactionsController = new TransactionsController(mockTransactionService.Object);
