@@ -33,4 +33,4 @@ jobs:
           context: .
           file: ./property-price-cosmos-db/Dockerfile
           push: true
-          tags: ${{ env.RELEASE_VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}
