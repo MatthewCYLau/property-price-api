@@ -8,7 +8,7 @@ public class Transaction(Guid id, Guid userId, decimal amount, string descriptio
     public Guid Id { get; set; } = id;
 
     [JsonProperty(PropertyName = "userId")]
-    public required Guid UserId { get; set; } = userId;
+    public Guid UserId { get; set; } = userId;
 
     [JsonProperty(PropertyName = "amount")]
     public decimal Amount { get; set; } = amount;
