@@ -55,36 +55,6 @@ jobs:
         run: dotnet build
       - name: Test
         run: dotnet test
-  build-push-docker-hub:
-    name: Build and push Cosmos DB Docker image to Docker Hub
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: matlau/property-price-cosmos-db
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./property-price-cosmos-db/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
