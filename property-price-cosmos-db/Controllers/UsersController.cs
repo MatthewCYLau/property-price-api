@@ -23,4 +23,12 @@ public class UsersController : ControllerBase
         await _userService.AddUserAsync(user);
         return Ok(user);
     }
+
+    [HttpGet("users")]
+    public async Task<IActionResult> GetUsers()
+    {
+
+        var users = await _userService.GetUsers();
+        return Ok(users);
+    }
 }

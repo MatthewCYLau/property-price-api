@@ -27,4 +27,22 @@ public class UserService : IUserService
     {
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
     }
+
+    public async Task<IEnumerable<CosmosUser>> GetUsers()
+    {
+        QueryDefinition queryDefinition = new QueryDefinition(
+                query: "SELECT * FROM users"
+        );
+
+        var query = _container.GetItemQueryIterator<CosmosUser>(queryDefinition: queryDefinition);
+
+        var results = new List<CosmosUser>();
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            results.AddRange(response.ToList());
+        }
+
+        return results;
+    }
 }
