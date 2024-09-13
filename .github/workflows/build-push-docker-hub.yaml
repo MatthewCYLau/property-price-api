@@ -1,3 +1,4 @@
+name: Build and push CosmosDB Service image to Docker Hub
 on:
   push:
     tags:
