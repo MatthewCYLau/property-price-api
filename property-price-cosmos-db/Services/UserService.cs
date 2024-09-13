@@ -45,4 +45,9 @@ public class UserService : IUserService
 
         return results;
     }
+
+    public async Task DeleteUserById(string id)
+    {
+        await _container.DeleteItemAsync<CosmosUser>(id, new PartitionKey(id));
+    }
 }

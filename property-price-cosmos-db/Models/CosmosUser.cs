@@ -2,11 +2,14 @@ using Newtonsoft.Json;
 
 namespace property_price_cosmos_db.Models;
 
-public class CosmosUser(Guid id, string name)
+public class CosmosUser()
 {
     [JsonProperty(PropertyName = "id")]
-    public Guid Id { get; set; } = id;
+    public Guid Id { get; set; }
 
     [JsonProperty(PropertyName = "name")]
-    public string Name { get; set; } = name;
+    public required string Name { get; set; }
+
+    [JsonProperty(PropertyName = "dateOfBirth")]
+    public required DateTime DateOfBirth { get; set; }
 }

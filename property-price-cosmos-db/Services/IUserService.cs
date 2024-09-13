@@ -7,4 +7,5 @@ public interface IUserService
     // Task<User?> GetUserByIdAsync(string id);
     Task AddUserAsync(CosmosUser item);
     Task<IEnumerable<CosmosUser>> GetUsers();
+    Task DeleteUserById(string id);
 }
