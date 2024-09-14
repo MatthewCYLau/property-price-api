@@ -20,5 +20,5 @@ public class Transaction()
     public required bool Completed { get; set; }
 
     [JsonProperty(PropertyName = "comments")]
-    public required List<Comment> Comments { get; set; }
+    public List<Comment> Comments { get; set; } = [];
 }
