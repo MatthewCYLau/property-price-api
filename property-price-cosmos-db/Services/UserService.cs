@@ -28,11 +28,24 @@ public class UserService : IUserService
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
     }
 
-    public async Task<IEnumerable<CosmosUser>> GetUsers()
+    public async Task<IEnumerable<CosmosUser>> GetUsers(DateTime? fromDate, DateTime? toDate)
     {
-        QueryDefinition queryDefinition = new QueryDefinition(
+
+        QueryDefinition queryDefinition;
+
+        if (fromDate == null || toDate == null)
+        {
+            queryDefinition = new QueryDefinition(
                 query: "SELECT * FROM users"
-        );
+            );
+        }
+        else
+        {
+            queryDefinition = new QueryDefinition(
+                    query: "SELECT * FROM users u WHERE (u.dateOfBirth >= @fromDate AND u.dateOfBirth <= @toDate)"
+            )
+            .WithParameter("@fromDate", fromDate).WithParameter("@toDate", toDate);
+        }
 
         var query = _container.GetItemQueryIterator<CosmosUser>(queryDefinition: queryDefinition);
 

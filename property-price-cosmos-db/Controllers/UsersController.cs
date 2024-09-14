@@ -25,10 +25,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("users")]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IActionResult> GetUsers(DateTime? fromDate, DateTime? toDate)
     {
 
-        var users = await _userService.GetUsers();
+        var users = await _userService.GetUsers(fromDate, toDate);
         return Ok(users);
     }
 
