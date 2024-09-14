@@ -71,4 +71,18 @@ public class UserService : IUserService
             return false;
         }
     }
+
+    public async Task<CosmosUser?> GetUserById(string id)
+    {
+        _logger.LogInformation("Getting user by ID {id}", id);
+        try
+        {
+            var response = await _container.ReadItemAsync<CosmosUser>(id, new PartitionKey(id));
+            return response.Resource;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+    }
 }

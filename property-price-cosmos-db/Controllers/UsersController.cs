@@ -33,6 +33,19 @@ public class UsersController : ControllerBase
     }
 
 
+    [HttpGet("users/{id}")]
+    public async Task<ActionResult<CosmosUser>> GetUserById(string id)
+    {
+        var user = await _userService.GetUserById(id);
+
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(user);
+    }
+
     [HttpDelete("users/{id}")]
     public async Task<IActionResult> DeleteUserById(string id)
     {
