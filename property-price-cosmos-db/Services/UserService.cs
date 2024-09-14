@@ -46,8 +46,16 @@ public class UserService : IUserService
         return results;
     }
 
-    public async Task DeleteUserById(string id)
+    public async Task<bool> DeleteUserById(string id)
     {
-        await _container.DeleteItemAsync<CosmosUser>(id, new PartitionKey(id));
+        try
+        {
+            await _container.DeleteItemAsync<CosmosUser>(id, new PartitionKey(id));
+            return true;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return false;
+        }
     }
 }
