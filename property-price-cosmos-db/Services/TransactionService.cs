@@ -10,21 +10,30 @@ public class TransactionService : ITransactionService
     private readonly CosmosDbOptions _options;
     private Container _container;
     private readonly ILogger _logger;
+    private readonly IUserService _userService;
 
     public TransactionService(
         ILogger<TransactionService> logger,
         CosmosClient client,
+        IUserService userService,
         IOptions<CosmosDbOptions> options)
     {
         _client = client;
         _logger = logger;
         _options = options.Value;
+        _userService = userService;
         _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
     }
 
     public async Task AddAsync(Transaction item)
 
     {
+        var user = _userService.GetUserById(item.UserId.ToString());
+        if (user.Result == null)
+        {
+            _logger.LogWarning("Invalid user ID {id}", item.UserId);
+        }
+
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
     }
 
