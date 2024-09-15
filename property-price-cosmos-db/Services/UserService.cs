@@ -85,4 +85,18 @@ public class UserService : IUserService
             return null;
         }
     }
+
+    public async Task<CosmosUser> UpdateUserById(string id, UpdateUserRequest request)
+    {
+
+        List<PatchOperation> patchOperations =
+[
+PatchOperation.Set("/name", request.Name),
+       PatchOperation.Set("/dateOfBirth", request.DateOfBirth)
+
+];
+
+        var response = await _container.PatchItemAsync<CosmosUser>(id, new PartitionKey(id), patchOperations);
+        return response.Resource;
+    }
 }

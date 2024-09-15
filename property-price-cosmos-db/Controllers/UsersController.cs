@@ -58,4 +58,11 @@ public class UsersController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("users/{id}")]
+    public async Task<ActionResult<CosmosUser>> UpdateUser(string id, [FromBody] UpdateUserRequest request)
+    {
+        var user = await _userService.UpdateUserById(id, request);
+        return Ok(user);
+    }
 }

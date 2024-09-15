@@ -8,4 +8,5 @@ public interface IUserService
     Task AddUserAsync(CosmosUser item);
     Task<IEnumerable<CosmosUser>> GetUsers(DateTime? fromDate, DateTime? toDate);
     Task<bool> DeleteUserById(string id);
+    Task<CosmosUser> UpdateUserById(string id, UpdateUserRequest request);
 }
