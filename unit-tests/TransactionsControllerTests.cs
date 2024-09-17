@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Newtonsoft.Json;
 using property_price_cosmos_db.Controllers;
 using property_price_cosmos_db.Models;
 using property_price_cosmos_db.Services;
@@ -38,5 +39,16 @@ public class TransactionsControllerTests
         Assert.IsNotNull(okResult);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
         Assert.That(okResult.Value, Is.EqualTo(transaction));
+    }
+
+    [Test]
+    public async Task CreateTransactionIdShould()
+    {
+        string text = File.ReadAllText("resources/example.json");
+        var transaction = JsonConvert.DeserializeObject<Transaction>(text);
+
+        // Assert
+        Assert.IsNotNull(text);
+        Assert.AreEqual(transaction.Amount, 2000);
     }
 }
