@@ -46,9 +46,15 @@ public class TransactionsControllerTests
     {
         string text = File.ReadAllText("resources/example.json");
         var transaction = JsonConvert.DeserializeObject<Transaction>(text);
+        var mockTransactionService = new Mock<ITransactionService>();
+        mockTransactionService.Setup(x => x.AddAsync(transaction)).Returns(Task.FromResult(transaction));
+        var transactionsController = new TransactionsController(mockTransactionService.Object);
+        var transactionsResult = await transactionsController.CreateTransaction(transaction);
+        CreatedAtActionResult? result = transactionsResult as CreatedAtActionResult;
 
         // Assert
         Assert.IsNotNull(text);
         Assert.AreEqual(transaction.Amount, 2000);
+        Assert.That(result.Value, Is.EqualTo(transaction));
     }
 }
