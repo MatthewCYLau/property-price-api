@@ -7,6 +7,9 @@ public class Transaction()
     [JsonProperty(PropertyName = "id")]
     public Guid Id { get; set; }
 
+    [JsonProperty(PropertyName = "created")]
+    public DateTime Created { get; set; } = DateTime.Now;
+
     [JsonProperty(PropertyName = "userId")]
     public required Guid UserId { get; set; }
 
