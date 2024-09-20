@@ -112,7 +112,8 @@ public class TransactionService : ITransactionService
 [
 PatchOperation.Set("/amount", request.Amount),
        PatchOperation.Set("/description", request.Description),
-       PatchOperation.Set("/isComplete", request.Completed)
+       PatchOperation.Set("/isComplete", request.Completed),
+       PatchOperation.Set("/modified", DateTime.Now)
 ];
 
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
