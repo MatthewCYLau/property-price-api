@@ -67,24 +67,33 @@ public class TransactionService : ITransactionService
         }
     }
 
-    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount)
+    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount, string? orderBy)
     {
         QueryDefinition queryDefinition;
+        string order;
+
+        if (orderBy != null && orderBy == "asc")
+        {
+            order = "ASC";
+        }
+        else
+        {
+            order = "DESC";
+        }
 
         if (isComplete is null)
         {
             queryDefinition = new QueryDefinition(
-                query: "SELECT * FROM transactions"
+                query: $"SELECT * FROM transactions ORDER BY transactions.created {order}"
             );
         }
         else
         {
             queryDefinition = new QueryDefinition(
-                    query: "SELECT * FROM transactions t WHERE t.isComplete = @isComplete"
+                    query: $"SELECT * FROM transactions t WHERE t.isComplete = @isComplete ORDER BY t.created {order}"
             )
             .WithParameter("@isComplete", isComplete);
         }
-
         var query = _container.GetItemQueryIterator<Transaction>(queryDefinition: queryDefinition);
 
         var results = new List<Transaction>();
