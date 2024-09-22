@@ -156,17 +156,37 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
     public async Task<AnalysisResponse> GetTransactionsAnalysisResponse()
     {
 
-        QueryDefinition queryDefinition = new(query: "SELECT VALUE SUM(t.amount) FROM transactions t");
-        var query = _container.GetItemQueryIterator<decimal>(queryDefinition: queryDefinition);
+        QueryDefinition count = new(query: "SELECT VALUE COUNT(t.amount) FROM transactions t");
+        var countQuery = _container.GetItemQueryIterator<int>(queryDefinition: count);
 
-        var results = new List<decimal>();
-        while (query.HasMoreResults)
+        var countResults = new List<int>();
+        while (countQuery.HasMoreResults)
         {
-            var response = await query.ReadNextAsync();
-            results.AddRange(response.ToList());
+            var response = await countQuery.ReadNextAsync();
+            countResults.AddRange([.. response]);
         }
 
-        return new AnalysisResponse { SumAmount = results[0] };
+        QueryDefinition sum = new(query: "SELECT VALUE SUM(t.amount) FROM transactions t");
+        var sumQuery = _container.GetItemQueryIterator<decimal>(queryDefinition: sum);
+
+        var sumResults = new List<decimal>();
+        while (sumQuery.HasMoreResults)
+        {
+            var response = await sumQuery.ReadNextAsync();
+            sumResults.AddRange([.. response]);
+        }
+
+        QueryDefinition average = new(query: "SELECT VALUE AVG(t.amount) FROM transactions t");
+        var averageQuery = _container.GetItemQueryIterator<decimal>(queryDefinition: average);
+
+        var averageResults = new List<decimal>();
+        while (averageQuery.HasMoreResults)
+        {
+            var response = await averageQuery.ReadNextAsync();
+            averageResults.AddRange([.. response]);
+        }
+
+        return new AnalysisResponse { Count = countResults[0], Sum = Math.Round(sumResults[0], 2), Average = Math.Round(averageResults[0], 2) };
     }
 
 }
