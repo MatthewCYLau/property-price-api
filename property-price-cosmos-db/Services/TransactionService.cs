@@ -152,4 +152,21 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return response.Resource;
 
     }
+
+    public async Task<AnalysisResponse> GetTransactionsAnalysisResponse()
+    {
+
+        QueryDefinition queryDefinition = new(query: "SELECT VALUE SUM(t.amount) FROM transactions t");
+        var query = _container.GetItemQueryIterator<decimal>(queryDefinition: queryDefinition);
+
+        var results = new List<decimal>();
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            results.AddRange(response.ToList());
+        }
+
+        return new AnalysisResponse { SumAmount = results[0] };
+    }
+
 }

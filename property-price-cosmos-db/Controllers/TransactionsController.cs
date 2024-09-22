@@ -77,4 +77,12 @@ public class TransactionsController : ControllerBase
         var transaction = await _transactionService.DeleteCommentAsync(transactionId, commentId);
         return Ok(transaction);
     }
+
+    [HttpGet("analysis/transactions")]
+    public async Task<ActionResult<AnalysisResponse>> GetTransactionsAnalysis()
+    {
+        var analysis = await _transactionService.GetTransactionsAnalysisResponse();
+
+        return Ok(analysis);
+    }
 }
