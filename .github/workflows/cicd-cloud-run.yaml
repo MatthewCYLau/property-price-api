@@ -31,6 +31,8 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build
+      - name: Test
+        run: dotnet test
       - name: Pack the NuGet package
         run: dotnet pack -c Release --output ${{ env.NUGET_DIRECTORY }}
       - name: Publish NuGet package
