@@ -23,9 +23,16 @@ builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 
 
+string userAssignedClientId = "af197119-e0e3-4a39-9599-646dc225fa1b";
+var credential = new DefaultAzureCredential(
+    new DefaultAzureCredentialOptions
+    {
+        ManagedIdentityClientId = userAssignedClientId
+    });
+
 builder.Configuration.AddAzureKeyVault(
     new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-    new DefaultAzureCredential()
+    credential
     );
 
 var app = builder.Build();
