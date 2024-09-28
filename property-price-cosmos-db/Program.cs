@@ -22,17 +22,19 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 
+var clientId = builder.Configuration
+    .GetSection(ManagedIdentityOptions.ManagedIdentitySettingsName)
+    .Get<ManagedIdentityOptions>().CliendId;
 
-string userAssignedClientId = "af197119-e0e3-4a39-9599-646dc225fa1b";
 var credential = new DefaultAzureCredential(
     new DefaultAzureCredentialOptions
     {
-        ManagedIdentityClientId = userAssignedClientId
+        ManagedIdentityClientId = clientId
     });
 
 builder.Configuration.AddAzureKeyVault(
     new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-    credential
+    Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential
     );
 
 var app = builder.Build();
