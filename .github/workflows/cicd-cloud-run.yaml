@@ -12,7 +12,6 @@ env:
   REGISTRY_HOSTNAME: gcr.io
   CLOUD_RUN_SERVICE: property-price-api
   INGEST_CLOUD_RUN_SERVICE: property-price-ingest
-  COSMOS_DB_CLOUD_RUN_SERVICE: property-price-cosmos-db
   NUGET_DIRECTORY: ${{ github.workspace}}/nuget
 
 jobs:
@@ -96,17 +95,6 @@ jobs:
         run: |
           docker push "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" 
           docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$INGEST_IMAGE":latest
-      # Build the Cosmos DB service Docker image
-      - name: Build Cosmos DB service
-        run: |-
-          docker build -f property-price-cosmos-db/Dockerfile -t \
-          "$REGISTRY_HOSTNAME/$PROJECT_ID/$COSMOS_DB_CLOUD_RUN_SERVICE:$GITHUB_SHA" -t \
-          "$REGISTRY_HOSTNAME/$PROJECT_ID/$COSMOS_DB_CLOUD_RUN_SERVICE:latest" .
-      # Push the Cosmos DB service Docker image to Google Container Registry
-      - name: Push
-        run: |
-          docker push "$REGISTRY_HOSTNAME/$PROJECT_ID/$COSMOS_DB_CLOUD_RUN_SERVICE:$GITHUB_SHA" 
-          docker push "$REGISTRY_HOSTNAME"/$PROJECT_ID/"$COSMOS_DB_CLOUD_RUN_SERVICE":latest
       - name: Deploy
         run: |
           gcloud run deploy ${CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:$GITHUB_SHA" --region europe-west1 \
@@ -114,4 +102,3 @@ jobs:
           ,JWT_SECRET=jwt-secret:latest
           gcloud run deploy ${INGEST_CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" --region europe-west1 \
           --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest
-          gcloud run deploy ${COSMOS_DB_CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$COSMOS_DB_CLOUD_RUN_SERVICE:$GITHUB_SHA" --region europe-west1
