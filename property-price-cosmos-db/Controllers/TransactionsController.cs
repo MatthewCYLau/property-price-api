@@ -9,10 +9,13 @@ namespace property_price_cosmos_db.Controllers;
 public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
+    private readonly IConfiguration _configuration;
 
-    public TransactionsController(ITransactionService transactionService)
+
+    public TransactionsController(ITransactionService transactionService, IConfiguration configuration)
     {
         _transactionService = transactionService;
+        _configuration = configuration;
     }
 
     [HttpGet("transactions")]
@@ -84,5 +87,10 @@ public class TransactionsController : ControllerBase
         var analysis = await _transactionService.GetTransactionsAnalysisResponse();
 
         return Ok(analysis);
+    }
+    [HttpGet("secret")]
+    public async Task<IActionResult> GetSecretFromAzureKeyVault()
+    {
+        return Ok(_configuration.GetConnectionString("MyDatabase"));
     }
 }

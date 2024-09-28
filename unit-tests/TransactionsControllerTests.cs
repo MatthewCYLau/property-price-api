@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;
 using property_price_cosmos_db.Controllers;
@@ -14,8 +15,9 @@ public class TransactionsControllerTests
     {
         IEnumerable<Transaction> transactions = [new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [] }];
         var mockTransactionService = new Mock<ITransactionService>();
+        Mock<IConfiguration> mockConfiguration = new();
         mockTransactionService.Setup(x => x.GetMultipleAsync(false, 100, "asc")).Returns(Task.FromResult(transactions));
-        var transactionsController = new TransactionsController(mockTransactionService.Object);
+        var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
         var transactionsResult = await transactionsController.List(false, 100, "asc");
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
 
@@ -30,8 +32,9 @@ public class TransactionsControllerTests
     {
         Transaction transaction = new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [] };
         var mockTransactionService = new Mock<ITransactionService>();
+        Mock<IConfiguration> mockConfiguration = new();
         mockTransactionService.Setup(x => x.GetAsync("1")).Returns(Task.FromResult(transaction));
-        var transactionsController = new TransactionsController(mockTransactionService.Object);
+        var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
         var transactionsResult = await transactionsController.Get("1");
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
 
@@ -47,8 +50,9 @@ public class TransactionsControllerTests
         string text = File.ReadAllText("resources/example.json");
         var transaction = JsonConvert.DeserializeObject<Transaction>(text);
         var mockTransactionService = new Mock<ITransactionService>();
+        Mock<IConfiguration> mockConfiguration = new();
         mockTransactionService.Setup(x => x.AddAsync(transaction)).Returns(Task.FromResult(transaction));
-        var transactionsController = new TransactionsController(mockTransactionService.Object);
+        var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
         var transactionsResult = await transactionsController.CreateTransaction(transaction);
         CreatedAtActionResult? result = transactionsResult as CreatedAtActionResult;
 

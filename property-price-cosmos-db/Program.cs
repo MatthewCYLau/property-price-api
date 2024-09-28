@@ -23,14 +23,10 @@ builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 
 
-// builder.Configuration.AddAzureKeyVault(
-//     new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-//     new DefaultAzureCredential()
-//     );
-//
-// var databaseConnectionString = builder.Configuration.GetConnectionString("MyDatabase");
-//
-// Console.WriteLine(databaseConnectionString);
+builder.Configuration.AddAzureKeyVault(
+    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+    new DefaultAzureCredential()
+    );
 
 var app = builder.Build();
 
