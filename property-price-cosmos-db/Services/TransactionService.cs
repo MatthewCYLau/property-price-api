@@ -1,4 +1,6 @@
 using Microsoft.Azure.Cosmos;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
 
@@ -11,17 +13,20 @@ public class TransactionService : ITransactionService
     private Container _container;
     private readonly ILogger _logger;
     private readonly IUserService _userService;
+    private readonly IAzureClientFactory<BlobServiceClient> _azureClientFactory;
 
     public TransactionService(
         ILogger<TransactionService> logger,
         CosmosClient client,
         IUserService userService,
+        IAzureClientFactory<BlobServiceClient> azureClientFactory,
         IOptions<CosmosDbOptions> options)
     {
         _client = client;
         _logger = logger;
         _options = options.Value;
         _userService = userService;
+        _azureClientFactory = azureClientFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
     }
 
@@ -34,7 +39,13 @@ public class TransactionService : ITransactionService
             _logger.LogWarning("Invalid user ID {id}", item.UserId);
         }
 
+        var blobServiceClient = _azureClientFactory.CreateClient("main");
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
+        BlobContainerClient container = await blobServiceClient.CreateBlobContainerAsync(item.Id.ToString());
+        if (await container.ExistsAsync())
+        {
+            _logger.LogInformation("Created container {0}", container.Name);
+        }
     }
 
     public async Task<Transaction> UpdateTransactionAppendCommentsAsync(string id, Comment comment)
