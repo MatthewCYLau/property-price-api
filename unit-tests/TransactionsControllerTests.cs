@@ -61,4 +61,24 @@ public class TransactionsControllerTests
         Assert.AreEqual(transaction.Amount, 2000);
         Assert.That(result.Value, Is.EqualTo(transaction));
     }
+
+    [Test]
+    public async Task GetSecretShould()
+    {
+        var mockTransactionService = new Mock<ITransactionService>();
+        var mockConfSection = new Mock<IConfigurationSection>();
+        mockConfSection.SetupGet(m => m[It.Is<string>(s => s == "MyDatabase")]).Returns("bar");
+
+        var mockConfiguration = new Mock<IConfiguration>();
+        mockConfiguration.Setup(a => a.GetSection(It.Is<string>(s => s == "ConnectionStrings"))).Returns(mockConfSection.Object);
+
+        var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
+        var transactionsResult = await transactionsController.GetSecretFromAzureKeyVault();
+        OkObjectResult? okResult = transactionsResult as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(okResult);
+        Assert.That(okResult.StatusCode, Is.EqualTo(200));
+        Assert.That(okResult.Value, Is.EqualTo("bar"));
+    }
 }
