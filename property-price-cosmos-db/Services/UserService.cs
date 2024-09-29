@@ -98,7 +98,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<CosmosUser> UpdateUserById(string id, UpdateUserRequest request)
+    public async Task<CosmosUser> UpdateUserById(string id, UpdateCosmosUserRequest request)
     {
 
         List<PatchOperation> patchOperations =

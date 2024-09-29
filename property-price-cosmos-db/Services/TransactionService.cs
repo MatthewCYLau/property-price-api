@@ -32,13 +32,14 @@ public class TransactionService : ITransactionService
         _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
     }
 
-    public async Task AddAsync(Transaction item)
+    public async Task<Result> AddAsync(Transaction item)
 
     {
         var user = _userService.GetUserById(item.UserId.ToString());
         if (user.Result == null)
         {
             _logger.LogWarning("Invalid user ID {id}", item.UserId);
+            return Result.Failure(TransactionErrors.InvalidUserId(item.UserId.ToString()));
         }
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
 
@@ -56,6 +57,7 @@ public class TransactionService : ITransactionService
             await blobClient.UploadAsync(streamToUploadToBlob);
         }
         _logger.LogInformation("Uploaded CSV for transaction with ID {id}", item.Id);
+        return Result.Success();
     }
 
     public async Task<Transaction> UpdateTransactionAppendCommentsAsync(string id, Comment comment)

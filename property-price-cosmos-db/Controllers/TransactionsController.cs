@@ -41,7 +41,12 @@ public class TransactionsController : ControllerBase
     {
 
         transaction.Id = Guid.NewGuid();
-        await _transactionService.AddAsync(transaction);
+        var result = await _transactionService.AddAsync(transaction);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
         return CreatedAtAction(nameof(Get), new { id = transaction.Id }, transaction);
     }
 
