@@ -51,7 +51,7 @@ public class TransactionsControllerTests
         var transaction = JsonConvert.DeserializeObject<Transaction>(text);
         var mockTransactionService = new Mock<ITransactionService>();
         Mock<IConfiguration> mockConfiguration = new();
-        mockTransactionService.Setup(x => x.AddAsync(transaction)).Returns(Task.FromResult(transaction));
+        mockTransactionService.Setup(x => x.AddAsync(transaction)).Returns(Task.FromResult(Result.Success()));
         var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
         var transactionsResult = await transactionsController.CreateTransaction(transaction);
         CreatedAtActionResult? result = transactionsResult as CreatedAtActionResult;
