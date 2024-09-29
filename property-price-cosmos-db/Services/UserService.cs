@@ -1,6 +1,8 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Azure;
 
 namespace property_price_cosmos_db.Services;
 
@@ -10,15 +12,18 @@ public class UserService : IUserService
     private readonly CosmosDbOptions _options;
     private Container _container;
     private readonly ILogger _logger;
+    private readonly IAzureClientFactory<BlobServiceClient> _azureClientFactory;
 
     public UserService(
         ILogger<UserService> logger,
         CosmosClient client,
+        IAzureClientFactory<BlobServiceClient> azureClientFactory,
         IOptions<CosmosDbOptions> options)
     {
         _client = client;
         _logger = logger;
         _options = options.Value;
+        _azureClientFactory = azureClientFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.UsersContainerId);
     }
 
@@ -26,6 +31,13 @@ public class UserService : IUserService
 
     {
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
+        var blobServiceClient = _azureClientFactory.CreateClient("main");
+
+        BlobContainerClient container = await blobServiceClient.CreateBlobContainerAsync(item.Id.ToString());
+        if (await container.ExistsAsync())
+        {
+            _logger.LogInformation("Created container for user {id}", item.Id.ToString());
+        }
     }
 
     public async Task<IEnumerable<CosmosUser>> GetUsers(DateTime? fromDate, DateTime? toDate)

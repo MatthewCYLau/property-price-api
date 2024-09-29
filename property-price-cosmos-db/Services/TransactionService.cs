@@ -1,5 +1,7 @@
+using System.Globalization;
 using Microsoft.Azure.Cosmos;
 using Azure.Storage.Blobs;
+using CsvHelper;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
@@ -38,14 +40,22 @@ public class TransactionService : ITransactionService
         {
             _logger.LogWarning("Invalid user ID {id}", item.UserId);
         }
+        await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
 
         var blobServiceClient = _azureClientFactory.CreateClient("main");
-        await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
-        BlobContainerClient container = await blobServiceClient.CreateBlobContainerAsync(item.Id.ToString());
-        if (await container.ExistsAsync())
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(item.UserId.ToString());
+        BlobClient blobClient = blobContainerClient.GetBlobClient($"{item.Id}.csv");
+
+        using (var writer = new StringWriter())
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
-            _logger.LogInformation("Created container {0}", container.Name);
+            csv.WriteRecords(new Transaction[] { item });
+            string csvContent = writer.ToString();
+
+            Stream streamToUploadToBlob = GenerateStreamFromString(csvContent);
+            await blobClient.UploadAsync(streamToUploadToBlob);
         }
+        _logger.LogInformation("Uploaded CSV for transaction with ID {id}", item.Id);
     }
 
     public async Task<Transaction> UpdateTransactionAppendCommentsAsync(string id, Comment comment)
@@ -200,4 +210,13 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return new AnalysisResponse { Count = countResults[0], Sum = Math.Round(sumResults[0], 2), Average = Math.Round(averageResults[0], 2) };
     }
 
+    private static Stream GenerateStreamFromString(string s)
+    {
+        var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+        writer.Write(s);
+        writer.Flush();
+        stream.Position = 0;
+        return stream;
+    }
 }
