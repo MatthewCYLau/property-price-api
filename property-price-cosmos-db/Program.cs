@@ -22,6 +22,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddHostedService<TrasantionWorker>();
 
 var clientId = builder.Configuration
     .GetSection(ManagedIdentityOptions.ManagedIdentitySettingsName)
