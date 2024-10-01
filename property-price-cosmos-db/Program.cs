@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
 using property_price_cosmos_db.Services;
 using Microsoft.Extensions.Azure;
+using Azure.Messaging.ServiceBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,17 @@ builder.Configuration.AddAzureKeyVault(
 builder.Services.AddAzureClients(clientBuilder =>
 {
     clientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("Azure:Storage")).WithName("main");
+    clientBuilder.AddServiceBusClientWithNamespace("sbns-gitlab-azure-terraform-production.servicebus.windows.net");
+    clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
+                provider
+                .GetService<ServiceBusClient>()
+                .CreateSender("sbt-aks-storage-request")
+            ).WithName("sbt-aks-storage-request-sender");
+    // clientBuilder.AddClient<ServiceBusReceiver, ServiceBusClientOptions>((_, _, provider) =>
+    //               provider
+    //               .GetService<ServiceBusClient>()
+    //               .CreateReceiver("sbt-aks-storage-request", "aks-storage-request")
+    //           ).WithName("queueNamde");
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
 });
 

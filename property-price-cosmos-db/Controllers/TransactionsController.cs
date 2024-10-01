@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Azure;
 using property_price_cosmos_db.Models;
 using property_price_cosmos_db.Services;
+using Azure.Messaging.ServiceBus;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace property_price_cosmos_db.Controllers;
 
@@ -10,12 +14,17 @@ public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
     private readonly IConfiguration _configuration;
+    private readonly IAzureClientFactory<ServiceBusSender> _serviceBusSenderFactory;
 
 
-    public TransactionsController(ITransactionService transactionService, IConfiguration configuration)
+    public TransactionsController(
+        ITransactionService transactionService,
+        IConfiguration configuration,
+        IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory)
     {
         _transactionService = transactionService;
         _configuration = configuration;
+        _serviceBusSenderFactory = serviceBusSenderFactory;
     }
 
     [HttpGet("transactions")]
@@ -47,6 +56,19 @@ public class TransactionsController : ControllerBase
         {
             return BadRequest(result.Error);
         }
+
+        var _sender = _serviceBusSenderFactory.CreateClient("sbt-aks-storage-request-sender");
+        var sql_value = "val1";
+        var message = new ServiceBusMessage(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(transaction)))
+        {
+
+            ApplicationProperties =
+                {
+                { "var1", sql_value }
+
+            }
+        };
+        await _sender.SendMessageAsync(message);
         return CreatedAtAction(nameof(Get), new { id = transaction.Id }, transaction);
     }
 
