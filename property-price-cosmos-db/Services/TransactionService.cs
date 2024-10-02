@@ -28,7 +28,7 @@ public class TransactionService : ITransactionService
         IUserService userService,
         IAzureClientFactory<BlobServiceClient> azureClientFactory,
         IOptions<CosmosDbOptions> options,
-         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory
+        IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory
         )
     {
         _client = client;
@@ -52,7 +52,7 @@ public class TransactionService : ITransactionService
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
 
 
-        var _sender = _serviceBusSenderFactory.CreateClient("sbt-aks-storage-request-sender");
+        var _sender = _serviceBusSenderFactory.CreateClient("sender");
         var sql_value = "val1";
         var message = new ServiceBusMessage(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(item)))
         {

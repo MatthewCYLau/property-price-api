@@ -43,17 +43,18 @@ builder.Configuration.AddAzureKeyVault(
 builder.Services.AddAzureClients(clientBuilder =>
 {
     clientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("Azure:Storage")).WithName("main");
-    clientBuilder.AddServiceBusClientWithNamespace("sbns-gitlab-azure-terraform-production.servicebus.windows.net");
+    clientBuilder.AddServiceBusClientWithNamespace("sbns-gitlab-azure-terraform-production.servicebus.windows.net").WithName("main");
     clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
                 provider
-                .GetService<ServiceBusClient>()
+                .GetService<IAzureClientFactory<ServiceBusClient>>()
+                .CreateClient("main")
                 .CreateSender("sbt-aks-storage-request")
-            ).WithName("sbt-aks-storage-request-sender");
+            ).WithName("sender");
     // clientBuilder.AddClient<ServiceBusReceiver, ServiceBusClientOptions>((_, _, provider) =>
     //               provider
     //               .GetService<ServiceBusClient>()
     //               .CreateReceiver("sbt-aks-storage-request", "aks-storage-request")
-    //           ).WithName("queueNamde");
+    //           ).WithName("sbt-aks-storage-request-receiver");
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
 });
 
