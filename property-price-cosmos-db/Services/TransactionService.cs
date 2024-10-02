@@ -5,6 +5,9 @@ using CsvHelper;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
+using Azure.Messaging.ServiceBus;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace property_price_cosmos_db.Services;
 
@@ -16,19 +19,24 @@ public class TransactionService : ITransactionService
     private readonly ILogger _logger;
     private readonly IUserService _userService;
     private readonly IAzureClientFactory<BlobServiceClient> _azureClientFactory;
+    private readonly IAzureClientFactory<ServiceBusSender> _serviceBusSenderFactory;
+
 
     public TransactionService(
         ILogger<TransactionService> logger,
         CosmosClient client,
         IUserService userService,
         IAzureClientFactory<BlobServiceClient> azureClientFactory,
-        IOptions<CosmosDbOptions> options)
+        IOptions<CosmosDbOptions> options,
+         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory
+        )
     {
         _client = client;
         _logger = logger;
         _options = options.Value;
         _userService = userService;
         _azureClientFactory = azureClientFactory;
+        _serviceBusSenderFactory = serviceBusSenderFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
     }
 
@@ -42,6 +50,19 @@ public class TransactionService : ITransactionService
             return Result.Failure(TransactionErrors.InvalidUserId(item.UserId.ToString()));
         }
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
+
+
+        var _sender = _serviceBusSenderFactory.CreateClient("sbt-aks-storage-request-sender");
+        var sql_value = "val1";
+        var message = new ServiceBusMessage(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(item)))
+        {
+            ApplicationProperties =
+                {
+                { "var1", sql_value }
+
+            }
+        };
+        await _sender.SendMessageAsync(message);
 
         var blobServiceClient = _azureClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(item.UserId.ToString());
