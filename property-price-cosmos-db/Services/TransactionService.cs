@@ -54,7 +54,8 @@ public class TransactionService : ITransactionService
 
         var _sender = _serviceBusSenderFactory.CreateClient("sender");
         var sql_value = "val1";
-        var message = new ServiceBusMessage(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(item)))
+        string messageBody = JsonConvert.SerializeObject(item);
+        ServiceBusMessage message = new(Encoding.UTF8.GetBytes(messageBody))
         {
             ApplicationProperties =
                 {

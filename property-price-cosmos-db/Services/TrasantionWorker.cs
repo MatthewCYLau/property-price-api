@@ -1,5 +1,8 @@
 using Microsoft.Extensions.Azure;
 using Azure.Messaging.ServiceBus;
+using property_price_cosmos_db.Models;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace property_price_cosmos_db.Services;
 
@@ -38,8 +41,9 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
 
     private async Task MessageHandler(ProcessMessageEventArgs args)
     {
-        var body = args.Message.Body.ToString();
-        _logger.LogInformation("####### Received message from Service Bus {message} #######", body);
+        Transaction transaction = JsonConvert.DeserializeObject<Transaction>(Encoding.UTF8.GetString(args.Message.Body));
+
+        _logger.LogInformation("Received message from Service Bus for trasaction {id}", transaction.Id);
         await args.CompleteMessageAsync(args.Message);
     }
 
