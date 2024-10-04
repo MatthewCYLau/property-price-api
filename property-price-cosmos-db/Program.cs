@@ -5,6 +5,7 @@ using property_price_cosmos_db.Models;
 using property_price_cosmos_db.Services;
 using Microsoft.Extensions.Azure;
 using Azure.Messaging.ServiceBus;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,14 @@ builder.Services.AddAzureClients(clientBuilder =>
     //               .CreateReceiver("sbt-aks-storage-request", "aks-storage-request")
     //           ).WithName("sbt-aks-storage-request-receiver");
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "CosmosDB Service",
+    });
 });
 
 var app = builder.Build();
