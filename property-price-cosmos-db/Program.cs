@@ -42,13 +42,14 @@ builder.Configuration.AddAzureKeyVault(
 
 builder.Services.AddAzureClients(clientBuilder =>
 {
+    var topic = builder.Configuration.GetValue<string>("Azure:ServiceBus:Topic");
     clientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("Azure:Storage")).WithName("main");
-    clientBuilder.AddServiceBusClientWithNamespace("sbns-gitlab-azure-terraform-production.servicebus.windows.net").WithName("main");
+    clientBuilder.AddServiceBusClientWithNamespace($"{builder.Configuration["Azure:ServiceBus:Name"]}.servicebus.windows.net").WithName("main");
     clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
                 provider
                 .GetService<IAzureClientFactory<ServiceBusClient>>()
                 .CreateClient("main")
-                .CreateSender("sbt-aks-storage-request")
+                .CreateSender(topic)
             ).WithName("sender");
     // clientBuilder.AddClient<ServiceBusReceiver, ServiceBusClientOptions>((_, _, provider) =>
     //               provider

@@ -13,19 +13,23 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
     private ServiceBusProcessor _processor;
     private readonly ILogger<TrasantionWorker> _logger;
     private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
+    private readonly IConfiguration _configuration;
 
 
-    public TrasantionWorker(ILogger<TrasantionWorker> logger, IAzureClientFactory<ServiceBusClient> serviceBusClientFactory)
+    public TrasantionWorker(ILogger<TrasantionWorker> logger, IAzureClientFactory<ServiceBusClient> serviceBusClientFactory, IConfiguration configuration)
     {
         _logger = logger;
         _serviceBusClientFactory = serviceBusClientFactory;
+        _configuration = configuration;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("{worker} is running...", nameof(TrasantionWorker));
         var _client = _serviceBusClientFactory.CreateClient("main");
-        _processor = _client.CreateProcessor("sbt-aks-storage-request", "aks-storage-request", new ServiceBusProcessorOptions());
+        _processor = _client.CreateProcessor(_configuration.GetValue<string>(
+                "Azure:ServiceBus:Topic"), _configuration.GetValue<string>(
+                "Azure:ServiceBus:Subscription"), new ServiceBusProcessorOptions());
         _processor.ProcessMessageAsync += MessageHandler;
         _processor.ProcessErrorAsync += ErrorHandler;
         await _processor.StartProcessingAsync();
