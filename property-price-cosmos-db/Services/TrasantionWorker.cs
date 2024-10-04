@@ -54,7 +54,23 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
     {
         Transaction transaction = JsonConvert.DeserializeObject<Transaction>(Encoding.UTF8.GetString(args.Message.Body));
         _logger.LogInformation("Received message from Service Bus for trasaction {id}", transaction.Id);
-        var res = await _userService.UpdateUserBalanceById(transaction.UserId.ToString(), transaction.Amount);
+        var amount = transaction.Amount;
+        switch (transaction.TransactionType)
+        {
+            case TransactionType.Debit:
+                {
+                    _logger.LogInformation("Processing debit transaction {amount}", transaction.Amount);
+                    amount *= -1;
+                    break;
+                }
+            case TransactionType.Credit:
+                {
+                    _logger.LogInformation("Processing credit transaction {amount}", transaction.Amount);
+                    break;
+                }
+            default: break;
+        }
+        var res = await _userService.UpdateUserBalanceById(transaction.UserId.ToString(), amount);
         _logger.LogInformation("Updated user {id}. Updated balance {balance}", res.Id, res.Balance);
         await args.CompleteMessageAsync(args.Message);
     }

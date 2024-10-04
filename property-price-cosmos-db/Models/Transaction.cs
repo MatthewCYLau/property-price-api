@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace property_price_cosmos_db.Models;
 
@@ -24,6 +25,10 @@ public class Transaction()
 
     [JsonProperty(PropertyName = "isComplete")]
     public required bool Completed { get; set; }
+
+    [JsonProperty(PropertyName = "transactionType")]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public required TransactionType TransactionType { get; set; }
 
     [JsonProperty(PropertyName = "comments")]
     public List<Comment> Comments { get; set; } = [];
