@@ -13,7 +13,7 @@ public class TransactionsControllerTests
     [Test]
     public async Task GetTransactionsShould()
     {
-        IEnumerable<Transaction> transactions = [new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [] }];
+        IEnumerable<Transaction> transactions = [new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [], TransactionType = 0 }];
         var mockTransactionService = new Mock<ITransactionService>();
         Mock<IConfiguration> mockConfiguration = new();
         mockTransactionService.Setup(x => x.GetMultipleAsync(false, 100, "asc")).Returns(Task.FromResult(transactions));
@@ -30,7 +30,7 @@ public class TransactionsControllerTests
     [Test]
     public async Task GetTransactionByIdShould()
     {
-        Transaction transaction = new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [] };
+        Transaction transaction = new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [], TransactionType = 0 };
         var mockTransactionService = new Mock<ITransactionService>();
         Mock<IConfiguration> mockConfiguration = new();
         mockTransactionService.Setup(x => x.GetAsync("1")).Returns(Task.FromResult(transaction));
