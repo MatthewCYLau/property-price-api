@@ -12,4 +12,7 @@ public class CosmosUser()
 
     [JsonProperty(PropertyName = "dateOfBirth")]
     public required DateTime DateOfBirth { get; set; }
+
+    [JsonProperty(PropertyName = "balance")]
+    public decimal Balance { get; set; } = 0;
 }

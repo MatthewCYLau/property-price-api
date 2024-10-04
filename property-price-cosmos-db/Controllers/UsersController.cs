@@ -16,10 +16,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("users")]
-    public async Task<IActionResult> CreateUser([FromBody] CosmosUser user)
+    public async Task<IActionResult> CreateUser([FromBody] CreateCosmosUserRequest request)
     {
-
-        user.Id = Guid.NewGuid();
+        CosmosUser user = new() { Id = Guid.NewGuid(), Name = request.Name, DateOfBirth = request.DateOfBirth };
         await _userService.AddUserAsync(user);
         return Ok(user);
     }

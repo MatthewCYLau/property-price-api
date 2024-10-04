@@ -111,4 +111,15 @@ PatchOperation.Set("/name", request.Name),
         var response = await _container.PatchItemAsync<CosmosUser>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
     }
+
+    public async Task<CosmosUser> UpdateUserBalanceById(string id, decimal transactionAmount)
+    {
+        List<PatchOperation> patchOperations =
+[
+       PatchOperation.Increment("/balance", (long)transactionAmount)
+];
+
+        var response = await _container.PatchItemAsync<CosmosUser>(id, new PartitionKey(id), patchOperations);
+        return response.Resource;
+    }
 }

@@ -9,4 +9,5 @@ public interface IUserService
     Task<IEnumerable<CosmosUser>> GetUsers(DateTime? fromDate, DateTime? toDate);
     Task<bool> DeleteUserById(string id);
     Task<CosmosUser> UpdateUserById(string id, UpdateCosmosUserRequest request);
+    Task<CosmosUser> UpdateUserBalanceById(string id, decimal transactionAmount);
 }
