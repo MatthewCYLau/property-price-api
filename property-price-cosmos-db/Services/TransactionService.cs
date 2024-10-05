@@ -243,4 +243,15 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         stream.Position = 0;
         return stream;
     }
+
+    public async Task<Transaction> UpdateTrasnscationCompleteState(string id, bool isComplete)
+    {
+        List<PatchOperation> patchOperations =
+[
+       PatchOperation.Set("/isComplete", isComplete),
+];
+
+        var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
+        return response.Resource;
+    }
 }

@@ -15,19 +15,22 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
     private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
     private readonly IConfiguration _configuration;
     private readonly IUserService _userService;
+    private readonly ITransactionService _transactionService;
 
 
     public TrasantionWorker(
         ILogger<TrasantionWorker> logger,
         IAzureClientFactory<ServiceBusClient> serviceBusClientFactory,
         IConfiguration configuration,
-        IUserService userService
+        IUserService userService,
+        ITransactionService transactionService
         )
     {
         _logger = logger;
         _serviceBusClientFactory = serviceBusClientFactory;
         _configuration = configuration;
         _userService = userService;
+        _transactionService = transactionService;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -72,6 +75,8 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
         }
         var res = await _userService.UpdateUserBalanceById(transaction.UserId.ToString(), amount);
         _logger.LogInformation("Updated user {id}. Updated balance {balance}", res.Id, res.Balance);
+        var updateTransactionResponse = await _transactionService.UpdateTrasnscationCompleteState(transaction.Id.ToString(), true);
+        _logger.LogInformation("Updated transaction {id}. Updated completion state {isComplete}", updateTransactionResponse.Id, updateTransactionResponse.Completed);
         await args.CompleteMessageAsync(args.Message);
     }
 
