@@ -3,6 +3,7 @@ using Azure.Messaging.ServiceBus;
 using property_price_cosmos_db.Models;
 using Newtonsoft.Json;
 using System.Text;
+using System.Globalization;
 
 namespace property_price_cosmos_db.Services;
 
@@ -73,10 +74,24 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
                 }
             default: break;
         }
-        var res = await _userService.UpdateUserBalanceById(transaction.UserId.ToString(), amount);
-        _logger.LogInformation("Updated user {id}. Updated balance {balance}", res.Id, res.Balance);
-        var updateTransactionResponse = await _transactionService.UpdateTrasnscationCompleteState(transaction.Id.ToString(), true);
-        _logger.LogInformation("Updated transaction {id}. Updated completion state {isComplete}", updateTransactionResponse.Id, updateTransactionResponse.Completed);
+        var user = await _userService.GetUserById(transaction.UserId.ToString());
+        var toBeBalance = user.Balance + amount;
+        if (toBeBalance < 0)
+        {
+
+            var description = $"Insuffient fund to complete transaction for user {user.Id}. Current balance {user.Balance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}; to-be balance {toBeBalance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}";
+            _logger.LogInformation(description);
+            await _transactionService.UpdateTransactionAppendCommentsAsync(transaction.Id.ToString(), new Comment(Guid.NewGuid(), description));
+        }
+        else
+        {
+            var res = await _userService.UpdateUserBalanceById(transaction.UserId.ToString(), amount);
+            _logger.LogInformation("Updated user {id}. Updated balance {balance}", res.Id, res.Balance);
+            var updateTransactionResponse = await _transactionService.UpdateTrasnscationCompleteState(transaction.Id.ToString(), true);
+            _logger.LogInformation("Updated transaction {id}. Updated completion state {isComplete}", updateTransactionResponse.Id, updateTransactionResponse.Completed);
+
+        }
+
         await args.CompleteMessageAsync(args.Message);
     }
 
