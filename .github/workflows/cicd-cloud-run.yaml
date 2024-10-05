@@ -55,7 +55,7 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Test
-        run: dotnet test
+        run: dotnet test /p:CollectCoverage=true
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
