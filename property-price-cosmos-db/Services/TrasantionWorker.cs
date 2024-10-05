@@ -76,6 +76,7 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
         }
         var user = await _userService.GetUserById(transaction.UserId.ToString());
         var toBeBalance = user.Balance + amount;
+        _logger.LogInformation("Current user balance {currentBalance}; to-be balance {tobeBalance}", user.Balance, toBeBalance);
         if (toBeBalance < 0)
         {
 
@@ -85,6 +86,7 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
         }
         else
         {
+            _logger.LogInformation("Sufficient to proceed. To-be balance: {tobeBalance}", toBeBalance);
             var res = await _userService.UpdateUserBalanceById(transaction.UserId.ToString(), amount);
             _logger.LogInformation("Updated user {id}. Updated balance {balance}", res.Id, res.Balance);
             var updateTransactionResponse = await _transactionService.UpdateTrasnscationCompleteState(transaction.Id.ToString(), true);
