@@ -254,4 +254,23 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
     }
+
+    public async Task<IEnumerable<Transaction>> ReadTransactionBlobAsync(string transactionId)
+    {
+        var transaction = await GetAsync(transactionId);
+        var blobServiceClient = _azureClientFactory.CreateClient("main");
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(transaction.UserId.ToString());
+        BlobClient blobClient = blobContainerClient.GetBlobClient($"{transaction.Id}.csv");
+        using var memoryStream = new MemoryStream();
+        blobClient.DownloadToAsync(memoryStream).GetAwaiter().GetResult();
+        memoryStream.Position = 0;
+        using var reader = new StreamReader(memoryStream);
+        using var csv = new CsvReader(reader, CultureInfo.CurrentCulture);
+        var transactions = csv.GetRecords<Transaction>().ToList();
+        foreach (Transaction t in transactions)
+        {
+            _logger.LogInformation("Reading transaction wit id {} and amount {}", t.Id, t.Amount);
+        }
+        return transactions;
+    }
 }

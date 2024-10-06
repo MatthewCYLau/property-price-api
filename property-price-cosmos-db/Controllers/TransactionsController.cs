@@ -39,6 +39,13 @@ public class TransactionsController : ControllerBase
         return Ok(transaction);
     }
 
+    [HttpGet("transactions/{id}/blob")]
+    public async Task<IActionResult> ReadTransactionBlobData(string id)
+    {
+        var transactions = await _transactionService.ReadTransactionBlobAsync(id);
+        return Ok(transactions);
+    }
+
     [HttpPost("transactions")]
     public async Task<IActionResult> CreateTransaction([FromBody] Transaction transaction)
     {
