@@ -45,6 +45,21 @@ public class TransactionsControllerTests
     }
 
     [Test]
+    public async Task DeleteTransactionByIdShould()
+    {
+        var mockTransactionService = new Mock<ITransactionService>();
+        Mock<IConfiguration> mockConfiguration = new();
+        mockTransactionService.Setup(x => x.DeleteAsync("1"));
+        var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
+        var transactionsResult = await transactionsController.Delete("1");
+        NoContentResult? noContentResult = transactionsResult as NoContentResult;
+
+        // Assert
+        Assert.IsNotNull(noContentResult);
+        Assert.That(noContentResult.StatusCode, Is.EqualTo(204));
+    }
+
+    [Test]
     public async Task CreateTransactionIdShould()
     {
         string text = File.ReadAllText("resources/example.json");
