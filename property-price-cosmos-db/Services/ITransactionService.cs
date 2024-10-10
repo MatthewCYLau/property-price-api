@@ -5,6 +5,7 @@ namespace property_price_cosmos_db.Services;
 public interface ITransactionService
 {
     Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount, string? orderBy);
+    Task<IEnumerable<Transaction>> GetTransactionsByUserId(string id);
     Task<Transaction?> GetAsync(string id);
     Task<Result> AddAsync(Transaction item);
     Task<Transaction> UpdateAsync(string id, UpdateTransactionRequest request);

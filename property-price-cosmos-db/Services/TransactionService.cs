@@ -72,7 +72,7 @@ public class TransactionService : ITransactionService
         using (var writer = new StringWriter())
         using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
-            csv.WriteRecords(new Transaction[] { item });
+            csv.WriteRecords([item]);
             string csvContent = writer.ToString();
 
             Stream streamToUploadToBlob = GenerateStreamFromString(csvContent);
@@ -272,5 +272,23 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
             _logger.LogInformation("Reading transaction wit id {} and amount {}", t.Id, t.Amount);
         }
         return transactions;
+    }
+
+    public async Task<IEnumerable<Transaction>> GetTransactionsByUserId(string id)
+    {
+        QueryDefinition queryDefinition = new QueryDefinition(
+                    query: $"SELECT * FROM transactions t WHERE t.userId = @userId"
+            )
+            .WithParameter("@userId", id);
+        var query = _container.GetItemQueryIterator<Transaction>(queryDefinition: queryDefinition);
+
+        var results = new List<Transaction>();
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            results.AddRange([.. response]);
+        }
+
+        return results;
     }
 }
