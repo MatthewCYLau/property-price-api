@@ -64,10 +64,4 @@ public class UsersController : ControllerBase
         var user = await _userService.UpdateUserById(id, request);
         return Ok(user);
     }
-
-    [HttpPost("users/{id}/export-csv")]
-    public IActionResult ExportTransactionsByUserId(string id)
-    {
-        return Ok();
-    }
 }

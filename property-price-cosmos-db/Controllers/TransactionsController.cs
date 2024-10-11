@@ -107,4 +107,12 @@ public class TransactionsController : ControllerBase
     {
         return Ok(_configuration.GetConnectionString("MyDatabase"));
     }
+
+    [HttpPost("users/{id}/export-csv")]
+    public async Task<ActionResult<ExportCsvResponse>> ExportTransactionsByUserId(string id)
+    {
+        var uri = await _transactionService.ExportTransactionsByUserId(id);
+        var res = new ExportCsvResponse() { Url = uri };
+        return Ok(res);
+    }
 }

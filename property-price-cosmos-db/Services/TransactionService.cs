@@ -4,6 +4,9 @@ using Azure.Storage.Blobs;
 using CsvHelper;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Sas;
 using property_price_cosmos_db.Models;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
@@ -290,5 +293,71 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         }
 
         return results;
+    }
+
+    private static async Task<UserDelegationKey> RequestUserDelegationKey(
+    BlobServiceClient blobServiceClient)
+    {
+        UserDelegationKey userDelegationKey =
+            await blobServiceClient.GetUserDelegationKeyAsync(
+                DateTimeOffset.UtcNow,
+                DateTimeOffset.UtcNow.AddDays(1));
+
+        return userDelegationKey;
+    }
+
+    private static async Task<Uri> CreateUserDelegationSASBlob(
+    BlobClient blobClient,
+    UserDelegationKey userDelegationKey)
+    {
+        // Create a SAS token for the blob resource that's also valid for 1 day
+        BlobSasBuilder sasBuilder = new BlobSasBuilder()
+        {
+            BlobContainerName = blobClient.BlobContainerName,
+            BlobName = blobClient.Name,
+            Resource = "b",
+            StartsOn = DateTimeOffset.UtcNow,
+            ExpiresOn = DateTimeOffset.UtcNow.AddDays(1)
+        };
+
+        // Specify the necessary permissions
+        sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+        // Add the SAS token to the blob URI
+        BlobUriBuilder uriBuilder = new BlobUriBuilder(blobClient.Uri)
+        {
+            // Specify the user delegation key
+            Sas = sasBuilder.ToSasQueryParameters(
+                userDelegationKey,
+                blobClient
+                .GetParentBlobContainerClient()
+                .GetParentBlobServiceClient().AccountName)
+        };
+
+        return uriBuilder.ToUri();
+    }
+
+    public async Task<Uri> ExportTransactionsByUserId(string id)
+    {
+        var transactions = await GetTransactionsByUserId(id);
+        var blobServiceClient = _azureClientFactory.CreateClient("main");
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(id);
+        var csvName = $"transactions-export-{DateTime.Now.ToFileTime()}.csv";
+        BlobClient blobClient = blobContainerClient.GetBlobClient(csvName);
+
+        using (var writer = new StringWriter())
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteRecords(transactions);
+            string csvContent = writer.ToString();
+
+            Stream streamToUploadToBlob = GenerateStreamFromString(csvContent);
+            await blobClient.UploadAsync(streamToUploadToBlob);
+        }
+        _logger.LogInformation("Uploaded CSV with name {csvName}", csvName);
+
+        var key = await RequestUserDelegationKey(blobServiceClient);
+        var url = await CreateUserDelegationSASBlob(blobClient, key);
+        return url;
     }
 }

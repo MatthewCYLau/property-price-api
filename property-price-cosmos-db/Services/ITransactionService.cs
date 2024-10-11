@@ -16,4 +16,5 @@ public interface ITransactionService
     Task<Transaction> DeleteCommentAsync(string transactionId, string commentId);
     Task<AnalysisResponse> GetTransactionsAnalysisResponse();
     Task<Transaction> UpdateTrasnscationCompleteState(string id, bool isComplete);
+    Task<Uri> ExportTransactionsByUserId(string id);
 }
