@@ -342,7 +342,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         var transactions = await GetTransactionsByUserId(id);
         var blobServiceClient = _azureClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(id);
-        var csvName = $"transactions-export-{DateTime.Now.ToFileTime()}.csv";
+        var csvName = "";
         BlobClient blobClient = blobContainerClient.GetBlobClient(csvName);
 
         using (var writer = new StringWriter())
