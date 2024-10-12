@@ -2,18 +2,18 @@
 
 namespace unit_tests
 {
-	public class StringHelpersUnitTests
-	{
+    public class StringHelpersUnitTests
+    {
         [Test]
         public void ShouldReturnTrueValidUkPostcode()
         {
-            Assert.IsTrue(StringHelpers.IsValidateUkPostcode("SE21 7LG"));
+            Assert.That(StringHelpers.IsValidateUkPostcode("SE21 7LG"), Is.True);
         }
 
         [Test]
         public void ShouldReturnFalseInvalidUkPostcode()
         {
-            Assert.IsFalse(StringHelpers.IsValidateUkPostcode("foo bar"));
+            Assert.That(StringHelpers.IsValidateUkPostcode("foo bar"), Is.False);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace unit_tests;
 [Category("Integration")]
 public class TransactionsServiceTests
 {
+    private const string TestTransactionId = "dd153bb0-a585-49af-97df-493c1b1399ac";
     private ServiceProvider _serviceProvider;
 
     [SetUp]
@@ -50,11 +51,18 @@ public class TransactionsServiceTests
     }
 
     [Test]
-    public async Task GetTransactions()
+    public async Task GetTransactionsShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
         var transactions = await transactionService.GetMultipleAsync(false, 100, "asc");
-        Console.WriteLine("Retrieved {0} transactions from database.", transactions.Count());
-        Assert.That(transactions.Count() > 0);
+        Assert.That(transactions.Count(), Is.GreaterThan(0));
+    }
+
+    [Test]
+    public async Task GetTransactionByIdShould()
+    {
+        var transactionService = _serviceProvider.GetService<ITransactionService>();
+        var transaction = await transactionService.GetAsync(TestTransactionId);
+        Assert.That(transaction.Id.ToString(), Is.EqualTo(TestTransactionId));
     }
 }
