@@ -24,6 +24,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IPaymentRequestService, PaymentRequestService>();
 builder.Services.AddHostedService<TrasantionWorker>();
 
 var clientId = builder.Configuration
@@ -44,6 +45,7 @@ builder.Configuration.AddAzureKeyVault(
 builder.Services.AddAzureClients(clientBuilder =>
 {
     var topic = builder.Configuration.GetValue<string>("Azure:ServiceBus:Topic");
+    var queue = builder.Configuration.GetValue<string>("Azure:ServiceBus:Queue");
     clientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("Azure:Storage")).WithName("main");
     clientBuilder.AddServiceBusClientWithNamespace($"{builder.Configuration["Azure:ServiceBus:Name"]}.servicebus.windows.net").WithName("main");
     clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
@@ -52,6 +54,12 @@ builder.Services.AddAzureClients(clientBuilder =>
                 .CreateClient("main")
                 .CreateSender(topic)
             ).WithName("topic-sender");
+    clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
+                 provider
+                 .GetService<IAzureClientFactory<ServiceBusClient>>()
+                 .CreateClient("main")
+                 .CreateSender(queue)
+             ).WithName("queue-sender");
     // clientBuilder.AddClient<ServiceBusReceiver, ServiceBusClientOptions>((_, _, provider) =>
     //               provider
     //               .GetService<ServiceBusClient>()
