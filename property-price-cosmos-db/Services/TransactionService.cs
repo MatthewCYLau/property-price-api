@@ -56,7 +56,7 @@ public class TransactionService : ITransactionService
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
 
 
-        var _sender = _serviceBusSenderFactory.CreateClient("sender");
+        var _sender = _serviceBusSenderFactory.CreateClient("topic-sender");
         var sql_value = "val1";
         string messageBody = JsonConvert.SerializeObject(item);
         ServiceBusMessage message = new(Encoding.UTF8.GetBytes(messageBody))

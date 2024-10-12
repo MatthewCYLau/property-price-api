@@ -51,7 +51,7 @@ builder.Services.AddAzureClients(clientBuilder =>
                 .GetService<IAzureClientFactory<ServiceBusClient>>()
                 .CreateClient("main")
                 .CreateSender(topic)
-            ).WithName("sender");
+            ).WithName("topic-sender");
     // clientBuilder.AddClient<ServiceBusReceiver, ServiceBusClientOptions>((_, _, provider) =>
     //               provider
     //               .GetService<ServiceBusClient>()
