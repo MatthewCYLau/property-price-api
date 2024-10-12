@@ -1,12 +1,14 @@
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using property_price_cosmos_db.Models;
 using property_price_cosmos_db.Services;
+using Microsoft.Extensions.Azure;
+using Azure.Messaging.ServiceBus;
 
 namespace unit_tests;
 
-[Ignore("Test to be ran locally")]
 [TestFixture]
 [Category("Integration")]
 public class TransactionsServiceTests
@@ -20,11 +22,30 @@ public class TransactionsServiceTests
         services.AddLogging(builder => builder.AddConsole().AddDebug());
         services.Configure<CosmosDbOptions>(options =>
         {
-            options.DatabaseId = "TransactionsDb";
-            options.TransactionsContainerId = "TransasctionsContainer";
+            options.DatabaseId = "transactionsdb";
+            options.TransactionsContainerId = "transactions";
+            options.UsersContainerId = "users";
         });
-        services.AddSingleton<CosmosClient>(_ => new CosmosClient(""));
+        services.AddSingleton<CosmosClient>(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
+    return new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_DB_CONNECTION_STRING") ?? settings.ConnectionString);
+});
         services.AddSingleton<ITransactionService, TransactionService>();
+        services.AddSingleton<IUserService, UserService>();
+        services.AddSingleton<IUserService, UserService>();
+        services.AddAzureClients(clientBuilder =>
+        {
+            clientBuilder.AddBlobServiceClient("foo").WithName("main");
+            clientBuilder.AddServiceBusClientWithNamespace("foo").WithName("main");
+            clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
+                        provider
+                        .GetService<IAzureClientFactory<ServiceBusClient>>()
+                        .CreateClient("main")
+                        .CreateSender("foo")
+                    ).WithName("topic-sender");
+        });
+
         _serviceProvider = services.BuildServiceProvider();
     }
 
