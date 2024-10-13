@@ -67,21 +67,6 @@ public class TransactionService : ITransactionService
             }
         };
         await _sender.SendMessageAsync(message);
-
-        var blobServiceClient = _azureClientFactory.CreateClient("main");
-        var blobContainerClient = blobServiceClient.GetBlobContainerClient(item.UserId.ToString());
-        BlobClient blobClient = blobContainerClient.GetBlobClient($"{item.Id}.csv");
-
-        using (var writer = new StringWriter())
-        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-        {
-            csv.WriteRecords([item]);
-            string csvContent = writer.ToString();
-
-            Stream streamToUploadToBlob = GenerateStreamFromString(csvContent);
-            await blobClient.UploadAsync(streamToUploadToBlob);
-        }
-        _logger.LogInformation("Uploaded CSV for transaction with ID {id}", item.Id);
         return Result.Success();
     }
 
