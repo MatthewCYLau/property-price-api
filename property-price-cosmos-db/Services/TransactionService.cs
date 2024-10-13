@@ -11,7 +11,6 @@ using property_price_cosmos_db.Models;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 using System.Text;
-using property_price_common;
 
 namespace property_price_cosmos_db.Services;
 
@@ -343,7 +342,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         var transactions = await GetTransactionsByUserId(id);
         var blobServiceClient = _azureClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(id);
-        var csvName = FileNameUtils.GenerateTransactionCsvFileName();
+        var csvName = $"transactions-export-{DateTime.Now.ToFileTime()}.csv";
         BlobClient blobClient = blobContainerClient.GetBlobClient(csvName);
 
         using (var writer = new StringWriter())
