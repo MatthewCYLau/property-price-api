@@ -26,6 +26,7 @@ builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IPaymentRequestService, PaymentRequestService>();
 builder.Services.AddHostedService<TrasantionWorker>();
+builder.Services.AddHostedService<PaymentRequestWorker>();
 
 var clientId = builder.Configuration
     .GetSection(ManagedIdentityOptions.ManagedIdentitySettingsName)
