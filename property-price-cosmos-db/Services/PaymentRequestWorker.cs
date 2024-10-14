@@ -42,6 +42,8 @@ public class PaymentRequestWorker(
     {
         PaymentRequest request = JsonConvert.DeserializeObject<PaymentRequest>(Encoding.UTF8.GetString(args.Message.Body));
         _logger.LogInformation("Received payment request from {DebtorUserId} to {CreditorUserId}", request.DebtorUserId, request.CreditorUserId);
+        await _transactionService.AddAsync(new Transaction { Id = Guid.NewGuid(), UserId = request.DebtorUserId, Amount = request.Amount, Description = "Debit", TransactionType = 0 });
+        await _transactionService.AddAsync(new Transaction { Id = Guid.NewGuid(), UserId = request.CreditorUserId, Amount = request.Amount, Description = "Credit", TransactionType = (TransactionType)1 });
         await args.CompleteMessageAsync(args.Message);
     }
 

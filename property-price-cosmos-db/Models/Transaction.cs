@@ -24,7 +24,7 @@ public class Transaction()
     public required string Description { get; set; }
 
     [JsonProperty(PropertyName = "isComplete")]
-    public required bool Completed { get; set; }
+    public bool Completed { get; set; } = false;
 
     [JsonProperty(PropertyName = "transactionType")]
     [JsonConverter(typeof(StringEnumConverter))]
