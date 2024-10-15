@@ -92,6 +92,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+await app.Services.GetRequiredService<ITransactionService>().CreateSeedTransactions();
+
+
 app.MapGet("/ping", () => "pong!");
 
 app.Run();

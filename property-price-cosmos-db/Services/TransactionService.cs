@@ -345,4 +345,10 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         var url = await CreateUserDelegationSASBlob(blobClient, key);
         return url;
     }
+
+    public async Task CreateSeedTransactions()
+    {
+        _logger.LogInformation("Creating seed transactions...");
+
+    }
 }
