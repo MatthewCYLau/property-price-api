@@ -130,10 +130,14 @@ public class TransactionService : ITransactionService
         var query = _container.GetItemQueryIterator<Transaction>(queryDefinition: queryDefinition);
 
         var results = new List<Transaction>();
+        TimeSpan cumulativeTime = new();
+
         while (query.HasMoreResults)
         {
             var response = await query.ReadNextAsync();
-            results.AddRange(response.ToList());
+            ServerSideCumulativeMetrics metrics = response.Diagnostics.GetQueryMetrics();
+            cumulativeTime = metrics.CumulativeMetrics.TotalTime;
+            results.AddRange([.. response]);
         }
 
         if (maxAmount is not null)
@@ -143,7 +147,7 @@ public class TransactionService : ITransactionService
                 where i.Amount < maxAmount
                 select i;
         }
-
+        _logger.LogInformation("Time take for query in seconds: {timeSpan}", cumulativeTime.TotalSeconds);
         return results;
     }
 
