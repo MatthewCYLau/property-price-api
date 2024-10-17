@@ -131,12 +131,14 @@ public class TransactionService : ITransactionService
 
         var results = new List<Transaction>();
         TimeSpan cumulativeTime = new();
+        long documentCount = 0;
 
         while (query.HasMoreResults)
         {
             var response = await query.ReadNextAsync();
             ServerSideCumulativeMetrics metrics = response.Diagnostics.GetQueryMetrics();
             cumulativeTime = metrics.CumulativeMetrics.TotalTime;
+            documentCount = metrics.CumulativeMetrics.RetrievedDocumentCount;
             results.AddRange([.. response]);
         }
 
@@ -147,7 +149,7 @@ public class TransactionService : ITransactionService
                 where i.Amount < maxAmount
                 select i;
         }
-        _logger.LogInformation("Time take for query in seconds: {timeSpan}", cumulativeTime.TotalSeconds);
+        _logger.LogInformation("Query retrieved {count} documents in {timeSpan} seconds.", documentCount, cumulativeTime.TotalSeconds);
         return results;
     }
 
