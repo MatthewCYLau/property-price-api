@@ -354,7 +354,15 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
 
     public async Task CreateSeedTransactions()
     {
-        _logger.LogInformation("Creating seed transactions...");
+        var transactions = await GetMultipleAsync(false, 100, "asc");
+        if (!transactions.Any())
+        {
+            _logger.LogInformation("Creating seed transactions...");
+        }
+        else
+        {
+            _logger.LogInformation("Skip creating seed transactions. Current transactions count :{count}", transactions.Count());
+        }
 
     }
 }
