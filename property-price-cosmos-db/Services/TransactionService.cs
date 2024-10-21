@@ -354,10 +354,18 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
 
     public async Task CreateSeedTransactions()
     {
-        var transactions = await GetMultipleAsync(false, 100, "asc");
+        var transactions = await GetMultipleAsync(null, 1_000_000, "asc");
         if (!transactions.Any())
         {
             _logger.LogInformation("Creating seed transactions...");
+            var seedTransactions = new List<Transaction>
+{
+  new() { Id = new Guid(), UserId = new Guid("3a0633a7-20aa-4373-9838-48e1b2498310"), Amount = 100, Description = "Seed transaction", Completed = false, Comments = [], TransactionType = 0 }
+};
+            seedTransactions.ForEach(async t =>
+            {
+                await AddAsync(t);
+            });
         }
         else
         {
