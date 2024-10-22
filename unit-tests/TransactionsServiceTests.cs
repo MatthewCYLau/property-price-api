@@ -54,7 +54,7 @@ public class TransactionsServiceTests
     public async Task GetTransactionsShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetMultipleAsync(false, 100, "asc");
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
         Assert.That(transactions.Count(), Is.GreaterThan(0));
     }
 
