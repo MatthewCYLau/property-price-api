@@ -60,7 +60,12 @@ builder.Services.AddAzureClients(clientBuilder =>
                  .GetService<IAzureClientFactory<ServiceBusClient>>()
                  .CreateClient("main")
                  .CreateSender(queue)
-             ).WithName("queue-sender");
+             ).WithName("queue-sender").ConfigureOptions(options =>
+          {
+              options.RetryOptions.Delay = TimeSpan.FromMilliseconds(50);
+              options.RetryOptions.MaxDelay = TimeSpan.FromSeconds(5);
+              options.RetryOptions.MaxRetries = 3;
+          });
     // clientBuilder.AddClient<ServiceBusReceiver, ServiceBusClientOptions>((_, _, provider) =>
     //               provider
     //               .GetService<ServiceBusClient>()
