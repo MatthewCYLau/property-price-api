@@ -373,4 +373,23 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         }
 
     }
+
+    public async Task<IEnumerable<Comment>> GetCommentsByTransactionId(string id)
+    {
+        _logger.LogInformation("Getting comments by transaction ID {id}", id);
+        var queryDefinition = new QueryDefinition(
+                query: $"SELECT c.Id, c.Description FROM transactions t JOIN c IN t.comments WHERE t.id = @transactionId"
+        )
+        .WithParameter("@transactionId", id);
+        var query = _container.GetItemQueryIterator<Comment>(queryDefinition: queryDefinition);
+
+        var results = new List<Comment>();
+
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            results.AddRange([.. response]);
+        }
+        return results;
+    }
 }

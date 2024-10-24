@@ -67,6 +67,13 @@ public class TransactionsController : ControllerBase
         return Ok(transaction);
     }
 
+    [HttpGet("transactions/{id}/comments")]
+    public async Task<ActionResult<Comment>> GetTransactionComments(string id)
+    {
+        var transaction = await _transactionService.GetCommentsByTransactionId(id);
+        return Ok(transaction);
+    }
+
     [HttpDelete("transactions/{id}")]
     public async Task<IActionResult> Delete(string id)
     {
