@@ -6,7 +6,7 @@ public interface ITransactionService
 {
     Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount, string? orderBy);
     Task<IEnumerable<Transaction>> GetTransactionsByUserId(string id);
-    Task<IEnumerable<Comment>> GetCommentsByTransactionId(string id);
+    Task<Result<IEnumerable<Comment>>> GetCommentsByTransactionId(string id);
     Task<Transaction?> GetAsync(string id);
     Task CreateSeedTransactions();
     Task<Result> AddAsync(Transaction item);

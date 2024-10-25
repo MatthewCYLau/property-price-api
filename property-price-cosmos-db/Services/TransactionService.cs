@@ -374,8 +374,15 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
 
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByTransactionId(string id)
+    public async Task<Result<IEnumerable<Comment>>> GetCommentsByTransactionId(string id)
     {
+
+        var transaction = GetAsync(id);
+        if (transaction.Result == null)
+        {
+            _logger.LogWarning("Invalid transaction ID {id}", id);
+            return Result<IEnumerable<Comment>>.Failure(TransactionErrors.InvalidTransactionId(id));
+        }
         _logger.LogInformation("Getting comments by transaction ID {id}", id);
         var queryDefinition = new QueryDefinition(
                 query: $"SELECT c.Id, c.Description FROM transactions t JOIN c IN t.comments WHERE t.id = @transactionId"
@@ -390,6 +397,6 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
             var response = await query.ReadNextAsync();
             results.AddRange([.. response]);
         }
-        return results;
+        return Result<IEnumerable<Comment>>.Success(results);
     }
 }

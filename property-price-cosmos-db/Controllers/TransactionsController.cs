@@ -68,10 +68,17 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpGet("transactions/{id}/comments")]
-    public async Task<ActionResult<Comment>> GetTransactionComments(string id)
+    public async Task<ActionResult<IEnumerable<Comment>>> GetTransactionComments(string id)
     {
-        var transaction = await _transactionService.GetCommentsByTransactionId(id);
-        return Ok(transaction);
+        var _res = await _transactionService.GetCommentsByTransactionId(id);
+
+        if (_res.IsFailure)
+        {
+            return BadRequest(_res.Error);
+        }
+        var res = _res.Value;
+
+        return Ok(res);
     }
 
     [HttpDelete("transactions/{id}")]
