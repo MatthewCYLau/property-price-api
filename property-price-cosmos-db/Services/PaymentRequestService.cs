@@ -32,6 +32,13 @@ public class PaymentRequestService : IPaymentRequestService
 
     public async Task<Result> CreatePaymentRequest(PaymentRequest request)
     {
+
+        if (request.CreditorUserId == request.DebtorUserId)
+        {
+            _logger.LogWarning("Creditor user ID {creditorUserId} cannot be same as debtor user ID {debtorUserId}", request.CreditorUserId, request.DebtorUserId);
+            return Result.Failure(PaymentRequestErrors.CreditorAndDebtorIdentical(request.CreditorUserId.ToString(), request.DebtorUserId.ToString()));
+        }
+
         _logger.LogInformation("Creating payment request from {DebtorUserId} to {CreditorUserId}", request.DebtorUserId, request.CreditorUserId);
         await _container.CreateItemAsync(request, new PartitionKey(request.Id.ToString()));
         var _sender = _serviceBusSenderFactory.CreateClient("queue-sender");
