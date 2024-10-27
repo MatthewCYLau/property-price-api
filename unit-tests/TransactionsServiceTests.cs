@@ -13,7 +13,7 @@ namespace unit_tests;
 [Category("Integration")]
 public class TransactionsServiceTests
 {
-    private const string TestTransactionId = "076e49b3-9295-4c88-b739-bd0cf3b1c628";
+    private const string TestTransactionId = "60e00dcb-3a38-470f-bc71-5cb90ffee073";
     private ServiceProvider _serviceProvider;
 
     [SetUp]

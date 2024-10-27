@@ -358,9 +358,10 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         if (!transactions.Any())
         {
             _logger.LogInformation("Creating seed transactions...");
+            var testUserId = "ccacfee0-a2c0-4cb9-9a1f-b7871400276b";
             var seedTransactions = new List<Transaction>
 {
-  new() { Id = Guid.NewGuid(), UserId = new Guid("3a0633a7-20aa-4373-9838-48e1b2498310"), Amount = 100, Description = "Seed transaction", Completed = false, Comments = [], TransactionType = 0 }
+  new() { Id = Guid.NewGuid(), UserId = new Guid(testUserId), Amount = 100, Description = "Seed transaction", Completed = false, Comments = [], TransactionType = (TransactionType)1 }
 };
             seedTransactions.ForEach(async t =>
             {
