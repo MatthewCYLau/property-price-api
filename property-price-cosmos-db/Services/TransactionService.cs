@@ -354,14 +354,26 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
 
     public async Task CreateSeedTransactions()
     {
+        var users = await _userService.GetUsers(null, null);
+        var testUserId = Guid.NewGuid();
+        if (!users.Any())
+        {
+            _logger.LogInformation("Creating seed user...");
+            CosmosUser testUser = new() { Id = testUserId, Name = "Test user", DateOfBirth = DateTime.Parse("1990-01-01") };
+            await _userService.AddUserAsync(testUser);
+        }
+        else
+        {
+            testUserId = users.First().Id;
+        }
+
         var transactions = await GetMultipleAsync(null, 1_000_000, "asc");
         if (!transactions.Any())
         {
-            _logger.LogInformation("Creating seed transactions...");
-            var testUserId = "ccacfee0-a2c0-4cb9-9a1f-b7871400276b";
+            _logger.LogInformation("Creating seed transaction...");
             var seedTransactions = new List<Transaction>
 {
-  new() { Id = Guid.NewGuid(), UserId = new Guid(testUserId), Amount = 100, Description = "Seed transaction", Completed = false, Comments = [], TransactionType = (TransactionType)1 }
+  new() { Id = Guid.NewGuid(), UserId = testUserId, Amount = 100, Description = "Seed transaction", Completed = false, Comments = [], TransactionType = (TransactionType)1 }
 };
             seedTransactions.ForEach(async t =>
             {

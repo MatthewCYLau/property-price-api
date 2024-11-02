@@ -13,7 +13,6 @@ namespace unit_tests;
 [Category("Integration")]
 public class TransactionsServiceTests
 {
-    private const string TestTransactionId = "60e00dcb-3a38-470f-bc71-5cb90ffee073";
     private ServiceProvider _serviceProvider;
 
     [SetUp]
@@ -62,7 +61,9 @@ public class TransactionsServiceTests
     public async Task GetTransactionByIdShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transaction = await transactionService.GetAsync(TestTransactionId);
-        Assert.That(transaction.Id.ToString(), Is.EqualTo(TestTransactionId));
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
+        var firstTransactionId = transactions.First().Id.ToString();
+        var transaction = await transactionService.GetAsync(firstTransactionId);
+        Assert.That(transaction.Id.ToString(), Is.EqualTo(firstTransactionId));
     }
 }
