@@ -62,7 +62,7 @@ public class TransactionsServiceTests
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
         var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
-        var firstTransactionId = transactions.First().Id.ToString();
+        var firstTransactionId = transactions.ElementAt(0).Id.ToString();
         var transaction = await transactionService.GetAsync(firstTransactionId);
         Assert.That(transaction.Id.ToString(), Is.EqualTo(firstTransactionId));
     }
