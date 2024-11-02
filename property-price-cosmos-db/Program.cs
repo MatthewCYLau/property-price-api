@@ -73,7 +73,7 @@ builder.Services.AddAzureClients(clientBuilder =>
     //               .GetService<ServiceBusClient>()
     //               .CreateReceiver("sbt-aks-storage-request", "aks-storage-request")
     //           ).WithName("sbt-aks-storage-request-receiver");
-    clientBuilder.AddEventHubProducerClientWithNamespace(eventHubsNamespace, "example").WithName("event-hub-producer"); ;
+    clientBuilder.AddEventHubProducerClientWithNamespace(eventHubsNamespace, "example").WithName("event-hub-producer");
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
 });
 
