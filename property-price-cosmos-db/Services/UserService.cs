@@ -3,8 +3,11 @@ using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Azure;
-
+using Azure.Messaging.EventHubs.Producer;
+using Azure.Messaging.EventHubs;
 namespace property_price_cosmos_db.Services;
+using System.Text;
+
 
 public class UserService : IUserService
 {
@@ -13,17 +16,22 @@ public class UserService : IUserService
     private Container _container;
     private readonly ILogger _logger;
     private readonly IAzureClientFactory<BlobServiceClient> _azureClientFactory;
+    private readonly IAzureClientFactory<EventHubProducerClient> _eventHubProducerClientFactory;
+
 
     public UserService(
         ILogger<UserService> logger,
         CosmosClient client,
         IAzureClientFactory<BlobServiceClient> azureClientFactory,
-        IOptions<CosmosDbOptions> options)
+        IOptions<CosmosDbOptions> options,
+        IAzureClientFactory<EventHubProducerClient> eventHubProducerClientFactory
+    )
     {
         _client = client;
         _logger = logger;
         _options = options.Value;
         _azureClientFactory = azureClientFactory;
+        _eventHubProducerClientFactory = eventHubProducerClientFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.UsersContainerId);
     }
 
@@ -87,6 +95,13 @@ public class UserService : IUserService
     public async Task<CosmosUser?> GetUserById(string id)
     {
         _logger.LogInformation("Getting user by ID {id}", id);
+
+        var eventHubProducerClient = _eventHubProducerClientFactory.CreateClient("event-hub-producer");
+        using EventDataBatch eventBatch = await eventHubProducerClient.CreateBatchAsync();
+        eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes($"Get User by ID {id}")));
+        await eventHubProducerClient.SendAsync(eventBatch);
+        _logger.LogInformation("Published to Event Hub");
+
         try
         {
             var response = await _container.ReadItemAsync<CosmosUser>(id, new PartitionKey(id));
@@ -102,11 +117,11 @@ public class UserService : IUserService
     {
 
         List<PatchOperation> patchOperations =
-[
-PatchOperation.Set("/name", request.Name),
+    [
+    PatchOperation.Set("/name", request.Name),
        PatchOperation.Set("/dateOfBirth", request.DateOfBirth)
 
-];
+    ];
 
         var response = await _container.PatchItemAsync<CosmosUser>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
@@ -115,9 +130,9 @@ PatchOperation.Set("/name", request.Name),
     public async Task<CosmosUser> UpdateUserBalanceById(string id, decimal transactionAmount)
     {
         List<PatchOperation> patchOperations =
-[
+    [
        PatchOperation.Increment("/balance", (long)transactionAmount)
-];
+    ];
 
         var response = await _container.PatchItemAsync<CosmosUser>(id, new PartitionKey(id), patchOperations);
         return response.Resource;

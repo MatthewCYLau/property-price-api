@@ -47,6 +47,8 @@ builder.Services.AddAzureClients(clientBuilder =>
 {
     var topic = builder.Configuration.GetValue<string>("Azure:ServiceBus:Topic");
     var queue = builder.Configuration.GetValue<string>("Azure:ServiceBus:Queue");
+    var eventHubsNamespace = builder.Configuration.GetValue<string>("Azure:EventHubs:Namespace");
+    var eventHubName = builder.Configuration.GetValue<string>("Azure:EventHubs:EventHubName");
     clientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("Azure:Storage")).WithName("main");
     clientBuilder.AddServiceBusClientWithNamespace($"{builder.Configuration["Azure:ServiceBus:Name"]}.servicebus.windows.net").WithName("main");
     clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
@@ -71,6 +73,7 @@ builder.Services.AddAzureClients(clientBuilder =>
     //               .GetService<ServiceBusClient>()
     //               .CreateReceiver("sbt-aks-storage-request", "aks-storage-request")
     //           ).WithName("sbt-aks-storage-request-receiver");
+    clientBuilder.AddEventHubProducerClientWithNamespace(eventHubsNamespace, "example").WithName("event-hub-producer"); ;
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
 });
 
