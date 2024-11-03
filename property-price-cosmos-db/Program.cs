@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<CosmosDbOptions>(
     builder.Configuration.GetSection(CosmosDbOptions.CosmosDbSettingsName));
+builder.Services.Configure<ManagedIdentityOptions>(
+    builder.Configuration.GetSection(ManagedIdentityOptions.ManagedIdentitySettingsName));
 
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 {
