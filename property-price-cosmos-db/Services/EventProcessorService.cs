@@ -13,8 +13,7 @@ namespace property_price_cosmos_db.Services;
 public class EventProcessorService(
     IAzureClientFactory<BlobServiceClient> blobServiceClientFactory,
     ILogger<EventProcessorService> logger,
-    IOptions<ManagedIdentityOptions> options,
-    IWebHostEnvironment environment
+    IOptions<ManagedIdentityOptions> options
         ) : BackgroundService
 {
 
@@ -36,7 +35,7 @@ public class EventProcessorService(
         var eventProcessorClient = new EventProcessorClient(
               blobContainerClient, EventHubConsumerClient.DefaultConsumerGroupName,
               "gitlab-example-event-hub-namespace.servicebus.windows.net",
-              "example", environment.IsDevelopment() ? new DefaultAzureCredential() : credential);
+              "example", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
         eventProcessorClient.ProcessEventAsync += ProcessEventHandler;
         eventProcessorClient.ProcessErrorAsync += ProcessErrorHandler;
         await eventProcessorClient.StartProcessingAsync(stoppingToken).ConfigureAwait(false);
