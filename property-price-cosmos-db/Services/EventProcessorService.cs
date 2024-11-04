@@ -13,8 +13,9 @@ namespace property_price_cosmos_db.Services;
 public class EventProcessorService(
     IAzureClientFactory<BlobServiceClient> blobServiceClientFactory,
     ILogger<EventProcessorService> logger,
-    IOptions<ManagedIdentityOptions> options
-        ) : BackgroundService
+    IOptions<ManagedIdentityOptions> options,
+    IConfiguration configuration
+        ) : BackgroundService, IAsyncDisposable
 {
 
     private readonly IAzureClientFactory<BlobServiceClient> _blobServiceClientFactory = blobServiceClientFactory;
@@ -26,7 +27,8 @@ public class EventProcessorService(
     {
         var blobServiceClient = _blobServiceClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient("event-hub-sink");
-
+        var eventHubsNamespace = configuration.GetValue<string>("Azure:EventHubs:Namespace");
+        var eventHubName = configuration.GetValue<string>("Azure:EventHubs:EventHubName");
         var credential = new DefaultAzureCredential(
     new DefaultAzureCredentialOptions
     {
@@ -34,23 +36,28 @@ public class EventProcessorService(
     });
         var eventProcessorClient = new EventProcessorClient(
               blobContainerClient, EventHubConsumerClient.DefaultConsumerGroupName,
-              "gitlab-example-event-hub-namespace.servicebus.windows.net",
-              "example", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
+              eventHubsNamespace,
+              eventHubName, Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
         eventProcessorClient.ProcessEventAsync += ProcessEventHandler;
         eventProcessorClient.ProcessErrorAsync += ProcessErrorHandler;
         await eventProcessorClient.StartProcessingAsync(stoppingToken).ConfigureAwait(false);
     }
 
 
-    Task ProcessEventHandler(ProcessEventArgs eventArgs)
+    private async Task ProcessEventHandler(ProcessEventArgs eventArgs)
     {
         _logger.LogInformation("Received event: {0}", Encoding.UTF8.GetString(eventArgs.Data.Body.ToArray()));
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 
-    Task ProcessErrorHandler(ProcessErrorEventArgs eventArgs)
+    private async Task ProcessErrorHandler(ProcessErrorEventArgs eventArgs)
     {
         _logger.LogError(eventArgs.PartitionId);
-        return Task.CompletedTask;
+        await Task.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+
     }
 }
