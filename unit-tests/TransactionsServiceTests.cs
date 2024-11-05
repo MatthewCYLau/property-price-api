@@ -67,4 +67,16 @@ public class TransactionsServiceTests
         var transaction = await transactionService.GetAsync(firstTransactionId);
         Assert.That(transaction.Id.ToString(), Is.EqualTo(firstTransactionId));
     }
+
+    [Test]
+    public async Task UpdateTransactionByIdShould()
+    {
+        var transactionService = _serviceProvider.GetService<ITransactionService>();
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
+        var firstTransactionId = transactions.ElementAt(0).Id.ToString();
+        var updatedTransaction1 = await transactionService.UpdateAsync(firstTransactionId, new UpdateTransactionRequest() { Amount = 200, Description = "example", Completed = false });
+        Assert.That(updatedTransaction1.Amount, Is.EqualTo(200));
+        var updatedTransaction2 = await transactionService.UpdateAsync(firstTransactionId, new UpdateTransactionRequest() { Amount = 100, Description = "example", Completed = false });
+        Assert.That(updatedTransaction2.Amount, Is.EqualTo(100));
+    }
 }
