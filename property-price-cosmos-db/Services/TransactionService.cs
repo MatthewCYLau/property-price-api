@@ -74,7 +74,7 @@ public class TransactionService : ITransactionService
     {
         List<PatchOperation> patchOperations =
         [
-            PatchOperation.Add("/comments/-", new Comment(Guid.NewGuid(), comment.Description))
+            PatchOperation.Add("/comments/-", new Comment(comment.Description){ Id = Guid.NewGuid()})
         ];
 
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);

@@ -82,7 +82,7 @@ public class TrasantionWorker : BackgroundService, IAsyncDisposable
 
             var description = $"Insuffient fund to complete transaction for user {user.Id}. Current balance {user.Balance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}; to-be balance {toBeBalance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}";
             _logger.LogInformation(description);
-            await _transactionService.UpdateTransactionAppendCommentsAsync(transaction.Id.ToString(), new Comment(Guid.NewGuid(), description));
+            await _transactionService.UpdateTransactionAppendCommentsAsync(transaction.Id.ToString(), new Comment(description));
         }
         else
         {
