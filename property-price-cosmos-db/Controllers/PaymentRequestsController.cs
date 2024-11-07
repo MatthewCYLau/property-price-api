@@ -6,20 +6,11 @@ namespace property_price_cosmos_db.Controllers;
 
 [ApiController]
 [Route("api")]
-public class PaymentRequestsController : ControllerBase
+public class PaymentRequestsController(
+    IPaymentRequestService paymentRequestService
+        ) : ControllerBase
 {
-    private readonly IPaymentRequestService _paymentRequestService;
-    private readonly IConfiguration _configuration;
-
-    public PaymentRequestsController(
-        IPaymentRequestService paymentRequestService,
-        IConfiguration configuration
-        )
-    {
-        _paymentRequestService = paymentRequestService;
-        _configuration = configuration;
-    }
-
+    private readonly IPaymentRequestService _paymentRequestService = paymentRequestService;
 
     [HttpPost("payment-requests")]
     public async Task<IActionResult> CreatePaymentRequest([FromBody] PaymentRequest request)
