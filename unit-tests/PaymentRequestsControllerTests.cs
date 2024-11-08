@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using property_price_cosmos_db.Controllers;
 using property_price_cosmos_db.Models;
@@ -14,12 +13,12 @@ public class PaymentRequestsControllerTests
     {
 
         var mockPaymentRequestService = new Mock<IPaymentRequestService>();
-        Mock<IConfiguration> mockConfiguration = new();
+        // Mock<IConfiguration> mockConfiguration = new();
         var debtorUserId = Guid.NewGuid();
         var creditorUserId = Guid.NewGuid();
         var request = new PaymentRequest { DebtorUserId = debtorUserId, CreditorUserId = creditorUserId, Amount = 10 };
         mockPaymentRequestService.Setup(x => x.CreatePaymentRequest(request)).Returns(Task.FromResult(Result.Failure(PaymentRequestErrors.CreditorAndDebtorIdentical(creditorUserId.ToString(), debtorUserId.ToString()))));
-        var paymentRequestsController = new PaymentRequestsController(mockPaymentRequestService.Object, mockConfiguration.Object);
+        var paymentRequestsController = new PaymentRequestsController(mockPaymentRequestService.Object);
         var createPaymentRequestResult = await paymentRequestsController.CreatePaymentRequest(request);
         BadRequestObjectResult? result = createPaymentRequestResult as BadRequestObjectResult;
 

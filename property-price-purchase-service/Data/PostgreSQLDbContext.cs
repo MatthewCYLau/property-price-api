@@ -4,7 +4,7 @@ using property_price_purchase_service.Models;
 
 namespace property_price_purchase_service.Data;
 
-public class PostgreSQLDbContext: DbContext
+public class PostgreSQLDbContext : DbContext
 {
     private readonly PostgreSqlDbOptions _options;
 
@@ -15,12 +15,15 @@ public class PostgreSQLDbContext: DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseNpgsql(_options.ConnectionString);
+        options
+            .UseNpgsql(
+                _options.ConnectionString,
+                options => options.EnableRetryOnFailure());
     }
-    
+
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
-    
+
     public override int SaveChanges()
     {
         var entries = ChangeTracker
