@@ -10,7 +10,7 @@ namespace property_price_cosmos_db.Services;
 public class TrasantionWorker : BackgroundService, IAsyncDisposable
 {
 
-    private ServiceBusClient _client;
+    private readonly ServiceBusClient _client;
     private ServiceBusProcessor _processor;
     private readonly ILogger<TrasantionWorker> _logger;
     private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory;
