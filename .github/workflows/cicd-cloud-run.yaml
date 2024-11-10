@@ -60,6 +60,16 @@ jobs:
         run: dotnet build
       - name: Test
         run: dotnet test /p:CollectCoverage=true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: |
+          node -v
+          npm i -g newman
+          newman run collections/cosmos-service-regression-tests.postman_collection.json \
+          -e collections/azure-container-apps_postman_environment.json
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
