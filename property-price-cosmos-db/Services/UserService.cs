@@ -13,16 +13,16 @@ public class UserService : IUserService
 {
     private readonly CosmosClient _client;
     private readonly CosmosDbOptions _options;
-    private Container _container;
+    private readonly Container _container;
     private readonly ILogger _logger;
-    private readonly IAzureClientFactory<BlobServiceClient> _azureClientFactory;
+    private readonly IAzureClientFactory<BlobServiceClient> _azureBlobServiceClientFactory;
     private readonly IAzureClientFactory<EventHubProducerClient> _eventHubProducerClientFactory;
 
 
     public UserService(
         ILogger<UserService> logger,
         CosmosClient client,
-        IAzureClientFactory<BlobServiceClient> azureClientFactory,
+        IAzureClientFactory<BlobServiceClient> azureBlobServiceClientFactory,
         IOptions<CosmosDbOptions> options,
         IAzureClientFactory<EventHubProducerClient> eventHubProducerClientFactory
     )
@@ -30,7 +30,7 @@ public class UserService : IUserService
         _client = client;
         _logger = logger;
         _options = options.Value;
-        _azureClientFactory = azureClientFactory;
+        _azureBlobServiceClientFactory = azureBlobServiceClientFactory;
         _eventHubProducerClientFactory = eventHubProducerClientFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.UsersContainerId);
     }
@@ -39,7 +39,7 @@ public class UserService : IUserService
 
     {
         await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
-        var blobServiceClient = _azureClientFactory.CreateClient("main");
+        var blobServiceClient = _azureBlobServiceClientFactory.CreateClient("main");
 
         BlobContainerClient container = await blobServiceClient.CreateBlobContainerAsync(item.Id.ToString());
         if (await container.ExistsAsync())

@@ -18,10 +18,10 @@ public class TransactionService : ITransactionService
 {
     private readonly CosmosClient _client;
     private readonly CosmosDbOptions _options;
-    private Container _container;
+    private readonly Container _container;
     private readonly ILogger _logger;
     private readonly IUserService _userService;
-    private readonly IAzureClientFactory<BlobServiceClient> _azureClientFactory;
+    private readonly IAzureClientFactory<BlobServiceClient> _azureBlobServiceClientFactory;
     private readonly IAzureClientFactory<ServiceBusSender> _serviceBusSenderFactory;
 
 
@@ -29,7 +29,7 @@ public class TransactionService : ITransactionService
         ILogger<TransactionService> logger,
         CosmosClient client,
         IUserService userService,
-        IAzureClientFactory<BlobServiceClient> azureClientFactory,
+        IAzureClientFactory<BlobServiceClient> azureBlobServiceClientFactory,
         IOptions<CosmosDbOptions> options,
         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory
         )
@@ -38,7 +38,7 @@ public class TransactionService : ITransactionService
         _logger = logger;
         _options = options.Value;
         _userService = userService;
-        _azureClientFactory = azureClientFactory;
+        _azureBlobServiceClientFactory = azureBlobServiceClientFactory;
         _serviceBusSenderFactory = serviceBusSenderFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
     }
@@ -252,7 +252,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
     public async Task<IEnumerable<Transaction>> ReadTransactionBlobAsync(string transactionId)
     {
         var transaction = await GetAsync(transactionId);
-        var blobServiceClient = _azureClientFactory.CreateClient("main");
+        var blobServiceClient = _azureBlobServiceClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(transaction.UserId.ToString());
         BlobClient blobClient = blobContainerClient.GetBlobClient($"{transaction.Id}.csv");
         using var memoryStream = new MemoryStream();
@@ -331,7 +331,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
     public async Task<Uri> ExportTransactionsByUserId(string id)
     {
         var transactions = await GetTransactionsByUserId(id);
-        var blobServiceClient = _azureClientFactory.CreateClient("main");
+        var blobServiceClient = _azureBlobServiceClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(id);
         var csvName = $"transactions-export-{DateTime.Now.ToFileTime()}.csv";
         BlobClient blobClient = blobContainerClient.GetBlobClient(csvName);

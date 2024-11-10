@@ -37,7 +37,7 @@ public class EventProcessorService(
         var eventProcessorClient = new EventProcessorClient(
               blobContainerClient, EventHubConsumerClient.DefaultConsumerGroupName,
               eventHubsNamespace,
-              eventHubName, Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new DefaultAzureCredential() : credential);
+              eventHubName, Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new AzureCliCredential() : credential);
         eventProcessorClient.ProcessEventAsync += ProcessEventHandler;
         eventProcessorClient.ProcessErrorAsync += ProcessErrorHandler;
         await eventProcessorClient.StartProcessingAsync(stoppingToken).ConfigureAwait(false);
