@@ -64,14 +64,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [14, 16, 18]
-    name: Node ${{ matrix.node }} Newman CLI tests
+        node: [16, 18]
+    name: Node ${{ matrix.node }} tests
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: |
+      - name: Run Newman CLI tests
+        run: |
           node -v
           npm i -g newman
           newman run collections/cosmos-service-regression-tests.postman_collection.json \
