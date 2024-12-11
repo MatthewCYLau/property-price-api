@@ -12,6 +12,7 @@ public interface IOrdersService
     void DeleteOrderById(int id);
     Order UpdateOrderById(int id, OrderRequest request);
     Order GetOrderById(int id);
+    IEnumerable<Quantity> GetQuantityByProduct();
 }
 
 public class OrdersService : IOrdersService
@@ -80,5 +81,13 @@ public class OrdersService : IOrdersService
         _dbContext.Orders.Update(order);
         _dbContext.SaveChanges();
         return order;
+    }
+
+    public IEnumerable<Quantity> GetQuantityByProduct()
+    {
+        var orders = GetOrders();
+        var res = orders.GroupBy(order => order.ProductId)
+        .Select(g => new Quantity() { ProductId = g.Key, TotalQuantity = g.Sum(r => r.Quantity) });
+        return res;
     }
 }

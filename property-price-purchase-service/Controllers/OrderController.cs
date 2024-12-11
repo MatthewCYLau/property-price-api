@@ -22,6 +22,13 @@ public class OrdersController : ControllerBase
         return Ok(orders);
     }
 
+    [HttpGet("quantity")]
+    public IActionResult GetQuantityByProduct()
+    {
+        var res = _ordersService.GetQuantityByProduct();
+        return Ok(res);
+    }
+
     [HttpPost]
     public IActionResult CreateOrder(OrderRequest request)
     {
