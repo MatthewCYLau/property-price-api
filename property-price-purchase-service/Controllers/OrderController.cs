@@ -22,7 +22,7 @@ public class OrdersController : ControllerBase
         return Ok(orders);
     }
 
-    [HttpGet("quantity")]
+    [HttpGet("quantity-analysis")]
     public IActionResult GetQuantityByProduct()
     {
         var res = _ordersService.GetQuantityByProduct();
