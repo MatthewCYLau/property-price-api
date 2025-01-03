@@ -29,7 +29,7 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IPaymentRequestService, PaymentRequestService>();
 builder.Services.AddHostedService<TrasantionWorker>();
 builder.Services.AddHostedService<PaymentRequestWorker>();
-builder.Services.AddHostedService<EventProcessorService>();
+// builder.Services.AddHostedService<EventProcessorService>();
 
 var clientId = builder.Configuration
     .GetSection(ManagedIdentityOptions.ManagedIdentitySettingsName)
@@ -76,7 +76,7 @@ builder.Services.AddAzureClients(clientBuilder =>
     //               .GetService<ServiceBusClient>()
     //               .CreateReceiver("sbt-aks-storage-request", "aks-storage-request")
     //           ).WithName("sbt-aks-storage-request-receiver");
-    clientBuilder.AddEventHubProducerClientWithNamespace(eventHubsNamespace, "example").WithName("event-hub-producer");
+    // clientBuilder.AddEventHubProducerClientWithNamespace(eventHubsNamespace, "example").WithName("event-hub-producer");
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new AzureCliCredential() : credential);
 });
 
