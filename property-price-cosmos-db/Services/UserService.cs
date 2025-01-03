@@ -3,8 +3,8 @@ using Microsoft.Extensions.Options;
 using property_price_cosmos_db.Models;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Azure;
-using Azure.Messaging.EventHubs.Producer;
-using Azure.Messaging.EventHubs;
+// using Azure.Messaging.EventHubs.Producer;
+// using Azure.Messaging.EventHubs;
 namespace property_price_cosmos_db.Services;
 using System.Text;
 
@@ -16,22 +16,22 @@ public class UserService : IUserService
     private readonly Container _container;
     private readonly ILogger _logger;
     private readonly IAzureClientFactory<BlobServiceClient> _azureBlobServiceClientFactory;
-    private readonly IAzureClientFactory<EventHubProducerClient> _eventHubProducerClientFactory;
+    // private readonly IAzureClientFactory<EventHubProducerClient> _eventHubProducerClientFactory;
 
 
     public UserService(
         ILogger<UserService> logger,
         CosmosClient client,
         IAzureClientFactory<BlobServiceClient> azureBlobServiceClientFactory,
-        IOptions<CosmosDbOptions> options,
-        IAzureClientFactory<EventHubProducerClient> eventHubProducerClientFactory
+        IOptions<CosmosDbOptions> options
+    // IAzureClientFactory<EventHubProducerClient> eventHubProducerClientFactory
     )
     {
         _client = client;
         _logger = logger;
         _options = options.Value;
         _azureBlobServiceClientFactory = azureBlobServiceClientFactory;
-        _eventHubProducerClientFactory = eventHubProducerClientFactory;
+        // _eventHubProducerClientFactory = eventHubProducerClientFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.UsersContainerId);
     }
 
@@ -96,11 +96,11 @@ public class UserService : IUserService
     {
         _logger.LogInformation("Getting user by ID {id}", id);
 
-        var eventHubProducerClient = _eventHubProducerClientFactory.CreateClient("event-hub-producer");
-        using EventDataBatch eventBatch = await eventHubProducerClient.CreateBatchAsync();
-        eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes($"Get User by ID {id}")));
-        await eventHubProducerClient.SendAsync(eventBatch);
-        _logger.LogInformation("Published to Event Hub");
+        // var eventHubProducerClient = _eventHubProducerClientFactory.CreateClient("event-hub-producer");
+        // using EventDataBatch eventBatch = await eventHubProducerClient.CreateBatchAsync();
+        // eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes($"Get User by ID {id}")));
+        // await eventHubProducerClient.SendAsync(eventBatch);
+        // _logger.LogInformation("Published to Event Hub");
 
         try
         {

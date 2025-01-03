@@ -38,7 +38,7 @@ public class TransactionsServiceTests
         {
             clientBuilder.AddBlobServiceClient("foo").WithName("main");
             clientBuilder.AddServiceBusClientWithNamespace("foo").WithName("main");
-            clientBuilder.AddEventHubProducerClientWithNamespace("foo", "example").WithName("event-hub-producer");
+            // clientBuilder.AddEventHubProducerClientWithNamespace("foo", "example").WithName("event-hub-producer");
             clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
                         provider
                         .GetService<IAzureClientFactory<ServiceBusClient>>()
