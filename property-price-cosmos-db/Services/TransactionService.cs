@@ -11,6 +11,7 @@ using property_price_cosmos_db.Models;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 using System.Text;
+using property_price_cosmos_db.Helper;
 
 namespace property_price_cosmos_db.Services;
 
@@ -228,16 +229,6 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return new AnalysisResponse { Count = countResults[0], Sum = Math.Round(sumResults[0], 2), Average = Math.Round(averageResults[0], 2) };
     }
 
-    private static Stream GenerateStreamFromString(string s)
-    {
-        var stream = new MemoryStream();
-        var writer = new StreamWriter(stream);
-        writer.Write(s);
-        writer.Flush();
-        stream.Position = 0;
-        return stream;
-    }
-
     public async Task<Transaction> UpdateTrasnscationCompleteState(string id, bool isComplete)
     {
         List<PatchOperation> patchOperations =
@@ -342,7 +333,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
             csv.WriteRecords(transactions);
             string csvContent = writer.ToString();
 
-            Stream streamToUploadToBlob = GenerateStreamFromString(csvContent);
+            Stream streamToUploadToBlob = StreamHelper.GenerateStreamFromString(csvContent);
             await blobClient.UploadAsync(streamToUploadToBlob);
         }
         _logger.LogInformation("Uploaded CSV with name {csvName}", csvName);
