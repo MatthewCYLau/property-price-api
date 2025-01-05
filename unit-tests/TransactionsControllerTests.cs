@@ -106,9 +106,9 @@ public class TransactionsControllerTests
         IEnumerable<Transaction> transactions = [new Transaction { Id = new Guid(), UserId = new Guid(), Amount = 100, Description = "Test", Completed = false, Comments = [], TransactionType = 0 }];
         var mockTransactionService = new Mock<ITransactionService>();
         Mock<IConfiguration> mockConfiguration = new();
-        mockTransactionService.Setup(x => x.ReadTransactionBlobAsync("1")).Returns(Task.FromResult(transactions));
+        mockTransactionService.Setup(x => x.ReadTransactionBlobAsync("1", "1")).Returns(Task.FromResult(transactions));
         var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
-        var transactionsResult = await transactionsController.ReadTransactionBlobData("1");
+        var transactionsResult = await transactionsController.ReadTransactionBlobData("1", "1");
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
 
         // Assert

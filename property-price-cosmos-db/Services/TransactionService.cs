@@ -240,12 +240,12 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return response.Resource;
     }
 
-    public async Task<IEnumerable<Transaction>> ReadTransactionBlobAsync(string transactionId)
+    public async Task<IEnumerable<Transaction>> ReadTransactionBlobAsync(string transactionId, string blobId)
     {
         var transaction = await GetAsync(transactionId);
         var blobServiceClient = _azureBlobServiceClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(transaction.UserId.ToString());
-        BlobClient blobClient = blobContainerClient.GetBlobClient($"{transaction.Id}.csv");
+        BlobClient blobClient = blobContainerClient.GetBlobClient($"transactions-export-{blobId}.csv");
         using var memoryStream = new MemoryStream();
         blobClient.DownloadToAsync(memoryStream).GetAwaiter().GetResult();
         memoryStream.Position = 0;
