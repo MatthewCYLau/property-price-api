@@ -240,23 +240,32 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return response.Resource;
     }
 
-    public async Task<IEnumerable<Transaction>> ReadTransactionBlobAsync(string transactionId, string blobId)
+    public async Task<Result<IEnumerable<Transaction>>> ReadTransactionBlobAsync(string transactionId, string blobId)
     {
         var transaction = await GetAsync(transactionId);
         var blobServiceClient = _azureBlobServiceClientFactory.CreateClient("main");
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(transaction.UserId.ToString());
         BlobClient blobClient = blobContainerClient.GetBlobClient($"transactions-export-{blobId}.csv");
         using var memoryStream = new MemoryStream();
-        blobClient.DownloadToAsync(memoryStream).GetAwaiter().GetResult();
-        memoryStream.Position = 0;
-        using var reader = new StreamReader(memoryStream);
-        using var csv = new CsvReader(reader, CultureInfo.CurrentCulture);
-        var transactions = csv.GetRecords<Transaction>().ToList();
-        foreach (Transaction t in transactions)
+
+        try
         {
-            _logger.LogInformation("Reading transaction wit id {} and amount {}", t.Id, t.Amount);
+            blobClient.DownloadToAsync(memoryStream).GetAwaiter().GetResult();
+            memoryStream.Position = 0;
+            using var reader = new StreamReader(memoryStream);
+            using var csv = new CsvReader(reader, CultureInfo.CurrentCulture);
+            var transactions = csv.GetRecords<Transaction>().ToList();
+            foreach (Transaction t in transactions)
+            {
+                _logger.LogInformation("Reading transaction wit id {} and amount {}", t.Id, t.Amount);
+            }
+            return Result<IEnumerable<Transaction>>.Success(transactions);
         }
-        return transactions;
+        catch (Exception e)
+        {
+            _logger.LogError("Download blob failed against blob ID {0} with exception {1}", blobId, e.Message);
+            return Result<IEnumerable<Transaction>>.Failure(BlobClientErrors.InvalidBlobId(blobId));
+        }
     }
 
     public async Task<IEnumerable<Transaction>> GetTransactionsByUserId(string id)

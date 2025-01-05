@@ -42,8 +42,12 @@ public class TransactionsController : ControllerBase
     [HttpGet("transactions/{id}/blob")]
     public async Task<IActionResult> ReadTransactionBlobData(string id, [FromQuery] string blobId)
     {
-        var transactions = await _transactionService.ReadTransactionBlobAsync(id, blobId);
-        return Ok(transactions);
+        var result = await _transactionService.ReadTransactionBlobAsync(id, blobId);
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+        return Ok(result.Value);
     }
 
     [HttpPost("transactions")]
