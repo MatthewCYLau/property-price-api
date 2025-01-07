@@ -302,7 +302,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
     UserDelegationKey userDelegationKey)
     {
         // Create a SAS token for the blob resource that's also valid for 1 day
-        BlobSasBuilder sasBuilder = new BlobSasBuilder()
+        BlobSasBuilder sasBuilder = new()
         {
             BlobContainerName = blobClient.BlobContainerName,
             BlobName = blobClient.Name,
@@ -315,7 +315,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         sasBuilder.SetPermissions(BlobSasPermissions.Read);
 
         // Add the SAS token to the blob URI
-        BlobUriBuilder uriBuilder = new BlobUriBuilder(blobClient.Uri)
+        BlobUriBuilder uriBuilder = new(blobClient.Uri)
         {
             // Specify the user delegation key
             Sas = sasBuilder.ToSasQueryParameters(
@@ -352,21 +352,26 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return url;
     }
 
-    public async Task CreateSeedTransactions()
+    private async Task<Guid> GetSeedUserId()
     {
         var users = await _userService.GetUsers(null, null);
-        var testUserId = Guid.NewGuid();
         if (!users.Any())
         {
             _logger.LogInformation("Creating seed user...");
-            CosmosUser testUser = new() { Id = testUserId, Name = "Test user", DateOfBirth = DateTime.Parse("1990-01-01") };
-            await _userService.AddUserAsync(testUser);
+            await _userService.AddUserAsync(CosmosUserMap.CosmosUsers[1]);
+            users = await _userService.GetUsers(null, null);
+            return users.First().Id;
         }
         else
         {
-            testUserId = users.First().Id;
+            return users.First().Id;
         }
+    }
 
+    public async Task CreateSeedTransactions()
+    {
+
+        var testUserId = await GetSeedUserId();
         var transactions = await GetMultipleAsync(null, 1_000_000, "asc");
         if (!transactions.Any())
         {
