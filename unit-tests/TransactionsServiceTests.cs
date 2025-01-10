@@ -91,4 +91,12 @@ public class TransactionsServiceTests
         Assert.That(transaction.Comments.Count, Is.GreaterThan(0));
         Assert.That(transaction.Comments[0].Description, Is.EqualTo("example"));
     }
+
+    [TearDown]
+    public async Task TeardownAsync()
+    {
+        var transactionService = _serviceProvider.GetService<ITransactionService>();
+        var transactions = await transactionService.GetTransactionsByCommentsCount(5);
+        Assert.That(transactions.Count(), Is.GreaterThan(0));
+    }
 }

@@ -154,16 +154,36 @@ public class TransactionService : ITransactionService
         return results;
     }
 
+    public async Task<IEnumerable<Transaction>> GetTransactionsByCommentsCount(int maxCount)
+    {
+        QueryDefinition queryDefinition = new QueryDefinition(
+            query: $"SELECT * FROM Transactions t WHERE ARRAY_LENGTH(t.comments) > @maxCount"
+            )
+            .WithParameter("@maxCount", maxCount);
+
+        var query = _container.GetItemQueryIterator<Transaction>(queryDefinition: queryDefinition);
+
+        var results = new List<Transaction>();
+
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+
+            results.AddRange([.. response]);
+        }
+        return results;
+    }
+
     public async Task<Transaction> UpdateAsync(string id, UpdateTransactionRequest request)
     {
 
         List<PatchOperation> patchOperations =
-[
-PatchOperation.Set("/amount", request.Amount),
+    [
+    PatchOperation.Set("/amount", request.Amount),
        PatchOperation.Set("/description", request.Description),
        PatchOperation.Set("/isComplete", request.Completed),
        PatchOperation.Set("/modified", DateTime.Now)
-];
+    ];
 
         var response = await _container.PatchItemAsync<Transaction>(id, new PartitionKey(id), patchOperations);
         return response.Resource;
@@ -174,9 +194,9 @@ PatchOperation.Set("/amount", request.Amount),
         var transaction = await GetAsync(transactionId);
         var index = transaction.Comments.FindIndex(n => n.Id == new Guid(commentId));
         var response = await _container.PatchItemAsync<Transaction>(
-transactionId,
-new PartitionKey(transactionId),
-patchOperations: [PatchOperation.Add($"/comments/{index}/Description", request.Description)]);
+    transactionId,
+    new PartitionKey(transactionId),
+    patchOperations: [PatchOperation.Add($"/comments/{index}/Description", request.Description)]);
         return response.Resource;
 
     }
@@ -186,9 +206,9 @@ patchOperations: [PatchOperation.Add($"/comments/{index}/Description", request.D
         var transaction = await GetAsync(transactionId);
         var updatedComments = transaction.Comments.Where(n => n.Id != new Guid(commentId));
         var response = await _container.PatchItemAsync<Transaction>(
-transactionId,
-new PartitionKey(transactionId),
-patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
+    transactionId,
+    new PartitionKey(transactionId),
+    patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
         return response.Resource;
 
     }
@@ -232,7 +252,7 @@ patchOperations: [PatchOperation.Replace($"/comments", updatedComments)]);
     public async Task<Transaction> UpdateTrasnscationCompleteState(string id, bool isComplete)
     {
         List<PatchOperation> patchOperations =
-[
+    [
        PatchOperation.Set("/isComplete", isComplete),
 ];
 
