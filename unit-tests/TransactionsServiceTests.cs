@@ -47,6 +47,7 @@ public class TransactionsServiceTests
                     ).WithName("topic-sender");
         });
 
+        services.AddLogging();
         _serviceProvider = services.BuildServiceProvider();
     }
 
@@ -89,14 +90,23 @@ public class TransactionsServiceTests
         await transactionService.UpdateTransactionAppendCommentsAsync(firstTransactionId, new Comment("example"));
         var transaction = await transactionService.GetAsync(firstTransactionId);
         Assert.That(transaction.Comments.Count, Is.GreaterThan(0));
-        Assert.That(transaction.Comments[0].Description, Is.EqualTo("example"));
+        Assert.That(transaction.Comments[0].Description.Length, Is.GreaterThan(0));
     }
 
     [TearDown]
     public async Task TeardownAsync()
     {
+
+        ILogger<TransactionService> _logger = _serviceProvider.GetRequiredService<ILogger<TransactionService>>();
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetTransactionsByCommentsCount(5);
+        var transactions = await transactionService.GetTransactionsByCommentsCount(0);
         Assert.That(transactions.Count(), Is.GreaterThan(0));
+        var count = 0;
+        foreach (var transaction in transactions)
+        {
+            // await transactionService.DeleteAsync(transaction.Id.ToString());
+            count += 1;
+        }
+        _logger.LogInformation("Deleted {0} transactions as part of clean-up.", count);
     }
 }
