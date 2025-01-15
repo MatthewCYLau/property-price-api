@@ -25,6 +25,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
     return new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_DB_CONNECTION_STRING") ?? settings.ConnectionString);
 });
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<ICustomInitService, CustomInitService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IPaymentRequestService, PaymentRequestService>();
 builder.Services.AddHostedService<TrasantionWorker>();
@@ -104,7 +105,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.Services.GetRequiredService<ITransactionService>().CreateSeedTransactions();
-
+app.Services.GetRequiredService<ICustomInitService>().GetAssembly();
 
 app.MapGet("/ping", () => "pong!");
 
