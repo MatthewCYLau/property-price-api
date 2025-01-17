@@ -73,7 +73,7 @@ public class UserService : IUserService
         while (query.HasMoreResults)
         {
             var response = await query.ReadNextAsync();
-            results.AddRange(response.ToList());
+            results.AddRange([.. response]);
         }
 
         return results;

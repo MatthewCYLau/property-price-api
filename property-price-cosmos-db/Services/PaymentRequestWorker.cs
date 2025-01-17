@@ -17,8 +17,6 @@ public class PaymentRequestWorker(
     private readonly ITransactionService _transactionService = transactionService;
     private readonly IAzureClientFactory<ServiceBusClient> _serviceBusClientFactory = serviceBusClientFactory;
     private readonly IConfiguration _configuration = configuration;
-
-    private ServiceBusClient _client;
     private ServiceBusProcessor _processor;
 
 
