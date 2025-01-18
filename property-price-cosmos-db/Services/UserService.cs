@@ -76,6 +76,13 @@ public class UserService : IUserService
             results.AddRange([.. response]);
         }
 
+        var usersGroupedByYear = results.GroupBy(x => new { x.DateOfBirth.Year }).ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var item in usersGroupedByYear)
+        {
+            _logger.LogInformation("Year {year} has count {count}", item.Key.Year, item.Value);
+        }
+
         return results;
     }
 
