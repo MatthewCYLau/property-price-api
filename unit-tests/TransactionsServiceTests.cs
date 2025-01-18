@@ -33,7 +33,6 @@ public class TransactionsServiceTests
 });
         services.AddSingleton<ITransactionService, TransactionService>();
         services.AddSingleton<IUserService, UserService>();
-        services.AddSingleton<IUserService, UserService>();
         services.AddAzureClients(clientBuilder =>
         {
             clientBuilder.AddBlobServiceClient("foo").WithName("main");
