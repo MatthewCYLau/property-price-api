@@ -43,12 +43,24 @@ public class PaymentRequestService : IPaymentRequestService
             return Result.Failure(PaymentRequestErrors.CreditorAndDebtorIdentical(request.CreditorUserId.ToString(), request.DebtorUserId.ToString()));
         }
 
-        var user = await _userService.GetUserById(request.DebtorUserId.ToString());
-        var toBeBalance = user.Balance - request.Amount;
-        _logger.LogInformation("Current user balance {currentBalance}; to-be balance {tobeBalance}", user.Balance, toBeBalance);
+        var userIds = new List<Guid> { request.CreditorUserId, request.DebtorUserId };
+
+        foreach (var id in userIds)
+        {
+            var user = await _userService.GetUserById(id.ToString());
+            if (user == null)
+            {
+                return Result.Failure(PaymentRequestErrors.InvalidUserId(id.ToString()));
+            }
+        }
+
+        var debtor = await _userService.GetUserById(request.DebtorUserId.ToString());
+
+        var toBeBalance = debtor.Balance - request.Amount;
+        _logger.LogInformation("Current user balance {currentBalance}; to-be balance {tobeBalance}", debtor.Balance, toBeBalance);
         if (toBeBalance < 0)
         {
-            var description = $"Insuffient fund to complete payment request for debtor {user.Id}. Current balance {user.Balance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}; to-be balance {toBeBalance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}";
+            var description = $"Insuffient fund to complete payment request for debtor {debtor.Id}. Current balance {debtor.Balance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}; to-be balance {toBeBalance.ToString("C3", CultureInfo.CreateSpecificCulture("en-GB"))}";
             _logger.LogInformation(description);
             return Result.Failure(PaymentRequestErrors.DebtorInsufficientFund(request.DebtorUserId.ToString()));
         }

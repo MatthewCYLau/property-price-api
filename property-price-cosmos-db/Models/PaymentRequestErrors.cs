@@ -2,6 +2,9 @@ namespace property_price_cosmos_db.Models;
 
 public class PaymentRequestErrors
 {
+
+    public static Error InvalidUserId(string userId) => new(
+"PaymentRequestErrors.InvalidUserId", $"Invalid user Id {userId}.");
     public static Error DebtorInsufficientFund(string debtorUserId) => new(
 "PaymentRequestErrors.DebtorInsufficientFund", $"Debtor with user Id {debtorUserId} has insufficient fund.");
 
