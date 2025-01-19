@@ -63,4 +63,19 @@ public class PaymentRequestServiceTest
             Assert.That(res.Error.ToString(), Does.Contain("PaymentRequestErrors.InvalidUserId"));
         });
     }
+
+    [Test]
+    public async Task CreatePaymentRequestSameDebtorCreditorUserIds()
+    {
+        var paymentRequestService = _serviceProvider.GetService<IPaymentRequestService>();
+        var debtorUserId = Guid.NewGuid();
+        var creditorUserId = debtorUserId;
+        var request = new PaymentRequest { DebtorUserId = debtorUserId, CreditorUserId = creditorUserId, Amount = 10 };
+        var res = await paymentRequestService.CreatePaymentRequest(request);
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.IsFailure, Is.True);
+            Assert.That(res.Error.ToString(), Does.Contain("PaymentRequestErrors.CreditorAndDebtorIdentical"));
+        });
+    }
 }
