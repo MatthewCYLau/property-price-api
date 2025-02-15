@@ -89,6 +89,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddHealthChecks()
+    .AddCheck<CustomHealthCheckService>("main-health-check");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -108,5 +111,5 @@ await app.Services.GetRequiredService<ITransactionService>().CreateSeedTransacti
 app.Services.GetRequiredService<ICustomInitService>().GetAssembly();
 
 app.MapGet("/ping", () => "pong!");
-
+app.MapHealthChecks("/healthz");
 app.Run();
