@@ -15,7 +15,7 @@ public class CustomHealthCheckService(IOptions<CosmosDbOptions> options) : IHeal
             HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         CosmosClient cosmosClient = new(
-            _options.ConnectionString);
+            Environment.GetEnvironmentVariable("COSMOS_DB_CONNECTION_STRING") ?? _options.ConnectionString);
 
         if (cosmosClient != null)
         {
