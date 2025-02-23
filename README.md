@@ -54,6 +54,10 @@ dotnet ef migrations add AddNewColumn
 dotnet ef database update
 ```
 
+## Kafka
+
+- See quick start documentation [here](https://hub.docker.com/r/apache/kafka)
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
