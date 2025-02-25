@@ -1,7 +1,7 @@
 
 using Confluent.Kafka;
 
-namespace property_price_kafka_service.Services;
+namespace property_price_kafka_consumer.Services;
 
 
 public class ConsumerService : BackgroundService

@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-common", "pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-kafka-service", "property-price-kafka-service\property-price-kafka-service.csproj", "{7CB10210-F27C-4BFF-9D53-0AB7460CEFBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "property-price-kafka-consumer", "property-price-kafka-consumer\property-price-kafka-consumer.csproj", "{6E72A172-FF8C-422E-A368-4BD2F988C4E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{7CB10210-F27C-4BFF-9D53-0AB7460CEFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CB10210-F27C-4BFF-9D53-0AB7460CEFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CB10210-F27C-4BFF-9D53-0AB7460CEFBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E72A172-FF8C-422E-A368-4BD2F988C4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E72A172-FF8C-422E-A368-4BD2F988C4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E72A172-FF8C-422E-A368-4BD2F988C4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E72A172-FF8C-422E-A368-4BD2F988C4E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
