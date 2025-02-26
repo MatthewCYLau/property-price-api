@@ -10,10 +10,13 @@ namespace property_price_kafka_service;
 public class InventoryController : ControllerBase
 {
     private readonly ProducerService _producerService;
+    private readonly IConfiguration _configuration;
 
-    public InventoryController(ProducerService producerService)
+    public InventoryController(ProducerService producerService, IConfiguration configuration
+)
     {
         _producerService = producerService;
+        _configuration = configuration;
     }
 
     [HttpPost]
@@ -21,7 +24,7 @@ public class InventoryController : ControllerBase
     {
         var message = JsonSerializer.Serialize(request);
 
-        await _producerService.ProduceAsync("InventoryUpdates", message);
+        await _producerService.ProduceAsync(_configuration["Kafka:Topic"], message);
 
         return Ok("Inventory Updated Successfully...");
     }
