@@ -32,6 +32,16 @@ services:
   #     - "8080:8080"
   #   env_file:
   #     - property-price-api/docker/dev.env
+  property-price-kafka-service:
+    build:
+      context: .
+      dockerfile: ./property-price-kafka-service/Dockerfile
+    image: property-price-kafka-service
+    container_name: property-price-kafka-service
+    ports:
+      - "8080:8080"
+    env_file:
+      - property-price-kafka-service/docker/dev.env
   zookeeper:
     image: confluentinc/cp-zookeeper
     ports:
