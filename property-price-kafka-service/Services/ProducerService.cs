@@ -14,7 +14,7 @@ public class ProducerService
 
         var producerconfig = new ProducerConfig
         {
-            BootstrapServers = _configuration["Kafka:BootstrapServers"]
+            BootstrapServers = Environment.GetEnvironmentVariable("KAFKA_HOST") ?? _configuration["Kafka:BootstrapServers"]
         };
 
         _producer = new ProducerBuilder<Null, string>(producerconfig).Build();

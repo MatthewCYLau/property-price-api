@@ -17,7 +17,7 @@ public class ConsumerService : BackgroundService
 
         var consumerConfig = new ConsumerConfig
         {
-            BootstrapServers = configuration["Kafka:BootstrapServers"],
+            BootstrapServers = Environment.GetEnvironmentVariable("KAFKA_HOST") ?? configuration["Kafka:BootstrapServers"],
             GroupId = "InventoryConsumerGroup",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };

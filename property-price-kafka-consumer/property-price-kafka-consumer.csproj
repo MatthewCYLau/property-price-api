@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>property_price_kafka_consumer</RootNamespace>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\property-price-kafka-service\property-price-kafka-service.csproj" />
@@ -14,5 +15,11 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Update="appsettings.json;appsettings.Development.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
