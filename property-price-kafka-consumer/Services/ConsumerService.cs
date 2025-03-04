@@ -28,6 +28,7 @@ public class ConsumerService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _consumer.Subscribe(_configuration["Kafka:Topic"]);
+        _logger.LogInformation("Listening to Kafka topic: {0}", _configuration["Kafka:Topic"]);
 
         while (!stoppingToken.IsCancellationRequested)
         {
