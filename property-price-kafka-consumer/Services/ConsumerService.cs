@@ -1,5 +1,7 @@
 
+using System.Text.Json;
 using Confluent.Kafka;
+using property_price_kafka_service.Models;
 
 namespace property_price_kafka_consumer.Services;
 
@@ -47,8 +49,9 @@ public class ConsumerService : BackgroundService
             var consumeResult = _consumer.Consume(stoppingToken);
 
             var message = consumeResult.Message.Value;
-
             _logger.LogInformation($"Received inventory update: {message}");
+            InventoryUpdateRequest request = JsonSerializer.Deserialize<InventoryUpdateRequest>(message);
+            _logger.LogInformation("ProductId: {0}; Quantity {1}", request.ProductId, request.Quantity);
         }
         catch (Exception ex)
         {
