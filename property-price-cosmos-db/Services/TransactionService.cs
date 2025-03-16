@@ -407,7 +407,7 @@ public class TransactionService : ITransactionService
         }
         else
         {
-            _logger.LogInformation("Skip creating seed transactions. Current transactions count :{count}", transactions.Count());
+            _logger.LogInformation("Skip creating seed transactions. Current transactions count :{count}; count is even number? {isEven}", transactions.Count(), MathsHelper.IsEven(transactions.Count()));
         }
 
     }
