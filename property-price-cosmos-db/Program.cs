@@ -6,6 +6,7 @@ using property_price_cosmos_db.Services;
 using Microsoft.Extensions.Azure;
 using Azure.Messaging.ServiceBus;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +93,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddHealthChecks()
     .AddCheck<CustomHealthCheckService>("main-health-check");
 
+// builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration["RedisSettings:Host"]));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

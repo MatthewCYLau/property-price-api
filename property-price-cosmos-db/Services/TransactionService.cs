@@ -12,6 +12,7 @@ using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 using System.Text;
 using property_price_cosmos_db.Helper;
+using StackExchange.Redis;
 
 namespace property_price_cosmos_db.Services;
 
@@ -24,6 +25,7 @@ public class TransactionService : ITransactionService
     private readonly IUserService _userService;
     private readonly IAzureClientFactory<BlobServiceClient> _azureBlobServiceClientFactory;
     private readonly IAzureClientFactory<ServiceBusSender> _serviceBusSenderFactory;
+    // private readonly IDatabase _redis;
 
 
     public TransactionService(
@@ -33,6 +35,7 @@ public class TransactionService : ITransactionService
         IAzureClientFactory<BlobServiceClient> azureBlobServiceClientFactory,
         IOptions<CosmosDbOptions> options,
         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory
+        // IConnectionMultiplexer muxer
         )
     {
         _client = client;
@@ -42,6 +45,7 @@ public class TransactionService : ITransactionService
         _azureBlobServiceClientFactory = azureBlobServiceClientFactory;
         _serviceBusSenderFactory = serviceBusSenderFactory;
         _container = _client.GetContainer(_options.DatabaseId, _options.TransactionsContainerId);
+        // _redis = muxer.GetDatabase();
     }
 
     public async Task<Result> AddAsync(Transaction item)
@@ -92,6 +96,20 @@ public class TransactionService : ITransactionService
         _logger.LogInformation("Getting transaction for ID {id}", id);
         try
         {
+            // string json;
+            // json = await _redis.StringGetAsync(id);
+            // if (string.IsNullOrEmpty(json))
+            // {
+            //     var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
+            //     string jsonString = JsonConvert.SerializeObject(response.Resource);
+            //     var setTask = _redis.StringSetAsync(id, jsonString);
+            //     var expireTask = _redis.KeyExpireAsync(id, TimeSpan.FromSeconds(3600));
+            //     await Task.WhenAll(setTask, expireTask);
+            //     return response.Resource;
+
+            // }
+            // var transaction = JsonConvert.DeserializeObject<Transaction>(json);
+            // return transaction;
             var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
             return response.Resource;
         }
