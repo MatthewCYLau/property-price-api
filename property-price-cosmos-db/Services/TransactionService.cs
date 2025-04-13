@@ -26,6 +26,7 @@ public class TransactionService : ITransactionService
     private readonly IAzureClientFactory<BlobServiceClient> _azureBlobServiceClientFactory;
     private readonly IAzureClientFactory<ServiceBusSender> _serviceBusSenderFactory;
     // private readonly IDatabase _redis;
+    private readonly Dictionary<string, Transaction> inMemoryCache = [];
 
 
     public TransactionService(
@@ -94,28 +95,38 @@ public class TransactionService : ITransactionService
     public async Task<Transaction?> GetAsync(string id)
     {
         _logger.LogInformation("Getting transaction for ID {id}", id);
-        try
-        {
-            // string json;
-            // json = await _redis.StringGetAsync(id);
-            // if (string.IsNullOrEmpty(json))
-            // {
-            //     var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
-            //     string jsonString = JsonConvert.SerializeObject(response.Resource);
-            //     var setTask = _redis.StringSetAsync(id, jsonString);
-            //     var expireTask = _redis.KeyExpireAsync(id, TimeSpan.FromSeconds(3600));
-            //     await Task.WhenAll(setTask, expireTask);
-            //     return response.Resource;
 
-            // }
-            // var transaction = JsonConvert.DeserializeObject<Transaction>(json);
-            // return transaction;
-            var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
-            return response.Resource;
-        }
-        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        if (inMemoryCache.TryGetValue(id, out Transaction? value))
         {
-            return null;
+            return value;
+        }
+        else
+        {
+            try
+            {
+                // string json;
+                // json = await _redis.StringGetAsync(id);
+                // if (string.IsNullOrEmpty(json))
+                // {
+                //     var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
+                //     string jsonString = JsonConvert.SerializeObject(response.Resource);
+                //     var setTask = _redis.StringSetAsync(id, jsonString);
+                //     var expireTask = _redis.KeyExpireAsync(id, TimeSpan.FromSeconds(3600));
+                //     await Task.WhenAll(setTask, expireTask);
+                //     return response.Resource;
+
+                // }
+                // var transaction = JsonConvert.DeserializeObject<Transaction>(json);
+                // return transaction;
+                var response = await _container.ReadItemAsync<Transaction>(id, new PartitionKey(id));
+                var transaction = response.Resource;
+                inMemoryCache[id] = transaction;
+                return transaction;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
         }
     }
 
