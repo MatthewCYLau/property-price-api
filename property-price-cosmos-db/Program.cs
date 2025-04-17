@@ -7,6 +7,7 @@ using Microsoft.Extensions.Azure;
 using Azure.Messaging.ServiceBus;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
+using property_price_cosmos_db.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,5 +114,6 @@ await app.Services.GetRequiredService<ITransactionService>().CreateSeedTransacti
 app.Services.GetRequiredService<ICustomInitService>().GetAssembly();
 
 app.MapGet("/ping", () => "pong!");
+app.MapGet("/async", async () => await MathsHelper.GetRandomNumberInclusiveAsync(1, 100));
 app.MapHealthChecks("/healthz");
 app.Run();

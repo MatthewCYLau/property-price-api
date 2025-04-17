@@ -13,8 +13,7 @@ public static class MathsHelper
         {
             Random random = new();
             int randomNumber = random.Next(min, max + 1);
-            int randomWaitSeconds = random.Next(1, 5);
-            Task.Delay(randomWaitSeconds).Wait();
+            Task.Delay(random.Next(1, 5) * 1_000).Wait();
             return randomNumber;
         });
     }
