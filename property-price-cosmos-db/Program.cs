@@ -114,19 +114,7 @@ await app.Services.GetRequiredService<ITransactionService>().CreateSeedTransacti
 app.Services.GetRequiredService<ICustomInitService>().GetAssembly();
 
 app.MapGet("/ping", () => "pong!");
-app.MapGet("/async", async () =>
-{
-
-    List<Task<int>> tasks = [];
-
-    for (int i = 0; i < 2; i++)
-    {
-        tasks.Add(MathsHelper.GetRandomNumberInclusiveAsync(1, 100));
-    }
-
-    List<int> result = [.. await Task.WhenAll(tasks)];
-    return result.Sum();
-});
+app.MapGet("/async", async () => await MathsHelper.GetSumOfRandomNumbersAsync(5));
 
 app.MapHealthChecks("/healthz");
 app.Run();

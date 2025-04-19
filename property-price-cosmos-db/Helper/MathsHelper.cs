@@ -17,4 +17,18 @@ public static class MathsHelper
             return randomNumber;
         });
     }
+
+    public static async Task<int> GetSumOfRandomNumbersAsync(int count)
+    {
+
+        List<Task<int>> tasks = [];
+
+        for (int i = 0; i < count; i++)
+        {
+            tasks.Add(GetRandomNumberInclusiveAsync(1, 100));
+        }
+
+        List<int> result = [.. await Task.WhenAll(tasks)];
+        return result.Sum();
+    }
 }
