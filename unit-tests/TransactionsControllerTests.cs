@@ -22,9 +22,12 @@ public class TransactionsControllerTests
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
 
         // Assert
-        Assert.IsNotNull(okResult);
-        Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        Assert.That(okResult.Value, Is.EqualTo(transactions));
+        Assert.That(okResult, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult.StatusCode, Is.EqualTo(200));
+            Assert.That(okResult.Value, Is.EqualTo(transactions));
+        });
     }
 
     [Test]
@@ -39,9 +42,12 @@ public class TransactionsControllerTests
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
 
         // Assert
-        Assert.IsNotNull(okResult);
-        Assert.That(okResult.StatusCode, Is.EqualTo(200));
-        Assert.That(okResult.Value, Is.EqualTo(transaction));
+        Assert.That(okResult, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(okResult.StatusCode, Is.EqualTo(200));
+            Assert.That(okResult.Value, Is.EqualTo(transaction));
+        });
     }
 
     [Test]
