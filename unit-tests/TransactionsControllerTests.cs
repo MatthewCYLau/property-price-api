@@ -20,13 +20,14 @@ public class TransactionsControllerTests
         var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
         var transactionsResult = await transactionsController.List(false, 100, "asc");
         OkObjectResult? okResult = transactionsResult as OkObjectResult;
+        var getTransactionsResponse = okResult.Value as GetTransactionsResponse;
 
         // Assert
         Assert.That(okResult, Is.Not.Null);
         Assert.Multiple(() =>
         {
             Assert.That(okResult.StatusCode, Is.EqualTo(200));
-            Assert.That(okResult.Value, Is.EqualTo(transactions));
+            Assert.That(getTransactionsResponse.Transactions, Is.EqualTo(transactions));
         });
     }
 
