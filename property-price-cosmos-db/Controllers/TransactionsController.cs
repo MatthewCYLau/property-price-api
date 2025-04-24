@@ -24,7 +24,8 @@ public class TransactionsController : ControllerBase
     [HttpGet("transactions")]
     public async Task<IActionResult> List([FromQuery] bool? isComplete, int? maxAmount, string? orderBy)
     {
-        return Ok(await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy));
+        var transactions = await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy);
+        return Ok(new GetTransactionsResponse { Transactions = transactions, TransactionsCount = transactions.Count() });
     }
     [HttpGet("transactions/{id}")]
     public async Task<IActionResult> Get(string id)
