@@ -25,7 +25,12 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> List([FromQuery] bool? isComplete, int? maxAmount, string? orderBy)
     {
         var transactions = await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy);
-        return Ok(new GetTransactionsResponse { Transactions = transactions, TransactionsCount = transactions.Count() });
+        return Ok(new GetTransactionsResponse
+        {
+            Transactions = transactions,
+            TransactionsCount = transactions.Count(),
+            TransactionsAmountMean = transactions.Select(i => i.Amount).Average()
+        });
     }
     [HttpGet("transactions/{id}")]
     public async Task<IActionResult> Get(string id)
