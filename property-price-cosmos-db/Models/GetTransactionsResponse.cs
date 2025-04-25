@@ -5,4 +5,5 @@ public class GetTransactionsResponse
     public required IEnumerable<Transaction> Transactions { get; set; }
     public required int TransactionsCount { get; set; }
     public required decimal TransactionsAmountMean { get; set; }
+    public required decimal TransactionsAmountSum { get; set; }
 }

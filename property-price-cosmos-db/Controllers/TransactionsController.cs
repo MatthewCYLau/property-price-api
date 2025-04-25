@@ -29,7 +29,8 @@ public class TransactionsController : ControllerBase
         {
             Transactions = transactions,
             TransactionsCount = transactions.Count(),
-            TransactionsAmountMean = transactions.Select(i => i.Amount).Average()
+            TransactionsAmountMean = Math.Round(transactions.Select(i => i.Amount).Average(), 2),
+            TransactionsAmountSum = Math.Round(transactions.Select(n => n.Amount).Sum(), 2)
         });
     }
     [HttpGet("transactions/{id}")]
