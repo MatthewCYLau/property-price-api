@@ -28,6 +28,7 @@ public class TransactionsControllerTests
         {
             Assert.That(okResult.StatusCode, Is.EqualTo(200));
             Assert.That(getTransactionsResponse.Transactions, Is.EqualTo(transactions));
+            Assert.That(getTransactionsResponse.TransactionsMetadata.TotalCount, Is.EqualTo(transactions.Count()));
         });
     }
 
