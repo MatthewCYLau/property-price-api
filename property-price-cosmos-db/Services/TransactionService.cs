@@ -130,10 +130,11 @@ public class TransactionService : ITransactionService
         }
     }
 
-    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount, string? orderBy)
+    public async Task<IEnumerable<Transaction>> GetMultipleAsync(bool? isComplete, int? maxAmount, string? orderBy, int page, int pageSize)
     {
         QueryDefinition queryDefinition;
         string order;
+        int offset = (page - 1) * pageSize;
 
         if (orderBy != null && orderBy == "asc")
         {
@@ -147,13 +148,13 @@ public class TransactionService : ITransactionService
         if (isComplete is null)
         {
             queryDefinition = new QueryDefinition(
-                query: $"SELECT * FROM transactions ORDER BY transactions.created {order}"
+                query: $"SELECT * FROM transactions ORDER BY transactions.created {order} OFFSET {offset} LIMIT {pageSize}"
             );
         }
         else
         {
             queryDefinition = new QueryDefinition(
-                    query: $"SELECT * FROM transactions t WHERE t.isComplete = @isComplete ORDER BY t.created {order}"
+                    query: $"SELECT * FROM transactions t WHERE t.isComplete = @isComplete ORDER BY t.created {order} OFFSET {offset} LIMIT {pageSize}"
             )
             .WithParameter("@isComplete", isComplete);
         }
@@ -421,7 +422,7 @@ public class TransactionService : ITransactionService
     {
 
         var testUserId = await GetSeedUserId();
-        var transactions = await GetMultipleAsync(null, 1_000_000, "asc");
+        var transactions = await GetMultipleAsync(null, 1_000_000, "asc", 1, 5);
         if (!transactions.Any())
         {
             _logger.LogInformation("Creating seed transaction...");

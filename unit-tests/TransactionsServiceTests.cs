@@ -54,7 +54,7 @@ public class TransactionsServiceTests
     public async Task GetTransactionsShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc", 1, 5);
         Assert.That(transactions.Count(), Is.GreaterThan(0));
     }
 
@@ -62,7 +62,7 @@ public class TransactionsServiceTests
     public async Task GetTransactionByIdShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc", 1, 5);
         var firstTransactionId = transactions.ElementAt(0).Id.ToString();
         var transaction = await transactionService.GetAsync(firstTransactionId);
         Assert.That(transaction.Id.ToString(), Is.EqualTo(firstTransactionId));
@@ -72,7 +72,7 @@ public class TransactionsServiceTests
     public async Task UpdateTransactionByIdShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc", 1, 5);
         var firstTransactionId = transactions.ElementAt(0).Id.ToString();
         var updatedTransaction1 = await transactionService.UpdateAsync(firstTransactionId, new UpdateTransactionRequest() { Amount = 200, Description = "example", Completed = false });
         Assert.That(updatedTransaction1.Amount, Is.EqualTo(200));
@@ -84,7 +84,7 @@ public class TransactionsServiceTests
     public async Task UpdateTransactionAppendCommentsAsyncShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
-        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc");
+        var transactions = await transactionService.GetMultipleAsync(null, 1_000_000, "asc", 1, 5);
         var firstTransactionId = transactions.ElementAt(0).Id.ToString();
         await transactionService.UpdateTransactionAppendCommentsAsync(firstTransactionId, new Comment("example"));
         var transaction = await transactionService.GetAsync(firstTransactionId);

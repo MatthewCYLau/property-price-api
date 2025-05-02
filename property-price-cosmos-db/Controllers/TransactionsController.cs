@@ -22,9 +22,9 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpGet("transactions")]
-    public async Task<IActionResult> List([FromQuery] bool? isComplete, int? maxAmount, string? orderBy)
+    public async Task<IActionResult> List([FromQuery] bool? isComplete, int? maxAmount, string? orderBy, int page = 1, int pageSize = 5)
     {
-        var transactions = await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy);
+        var transactions = await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy, page, pageSize);
         var count = transactions.Count();
         var amountMean = Math.Round(transactions.Select(i => i.Amount).Average(), 2);
         var amountSum = Math.Round(transactions.Select(n => n.Amount).Sum(), 2);
