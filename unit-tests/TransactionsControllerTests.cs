@@ -127,4 +127,16 @@ public class TransactionsControllerTests
             Assert.That(okResult.Value, Is.EqualTo(transactions));
         });
     }
+
+    [Test]
+    public async Task GetTransactions_InvalidPageSize_Should()
+    {
+        IEnumerable<Transaction> transactions = [];
+        var mockTransactionService = new Mock<ITransactionService>();
+        Mock<IConfiguration> mockConfiguration = new();
+        mockTransactionService.Setup(x => x.GetMultipleAsync(false, 100, "asc", 1, 5)).Returns(Task.FromResult(transactions));
+        var transactionsController = new TransactionsController(mockTransactionService.Object, mockConfiguration.Object);
+        var result = await transactionsController.List(false, 100, "asc", 1, 6);
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
 }
