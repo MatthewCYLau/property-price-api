@@ -22,8 +22,14 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpGet("transactions")]
-    public async Task<IActionResult> List([FromQuery] bool? isComplete, int? maxAmount, string? orderBy, int page = 1, int pageSize = 5)
+    public async Task<IActionResult> List([FromQuery] bool? isComplete, int? maxAmount, string? orderBy, int page = 1, int pageSize = TransactionConstants.defaultPageSize)
     {
+
+        if (pageSize <= 0 || pageSize > 5)
+        {
+            return BadRequest(new { message = $"Invalid page size {pageSize}. Page size must be between 1 to 5 inclusive." });
+        }
+
         var transactions = await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy, page, pageSize);
         var count = transactions.Count();
         var amountMean = Math.Round(transactions.Select(i => i.Amount).Average(), 2);
