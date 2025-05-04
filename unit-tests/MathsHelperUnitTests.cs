@@ -19,4 +19,14 @@ public class MathsHelperUnitTests
         var res = await MathsHelper.GetSumOfRandomNumbersAsync(3);
         Assert.That(res, Is.TypeOf<int>());
     }
+
+    [Test]
+    public void TestCreateListIntSwapFirstLast()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(MathsHelper.CreateListIntSwapFirstLast(4), Is.EqualTo(new List<int> { 4, 2, 3, 1 }));
+            Assert.That(MathsHelper.CreateListIntSwapFirstLast(5), Is.EqualTo(new List<int> { 5, 2, 3, 4, 1 }));
+        });
+    }
 }

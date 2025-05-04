@@ -31,4 +31,12 @@ public static class MathsHelper
         List<int> result = [.. await Task.WhenAll(tasks)];
         return result.Sum();
     }
+
+
+    public static List<int> CreateListIntSwapFirstLast(int listSize)
+    {
+        var list = Enumerable.Range(1, listSize).ToList();
+        (list[^1], list[0]) = (list[0], list[^1]);
+        return list;
+    }
 }
