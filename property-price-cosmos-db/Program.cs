@@ -115,7 +115,7 @@ app.Services.GetRequiredService<ICustomInitService>().GetAssembly();
 
 app.MapGet("/ping", () => "pong!");
 app.MapGet("/async", async () => await MathsHelper.GetSumOfRandomNumbersAsync(5));
-app.MapGet("/create-int-list", () => MathsHelper.CreateListIntSwapFirstLast(5));
+app.MapPost("/create-int-list", (CreateIntegerListRequest request) => Results.Ok(MathsHelper.CreateListIntSwapFirstLast(request.Count)));
 
 app.MapHealthChecks("/healthz");
 app.Run();
