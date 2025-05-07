@@ -117,5 +117,7 @@ app.MapGet("/ping", () => "pong!");
 app.MapGet("/async", async () => await MathsHelper.GetSumOfRandomNumbersAsync(5));
 app.MapPost("/create-int-list", (CreateIntegerListRequest request) => Results.Ok(MathsHelper.CreateListIntSwapFirstLast(request.Count)));
 
+app.MapPost("/current-time", (GetCurrentTimeRequest request) => Results.Ok(TimeHelper.GetCurrentTimeByTimeZoneId(request.TimeZoneId)));
+
 app.MapHealthChecks("/healthz");
 app.Run();
