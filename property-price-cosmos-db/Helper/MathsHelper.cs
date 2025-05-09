@@ -37,6 +37,19 @@ public static class MathsHelper
     {
         var list = Enumerable.Range(1, listSize).ToList();
         (list[^1], list[0]) = (list[0], list[^1]);
+        ICollection<int> collection = [];
+
+        foreach (var item in list)
+        {
+            collection.Add(item);
+        }
+        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        var logger = loggerFactory.CreateLogger(string.Empty);
+        foreach (var item in collection)
+        {
+            logger.LogInformation("Integer is: {0}", item);
+        }
+
         return list;
     }
 }
