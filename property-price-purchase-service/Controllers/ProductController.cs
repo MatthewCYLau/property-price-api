@@ -66,4 +66,11 @@ public class ProductController : ControllerBase
         var order = _productsService.UpdateProductById(id, request);
         return Ok(order);
     }
+
+    [HttpPost("update-price")]
+    public async Task<IActionResult> UpdateProductPrice(UpdateProductPriceRequest request)
+    {
+        await _productsService.UpdateProductPrice(request.Magnitude);
+        return Ok(new { message = "Products updated" });
+    }
 }

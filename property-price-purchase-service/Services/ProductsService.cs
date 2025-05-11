@@ -15,6 +15,7 @@ public interface IProductsService
     Product? GetProductById(int id);
     void DeleteProductById(int id);
     Product UpdateProductById(int id, ProductRequest request);
+    Task UpdateProductPrice(int magnitude);
 }
 
 public class ProductsService : IProductsService
@@ -94,5 +95,33 @@ public class ProductsService : IProductsService
         _dbContext.Products.Update(product);
         _dbContext.SaveChanges();
         return product;
+    }
+
+    public async Task UpdateProductPrice(int magnitude)
+    {
+        try
+        {
+            const string queryString = "UPDATE \"Products\" SET \"Price\" = \"Price\" * @magnitude;";
+            var connection = new NpgsqlConnection(_options.ConnectionString);
+            var command = new NpgsqlCommand(queryString, connection);
+            command.Parameters.AddWithValue("@magnitude", magnitude);
+            await connection.OpenAsync();
+            await using var tx = await connection.BeginTransactionAsync();
+            try
+            {
+                await command.ExecuteNonQueryAsync();
+                await tx.CommitAsync();
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                await tx.RollbackAsync();
+            }
+
+        }
+        catch (NpgsqlException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
     }
 }
