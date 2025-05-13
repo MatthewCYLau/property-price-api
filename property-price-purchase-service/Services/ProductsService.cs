@@ -18,21 +18,14 @@ public interface IProductsService
     Task UpdateProductPrice(int magnitude);
 }
 
-public class ProductsService : IProductsService
+public class ProductsService(IConfiguration configuration, PostgreSQLDbContext dbContext, IMapper mapper, IOptions<PostgreSqlDbOptions> options, ILogger<ProductsService> logger
+) : IProductsService
 {
-    private readonly IConfiguration _configuration;
-    private readonly PostgreSQLDbContext _dbContext;
-    private readonly IMapper _mapper;
-    private readonly PostgreSqlDbOptions _options;
-
-
-    public ProductsService(IConfiguration configuration, PostgreSQLDbContext dbContext, IMapper mapper, IOptions<PostgreSqlDbOptions> options)
-    {
-        _dbContext = dbContext;
-        _mapper = mapper;
-        _configuration = configuration;
-        _options = options.Value;
-    }
+    private readonly IConfiguration _configuration = configuration;
+    private readonly PostgreSQLDbContext _dbContext = dbContext;
+    private readonly IMapper _mapper = mapper;
+    private readonly PostgreSqlDbOptions _options = options.Value;
+    private readonly ILogger _logger = logger;
 
     public IEnumerable<Product> GetProducts()
     {
@@ -111,6 +104,7 @@ public class ProductsService : IProductsService
             {
                 await command.ExecuteNonQueryAsync();
                 await tx.CommitAsync();
+                _logger.LogInformation("Query execution complete!");
             }
             catch (NpgsqlException ex)
             {
