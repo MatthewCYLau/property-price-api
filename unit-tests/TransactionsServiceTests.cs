@@ -81,6 +81,7 @@ public class TransactionsServiceTests
     }
 
     [Test]
+    [Ignore("Avoid CosmosDB rate limitting")]
     public async Task UpdateTransactionAppendCommentsAsyncShould()
     {
         var transactionService = _serviceProvider.GetService<ITransactionService>();
