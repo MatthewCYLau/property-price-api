@@ -10,15 +10,18 @@ public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
     private readonly IConfiguration _configuration;
+    private readonly ILogger _logger;
 
 
     public TransactionsController(
         ITransactionService transactionService,
-        IConfiguration configuration
+        IConfiguration configuration,
+        ILogger<TransactionsController> logger
         )
     {
         _transactionService = transactionService;
         _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpGet("transactions")]
@@ -34,9 +37,31 @@ public class TransactionsController : ControllerBase
         var count = transactions.Count();
         var amountMean = Math.Round(transactions.Select(i => i.Amount).Average(), 2);
         var amountSum = Math.Round(transactions.Select(n => n.Amount).Sum(), 2);
+
+        Dictionary<decimal, int> countDict = [];
+        foreach (Transaction transaction in transactions)
+        {
+            if (countDict.TryGetValue(transaction.Amount, out int value))
+            {
+                countDict[transaction.Amount] = ++value;
+            }
+            else
+            {
+                countDict[transaction.Amount] = 1;
+            }
+        }
+
+        List<CountByAmountResponse> countByAmountList = [];
+        foreach (KeyValuePair<decimal, int> entry in countDict)
+        {
+            _logger.LogInformation("Amount {amount} occurs {count} times.", entry.Key, entry.Value);
+            countByAmountList.Add(new CountByAmountResponse { Amount = entry.Key, Count = entry.Value });
+        }
+
         return Ok(new GetTransactionsResponse
         {
             Transactions = transactions,
+            CountByAmountResponse = countByAmountList,
             TransactionsMetadata = new TransactionsMetadata
             {
                 TotalCount = count,

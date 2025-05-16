@@ -181,24 +181,6 @@ public class TransactionService : ITransactionService
                 select i;
         }
 
-        Dictionary<decimal, int> countDict = [];
-        foreach (Transaction transaction in results)
-        {
-            if (countDict.TryGetValue(transaction.Amount, out int value))
-            {
-                countDict[transaction.Amount] = ++value;
-            }
-            else
-            {
-                countDict[transaction.Amount] = 1;
-            }
-        }
-
-        foreach (KeyValuePair<decimal, int> entry in countDict)
-        {
-            _logger.LogInformation("Amount {amount} occurs {count} times.", entry.Key, entry.Value);
-
-        }
         _logger.LogInformation("Query retrieved {count} documents in {timeSpan} seconds.", documentCount, cumulativeTime.TotalSeconds);
         return results;
     }
