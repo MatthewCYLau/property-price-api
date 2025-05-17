@@ -58,6 +58,8 @@ public class TransactionsController : ControllerBase
             countByAmountList.Add(new CountByAmountResponse { Amount = entry.Key, Count = entry.Value });
         }
 
+        countByAmountList.Sort((a, b) => b.Amount.CompareTo(a.Amount));
+
         return Ok(new GetTransactionsResponse
         {
             Transactions = transactions,
