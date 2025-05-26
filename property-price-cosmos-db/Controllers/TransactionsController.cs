@@ -35,8 +35,16 @@ public class TransactionsController : ControllerBase
 
         var transactions = await _transactionService.GetMultipleAsync(isComplete, maxAmount, orderBy, page, pageSize);
         var count = transactions.Count();
-        var amountMean = Math.Round(transactions.Select(i => i.Amount).Average(), 2);
-        var amountSum = Math.Round(transactions.Select(n => n.Amount).Sum(), 2);
+
+        decimal amountMean = 0;
+        decimal amountSum = 0;
+
+        if (count > 0)
+        {
+            amountMean = Math.Round(transactions.Select(i => i.Amount).Average(), 2);
+            amountSum = Math.Round(transactions.Select(n => n.Amount).Sum(), 2);
+        }
+
 
         Dictionary<decimal, int> countDict = [];
         foreach (Transaction transaction in transactions)

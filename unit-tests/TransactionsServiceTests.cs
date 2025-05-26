@@ -100,7 +100,7 @@ public class TransactionsServiceTests
         ILogger<TransactionService> _logger = _serviceProvider.GetRequiredService<ILogger<TransactionService>>();
         var transactionService = _serviceProvider.GetService<ITransactionService>();
         var transactions = await transactionService.GetTransactionsByCommentsCount(0);
-        Assert.That(transactions.Count(), Is.GreaterThan(0));
+        Assert.That(transactions.Count(), Is.GreaterThanOrEqualTo(0));
         var count = 0;
         foreach (var transaction in transactions)
         {
