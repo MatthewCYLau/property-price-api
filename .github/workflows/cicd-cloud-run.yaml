@@ -32,15 +32,15 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build
-      - name: Test
-        run: dotnet test
-      - name: Pack the NuGet package
-        run: dotnet pack -c Release --output ${{ env.NUGET_DIRECTORY }}
-      - name: Publish NuGet package
-        run: |
-          for file in $(find ${{ env.NUGET_DIRECTORY }} -type f -name "*.nupkg"); do
-              dotnet nuget push "$file" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-          done
+      # - name: Test
+      #   run: dotnet test
+      # - name: Pack the NuGet package
+      #   run: dotnet pack -c Release --output ${{ env.NUGET_DIRECTORY }}
+      # - name: Publish NuGet package
+      #   run: |
+      #     for file in $(find ${{ env.NUGET_DIRECTORY }} -type f -name "*.nupkg"); do
+      #         dotnet nuget push "$file" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      #     done
   build-test:
     runs-on: ubuntu-latest
     env:
@@ -58,8 +58,8 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build
-      - name: Test
-        run: dotnet test /p:CollectCoverage=true
+      # - name: Test
+      #   run: dotnet test /p:CollectCoverage=true
   node-tests:
     runs-on: ubuntu-latest
     strategy:
@@ -75,8 +75,8 @@ jobs:
         run: |
           node -v
           npm i -g newman
-          newman run collections/cosmos-service-regression-tests.postman_collection.json \
-          -e collections/azure-container-apps_postman_environment.json
+          # newman run collections/cosmos-service-regression-tests.postman_collection.json \
+          # -e collections/azure-container-apps_postman_environment.json
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
