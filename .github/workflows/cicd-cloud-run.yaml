@@ -119,7 +119,6 @@ jobs:
       - name: Deploy
         run: |
           gcloud run deploy ${CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$API_IMAGE:$GITHUB_SHA" --region europe-west1 \
-          --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest\
-          ,JWT_SECRET=jwt-secret:latest
+          --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest
           gcloud run deploy ${INGEST_CLOUD_RUN_SERVICE} --image "$REGISTRY_HOSTNAME/$PROJECT_ID/$INGEST_IMAGE:$GITHUB_SHA" --region europe-west1 \
           --update-secrets=MONGO_DB_CONNECTION_STRING=property-price-api-mongo-db-connection-string:latest
