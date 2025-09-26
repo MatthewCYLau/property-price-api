@@ -54,6 +54,13 @@ dotnet ef migrations add AddNewColumn
 dotnet ef database update
 ```
 
+## Run tests
+
+```
+dotnet test
+dotnet test --filter "FullyQualifiedName=unit_tests.PropertyServiceTests.ReadCSV"
+```
+
 ## Kafka
 
 - See quick start documentation [here](https://hub.docker.com/r/apache/kafka)
