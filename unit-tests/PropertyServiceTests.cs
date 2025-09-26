@@ -37,7 +37,7 @@ public class PropertyServiceTests
         {
             return new MongoDbContext(
         Environment.GetEnvironmentVariable("MONGO_DB_CONNECTION_STRING") ??
-        _config.Value.DatabaseName,
+        _config.Value.ConnectionString,
         _config.Value.DatabaseName);
         });
 
