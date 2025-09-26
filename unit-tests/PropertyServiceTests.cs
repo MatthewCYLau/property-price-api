@@ -1,7 +1,9 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using property_price_api.Data;
+using property_price_api.Models;
 using property_price_api.Profiles;
 using property_price_api.Services;
 
@@ -13,15 +15,21 @@ namespace unit_tests;
 public class PropertyServiceTests
 {
     private ServiceProvider _serviceProvider;
-    
+
     [SetUp]
     public void Setup()
     {
         var services = new ServiceCollection();
         services.AddLogging(builder => builder.AddConsole().AddDebug());
-        services.AddSingleton(_ => new MongoDbContext(
-            "foo",
-            "bar"));
+        services.AddSingleton(serviceProvider =>
+        {
+            var settings = serviceProvider.GetRequiredService<IOptions<PropertyPriceApiDatabaseSettings>>().Value;
+            return new MongoDbContext(
+        Environment.GetEnvironmentVariable("MONGO_DB_CONNECTION_STRING") ??
+        settings.ConnectionString,
+        settings.DatabaseName);
+        });
+
         var mapperConfig = new MapperConfiguration(mc =>
         {
             mc.AddProfile(new UserProfile());
@@ -44,5 +52,16 @@ public class PropertyServiceTests
         var properties = await propertyService.GetProperties(startDate, endDate);
         Console.WriteLine("Retrieved {0} properties from database.", properties.Count);
         Assert.That(properties.Count > 0);
+    }
+
+    [Test]
+    public void ReadCSV()
+    {
+        FileStream stream = File.OpenRead("resources/example-properties.csv");
+        var propertyService = _serviceProvider.GetService<IPropertyService>();
+        var createPropertyRequests = propertyService.ReadCSV<CreatePropertyRequest>(stream);
+
+        // Assert
+        Assert.That(createPropertyRequests.Count(), Is.EqualTo(3));
     }
 }
