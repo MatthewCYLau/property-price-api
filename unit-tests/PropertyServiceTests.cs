@@ -58,8 +58,8 @@ public class PropertyServiceTests
     public async Task GetProperties()
     {
         var propertyService = _serviceProvider.GetService<IPropertyService>();
-        var startDate = new DateTime(2024, 04, 01);
-        var endDate = new DateTime(2024, 06, 01);
+        var startDate = new DateTime(2020, 04, 01);
+        var endDate = new DateTime(2025, 06, 01);
         var properties = await propertyService.GetProperties(startDate, endDate);
         Console.WriteLine("Retrieved {0} properties from database.", properties.Count);
         Assert.That(properties.Count > 0);
