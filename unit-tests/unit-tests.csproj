@@ -30,8 +30,8 @@
       <ProjectReference Include="..\property-price-common\property-price-common.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="resources\*.*">
+        <Content Include="resources\*.*;appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>  
+        </Content>
     </ItemGroup>
 </Project>

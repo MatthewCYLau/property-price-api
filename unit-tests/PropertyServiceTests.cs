@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,12 +10,23 @@ using property_price_api.Services;
 
 namespace unit_tests;
 
-[Ignore("Test to be ran locally")]
 [TestFixture]
 [Category("Integration")]
 public class PropertyServiceTests
 {
     private ServiceProvider _serviceProvider;
+    private IOptions<PropertyPriceApiDatabaseSettings> _config;
+
+    [OneTimeSetUp]
+    public void GlobalPrepare()
+    {
+        var configuration = new ConfigurationBuilder()
+           .SetBasePath(Directory.GetCurrentDirectory())
+           .AddJsonFile("appsettings.json", false)
+           .Build();
+
+        _config = Options.Create(configuration.GetSection("PropertyPriceApiDatabase").Get<PropertyPriceApiDatabaseSettings>());
+    }
 
     [SetUp]
     public void Setup()
@@ -23,11 +35,10 @@ public class PropertyServiceTests
         services.AddLogging(builder => builder.AddConsole().AddDebug());
         services.AddSingleton(serviceProvider =>
         {
-            var settings = serviceProvider.GetRequiredService<IOptions<PropertyPriceApiDatabaseSettings>>().Value;
             return new MongoDbContext(
         Environment.GetEnvironmentVariable("MONGO_DB_CONNECTION_STRING") ??
-        settings.ConnectionString,
-        settings.DatabaseName);
+        _config.Value.DatabaseName,
+        _config.Value.DatabaseName);
         });
 
         var mapperConfig = new MapperConfiguration(mc =>
