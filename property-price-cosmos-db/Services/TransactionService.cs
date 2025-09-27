@@ -18,6 +18,9 @@ namespace property_price_cosmos_db.Services;
 
 public class TransactionService : ITransactionService
 {
+    private const string getTransactionsAmountSumQuery = "SELECT VALUE SUM(t.amount) FROM transactions t";
+    private const string getTransactionsCountQuery = "SELECT VALUE COUNT(t.amount) FROM transactions t";
+    private const string getTransactionsAmountAverageQuery = "SELECT VALUE AVG(t.amount) FROM transactions t";
     private readonly CosmosClient _client;
     private readonly CosmosDbOptions _options;
     private readonly Container _container;
@@ -247,7 +250,7 @@ public class TransactionService : ITransactionService
     public async Task<AnalysisResponse> GetTransactionsAnalysisResponse()
     {
 
-        QueryDefinition count = new(query: "SELECT VALUE COUNT(t.amount) FROM transactions t");
+        QueryDefinition count = new(query: getTransactionsCountQuery);
         var countQuery = _container.GetItemQueryIterator<int>(queryDefinition: count);
 
         var countResults = new List<int>();
@@ -257,7 +260,7 @@ public class TransactionService : ITransactionService
             countResults.AddRange([.. response]);
         }
 
-        QueryDefinition sum = new(query: "SELECT VALUE SUM(t.amount) FROM transactions t");
+        QueryDefinition sum = new(query: getTransactionsAmountSumQuery);
         var sumQuery = _container.GetItemQueryIterator<decimal>(queryDefinition: sum);
 
         var sumResults = new List<decimal>();
@@ -267,7 +270,7 @@ public class TransactionService : ITransactionService
             sumResults.AddRange([.. response]);
         }
 
-        QueryDefinition average = new(query: "SELECT VALUE AVG(t.amount) FROM transactions t");
+        QueryDefinition average = new(query: getTransactionsAmountAverageQuery);
         var averageQuery = _container.GetItemQueryIterator<decimal>(queryDefinition: average);
 
         var averageResults = new List<decimal>();

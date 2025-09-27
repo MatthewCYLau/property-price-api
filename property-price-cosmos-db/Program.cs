@@ -21,7 +21,7 @@ builder.Services.Configure<CosmosDbOptions>(
 builder.Services.Configure<ManagedIdentityOptions>(
     builder.Configuration.GetSection(ManagedIdentityOptions.ManagedIdentitySettingsName));
 
-builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
+builder.Services.AddSingleton(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<CosmosDbOptions>>().Value;
     return new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_DB_CONNECTION_STRING") ?? settings.ConnectionString);
