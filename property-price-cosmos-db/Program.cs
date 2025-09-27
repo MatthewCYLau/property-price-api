@@ -8,6 +8,7 @@ using Azure.Messaging.ServiceBus;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using property_price_cosmos_db.Helper;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +84,13 @@ builder.Services.AddAzureClients(clientBuilder =>
     clientBuilder.UseCredential(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "development" ? new AzureCliCredential() : credential);
 });
 
+builder.Services.AddHttpClient<JsonPlaceholderService>((serviceProvider, client) =>
+{
+    client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
+    client.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+});
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -118,6 +126,8 @@ app.MapGet("/async", async () => await MathsHelper.GetSumOfRandomNumbersAsync(5)
 app.MapPost("/create-int-list", (CreateIntegerListRequest request) => Results.Ok(MathsHelper.CreateListIntSwapFirstLast(request.Count)));
 
 app.MapPost("/current-time", (GetCurrentTimeRequest request) => Results.Ok(TimeHelper.GetCurrentTimeByTimeZoneId(request.TimeZoneId)));
+
+app.MapGet("/posts", async () => await app.Services.GetRequiredService<JsonPlaceholderService>().GetJsonPlaceholderPosts());
 
 app.MapHealthChecks("/healthz");
 app.Run();
