@@ -33,6 +33,7 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IPaymentRequestService, PaymentRequestService>();
 builder.Services.AddHostedService<TrasantionWorker>();
 builder.Services.AddHostedService<PaymentRequestWorker>();
+builder.Services.AddTransient<FactoryMiddleware>();
 // builder.Services.AddHostedService<EventProcessorService>();
 
 var clientId = builder.Configuration
@@ -117,6 +118,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseMiddleware<FactoryMiddleware>();
 
 await app.Services.GetRequiredService<ITransactionService>().CreateSeedTransactions();
 app.Services.GetRequiredService<ICustomInitService>().GetAssembly();
