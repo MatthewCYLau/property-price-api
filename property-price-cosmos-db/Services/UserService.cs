@@ -6,6 +6,7 @@ using Microsoft.Extensions.Azure;
 // using Azure.Messaging.EventHubs.Producer;
 // using Azure.Messaging.EventHubs;
 namespace property_price_cosmos_db.Services;
+
 using System.Text;
 
 
@@ -18,6 +19,7 @@ public class UserService : IUserService
     private readonly IAzureClientFactory<BlobServiceClient> _azureBlobServiceClientFactory;
     // private readonly IAzureClientFactory<EventHubProducerClient> _eventHubProducerClientFactory;
 
+    private readonly List<string> _userName = [];
 
     public UserService(
         ILogger<UserService> logger,
@@ -35,10 +37,18 @@ public class UserService : IUserService
         _container = _client.GetContainer(_options.DatabaseId, _options.UsersContainerId);
     }
 
-    public async Task AddUserAsync(CosmosUser item)
+    public async Task<Result<CosmosUser>> AddUserAsync(CosmosUser item)
 
     {
-        await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
+
+        if (_userName.Contains(item.Name))
+        {
+            return Result<CosmosUser>.Failure(CosmosUserErrors.UsernameAlreadyExists(item.Name));
+        }
+
+        ItemResponse<CosmosUser> newUser = await _container.CreateItemAsync(item, new PartitionKey(item.Id.ToString()));
+        _userName.Add(item.Name);
+
         var blobServiceClient = _azureBlobServiceClientFactory.CreateClient("main");
 
         BlobContainerClient container = await blobServiceClient.CreateBlobContainerAsync(item.Id.ToString());
@@ -46,6 +56,8 @@ public class UserService : IUserService
         {
             _logger.LogInformation("Created container for user {id}", item.Id.ToString());
         }
+
+        return Result<CosmosUser>.Success(newUser);
     }
 
     public async Task<IEnumerable<CosmosUser>> GetUsers(DateTime? fromDate, DateTime? toDate)

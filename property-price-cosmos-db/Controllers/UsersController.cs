@@ -19,8 +19,15 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] CreateCosmosUserRequest request)
     {
         CosmosUser user = new() { Id = Guid.NewGuid(), Name = request.Name, DateOfBirth = request.DateOfBirth };
-        await _userService.AddUserAsync(user);
-        return Ok(user);
+        var _result = await _userService.AddUserAsync(user);
+
+        if (_result.IsFailure)
+        {
+            return BadRequest(new { message = _result.Error });
+        }
+        var value = _result.Value;
+
+        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, value);
     }
 
     [HttpGet("users")]
