@@ -103,5 +103,13 @@ app.MapGet("/ping", () => "pong!")
 .WithDescription("Ping uptime check")
 .WithOpenApi();
 
+app.MapGet("/oop", () =>
+{
+    var logger = app.Services.GetRequiredService<ILogger<OopPerson>>();
+    OopPerson oopPerson = new OopPerson("Foo", 10, logger);
+    oopPerson.LogName();
+        
+});
+
 app.Run();
 
