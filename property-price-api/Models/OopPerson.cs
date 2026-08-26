@@ -11,6 +11,11 @@ public class OopPerson: BaseOopPerson
         Age = age;
     }
 
+    public OopPerson(string name, ILogger<OopPerson> logger) 
+        : base(name, logger) // Pass logger up to Person
+    {
+    }
+    
     public override void LogName()
     {
         base.LogName();

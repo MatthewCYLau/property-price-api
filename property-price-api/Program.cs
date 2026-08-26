@@ -108,7 +108,10 @@ app.MapGet("/oop", () =>
     var logger = app.Services.GetRequiredService<ILogger<OopPerson>>();
     OopPerson oopPerson = new OopPerson("Foo", 10, logger);
     oopPerson.LogName();
-        
+    
+    OopPerson oopPerson2 = new OopPerson("Foo", logger){Age = 20};
+    oopPerson2.LogName();
+    
 });
 
 app.Run();
